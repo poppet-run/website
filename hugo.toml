@@ -1,0 +1,12 @@
+baseURL = "https://poppet.run/"
+locale = "en-GB"
+title = "Poppet"
+disableKinds = ["taxonomy", "term", "RSS"]
+enableRobotsTXT = true
+
+[params]
+description = "Poppet is a small personal AI agent for your computer. Conversations, notes, memory, and scheduled tasks are on the way."
+githubURL = "https://github.com/poppet-run"
+
+[build]
+noJSConfigInAssets = true
