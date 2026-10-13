@@ -1,0 +1,15 @@
+{{ define "main" }}
+<main class="hero" id="main">
+  <div class="hero-copy">
+    <p class="status"><span class="status-dot" aria-hidden="true"></span>{{ .Params.status }}</p>
+    <h1>{{ .Params.heading }}<br><span>{{ .Params.headingAccent }}</span></h1>
+    <div class="intro">{{ .Content }}</div>
+    <a class="button" href="{{ site.Params.githubURL }}">Follow on GitHub <span aria-hidden="true">↗</span></a>
+    <p class="work-note">{{ .Params.note }}</p>
+  </div>
+  <div class="hero-art">
+    <img src="{{ "images/poppet.svg" | relURL }}" width="704" height="620" alt="Poppet, an apricot cushion with a cross-stitch and a smiling digital face, waving from a cream pocket.">
+    <span class="art-caption" aria-hidden="true">Say hello to Poppet.</span>
+  </div>
+</main>
+{{ end }}
