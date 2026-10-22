@@ -1,0 +1,38 @@
+{{ $toc := replace .TableOfContents `id="TableOfContents"` `class="table-of-contents"` }}
+<main class="docs-layout" id="main" tabindex="-1">
+  <aside class="docs-sidebar">{{ partial "docs-nav.html" . }}</aside>
+  <div class="docs-body">
+    <details class="docs-mobile-nav">
+      <summary>Browse the docs</summary>
+      {{ partial "docs-nav.html" . }}
+    </details>
+    {{ if .Fragments.Headings }}
+    <details class="docs-mobile-toc">
+      <summary>On this page</summary>
+      {{ $toc | safeHTML }}
+    </details>
+    {{ end }}
+    <article class="prose" aria-label="{{ .Title }}">
+      {{ .Content }}
+    </article>
+    {{ with .Params.next }}
+      {{ with site.GetPage . }}
+      <p class="doc-next"><a href="{{ .RelPermalink }}">Next: {{ .Title }} <span aria-hidden="true">→</span></a></p>
+      {{ else }}
+        {{ errorf "Missing next guide %s" . }}
+      {{ end }}
+    {{ end }}
+    <footer class="doc-footer">
+      <span>In early development</span>
+      {{ with .Params.source }}
+      <a href="{{ printf "%s/blob/%s/docs/%s" site.Params.githubURL hugo.Data.poppet.revision . }}">App guide on GitHub <span aria-hidden="true">↗</span></a>
+      {{ else }}
+      <a href="{{ site.Params.githubURL }}/tree/{{ hugo.Data.poppet.revision }}/docs">More guides on GitHub <span aria-hidden="true">↗</span></a>
+      {{ end }}
+    </footer>
+  </div>
+  <aside class="docs-toc" aria-label="On this page">
+    <p class="nav-group">On this page</p>
+    {{ $toc | safeHTML }}
+  </aside>
+</main>

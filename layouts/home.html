@@ -1,15 +1,53 @@
 {{ define "main" }}
-<main class="hero" id="main">
+<main id="main" tabindex="-1">
+<section class="hero" aria-labelledby="hero-heading">
   <div class="hero-copy">
     <p class="status"><span class="status-dot" aria-hidden="true"></span>{{ .Params.status }}</p>
-    <h1>{{ .Params.heading }}<br><span>{{ .Params.headingAccent }}</span></h1>
+    <h1 id="hero-heading">{{ .Params.heading }}<br><span>{{ .Params.headingAccent }}</span></h1>
     <div class="intro">{{ .Content }}</div>
-    <a class="button" href="{{ site.Params.githubURL }}">Follow on GitHub <span aria-hidden="true">↗</span></a>
+    <div class="hero-actions">
+      <a class="button" href="{{ "docs/getting-started/" | relURL }}">Get started <span aria-hidden="true">↗</span></a>
+      <a class="text-link" href="{{ site.Params.githubURL }}">View the source <span aria-hidden="true">↗</span></a>
+    </div>
     <p class="work-note">{{ .Params.note }}</p>
   </div>
   <div class="hero-art">
     <img src="{{ "images/poppet.svg" | relURL }}" width="704" height="620" alt="Poppet, an apricot cushion with a cross-stitch and a smiling digital face, waving from a cream pocket.">
     <span class="art-caption" aria-hidden="true">Say hello to Poppet.</span>
   </div>
+</section>
+<section class="home-section" aria-labelledby="capabilities-heading">
+  <div class="section-intro">
+    <p class="eyebrow">A little help, on your terms</p>
+    <h2 id="capabilities-heading">Pick up a conversation.<br>Leave a task for later.</h2>
+    <p>Start with a conversation. Add project context, scheduled work, or connected tools when you need them.</p>
+  </div>
+  <ol class="capabilities">
+    {{ range .Params.capabilities }}
+    <li><h3><a href="{{ .guide | relURL }}">{{ .title }}</a></h3><p>{{ .description }}</p></li>
+    {{ end }}
+  </ol>
+</section>
+<section class="provider-section" aria-labelledby="providers-heading">
+  <div><p class="eyebrow">Bring your own provider</p><h2 id="providers-heading">Choose what powers Poppet.</h2></div>
+  <ul class="provider-links">
+    <li><a href="{{ "docs/providers/openai-chatgpt/" | relURL }}">ChatGPT <span aria-hidden="true">↗</span></a><span>Browser sign-in</span></li>
+    <li><a href="{{ "docs/providers/openrouter/" | relURL }}">OpenRouter <span aria-hidden="true">↗</span></a><span>API key</span></li>
+    <li><a href="{{ "docs/providers/opencode-go/" | relURL }}">OpenCode Go <span aria-hidden="true">↗</span></a><span>Coding workloads only</span></li>
+  </ul>
+</section>
+<section class="home-section setup-section" aria-labelledby="setup-heading">
+  <div class="section-intro">
+    <p class="eyebrow">Your first conversation</p>
+    <h2 id="setup-heading">Get Poppet running.<br>Send your first message.</h2>
+    <p>You will need Git, Bun 1.4.3, and access to a supported provider. The guide takes you from a source checkout to your first message.</p>
+    <a class="text-link" href="{{ "docs/getting-started/" | relURL }}">Read the setup guide <span aria-hidden="true">↗</span></a>
+  </div>
+  <div class="terminal-example">
+    <div class="terminal-label">Start from source <span>fish</span></div>
+    {{ highlight "git clone https://github.com/poppet-run/poppet.git\ncd poppet\nbun install --frozen-lockfile\nbun run start --help" "fish" "" }}
+    <p>Model requests use your provider account. Sessions and notes are stored locally.</p>
+  </div>
+</section>
 </main>
 {{ end }}

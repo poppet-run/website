@@ -1,0 +1,19 @@
+{{- $url := urls.Parse .Destination -}}
+{{- $href := .Destination -}}
+{{- if and (not $url.IsAbs) (strings.HasSuffix $url.Path ".md") -}}
+  {{- $path := path.Clean (path.Join .Page.File.Dir $url.Path) -}}
+  {{- $page := site.GetPage $path -}}
+  {{- if eq $path "docs/index.md" -}}{{- $page = site.GetPage "/docs" -}}{{- end -}}
+  {{- with $page -}}
+    {{- $href = .RelPermalink -}}
+  {{- else -}}
+    {{- if not (resources.Get (printf "poppet-docs/%s" (strings.TrimPrefix "docs/" $path))) -}}
+      {{- errorf "Unresolved documentation link %s in %s" $.Destination $.Page.File.Path -}}
+    {{- end -}}
+    {{- $href = printf "%s/blob/%s/%s" site.Params.githubURL hugo.Data.poppet.revision $path -}}
+  {{- end -}}
+  {{- with $url.RawQuery -}}{{- $href = printf "%s?%s" $href . -}}{{- end -}}
+  {{- with $url.Fragment -}}{{- $href = printf "%s#%s" $href . -}}{{- end -}}
+{{- end -}}
+<a href="{{ $href | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
+{{- /* Trim whitespace around inline links. */ -}}
