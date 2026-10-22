@@ -5,8 +5,23 @@ disableKinds = ["taxonomy", "term", "RSS"]
 enableRobotsTXT = true
 
 [params]
-description = "Poppet is a small personal AI agent for your computer. Conversations, notes, memory, and scheduled tasks are on the way."
-githubURL = "https://github.com/poppet-run"
+description = "A small personal AI agent with saved conversations, notes, memory, and scheduled tasks. Run Poppet on your computer with your chosen model provider."
+githubURL = "https://github.com/poppet-run/poppet"
+
+[module]
+[[module.mounts]]
+source = "assets"
+target = "assets"
+[[module.mounts]]
+source = "sources/poppet/docs"
+target = "assets/poppet-docs"
+
+[markup.tableOfContents]
+startLevel = 2
+endLevel = 3
+
+[markup.highlight]
+noClasses = false
 
 [build]
 noJSConfigInAssets = true

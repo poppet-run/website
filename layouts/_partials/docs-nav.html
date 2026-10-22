@@ -1,0 +1,25 @@
+<nav aria-label="Documentation">
+  <a class="docs-home" href="{{ "docs/" | relURL }}"{{ if eq .RelPermalink ("docs/" | relURL) }} aria-current="page"{{ end }}>Documentation</a>
+  {{ $current := . }}
+  {{ range hugo.Data.docs }}
+    <p class="nav-group">{{ .title }}</p>
+    <ul>
+    {{ range .pages }}
+      {{ with site.GetPage . }}
+      <li>
+        <a href="{{ .RelPermalink }}"{{ if eq $current.RelPermalink .RelPermalink }} aria-current="page"{{ end }}>{{ .Title }}</a>
+        {{ if .IsSection }}
+        <ul>
+          {{ range .RegularPages.ByWeight }}
+          <li><a href="{{ .RelPermalink }}"{{ if eq $current.RelPermalink .RelPermalink }} aria-current="page"{{ end }}>{{ .Title }}</a></li>
+          {{ end }}
+        </ul>
+        {{ end }}
+      </li>
+      {{ else }}
+        {{ errorf "Missing navigation page %s" . }}
+      {{ end }}
+    {{ end }}
+    </ul>
+  {{ end }}
+</nav>

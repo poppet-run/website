@@ -1,0 +1,45 @@
+[
+  {
+    "title": "Start here",
+    "pages": [
+      "/docs/getting-started",
+      "/docs/providers"
+    ]
+  },
+  {
+    "title": "Use Poppet",
+    "pages": [
+      "/docs/chat",
+      "/docs/notes",
+      "/docs/memory",
+      "/docs/projects",
+      "/docs/skills"
+    ]
+  },
+  {
+    "title": "Schedule work",
+    "pages": [
+      "/docs/tasks",
+      "/docs/monitoring",
+      "/docs/worker"
+    ]
+  },
+  {
+    "title": "Connect services",
+    "pages": [
+      "/docs/gateways",
+      "/docs/web",
+      "/docs/browser",
+      "/docs/mcp"
+    ]
+  },
+  {
+    "title": "Reference",
+    "pages": [
+      "/docs/configuration",
+      "/docs/cli",
+      "/docs/storage",
+      "/docs/troubleshooting"
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+{{- $path := printf "poppet-docs/%s" .Page.Params.source -}}
+{{- with resources.Get $path -}}
+  {{- $body := replaceRE `^# [^\n]+\n+\[Documentation index\]\([^\n]+\)\n+` "" .Content -}}
+  {{- if eq $.Page.Params.source "gateways/discord.md" -}}
+    {{- /* shortcut: the pinned Discord guide calls WhatsApp planned; remove this correction when upstream is fixed. */ -}}
+    {{- $body = replace $body "WhatsApp remains planned." "[WhatsApp private chat](whatsapp.md) is also supported." -}}
+  {{- end -}}
+  {{- $body | safeHTML -}}
+{{- else -}}
+  {{- errorf "Missing app guide %s. Run git submodule update --init --recursive." $path -}}
+{{- end -}}
