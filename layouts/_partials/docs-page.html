@@ -24,11 +24,6 @@
     {{ end }}
     <footer class="doc-footer">
       <span>In early development</span>
-      {{ with .Params.source }}
-      <a href="{{ printf "%s/blob/%s/docs/%s" site.Params.githubURL hugo.Data.poppet.revision . }}">App guide on GitHub <span aria-hidden="true">↗</span></a>
-      {{ else }}
-      <a href="{{ site.Params.githubURL }}/tree/{{ hugo.Data.poppet.revision }}/docs">More guides on GitHub <span aria-hidden="true">↗</span></a>
-      {{ end }}
     </footer>
   </div>
   <aside class="docs-toc" aria-label="On this page">

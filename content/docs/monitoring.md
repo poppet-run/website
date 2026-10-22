@@ -1,7 +1,6 @@
 +++
 title = "Monitoring"
 description = "Check a source on a recurring schedule and report changes to a specific value."
-source = "tasks.md"
 next = "/docs/worker"
 +++
 

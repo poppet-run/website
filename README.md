@@ -6,11 +6,9 @@ There is no theme, browser JavaScript, external font, or package dependency.
 
 ## Development
 
-Hugo 0.167.0 is pinned in `mise.toml`. Initialise the app documentation submodule
-before building:
+Hugo 0.167.0 is pinned in `mise.toml`:
 
 ```fish
-git submodule update --init --recursive
 mise install
 mise exec -- hugo server --bind 127.0.0.1
 ```
@@ -33,39 +31,19 @@ and deploys it on pushes to `main`. You can also run it manually. Deployment is
 restricted to `main`; manual runs on other branches only build and upload.
 The build uses the site URL supplied by GitHub Pages.
 
-While the app repository is private, Actions needs a `POPPET_SOURCE_TOKEN`
-repository secret with read-only contents access to both this repository and
-`poppet-run/poppet` for recursive checkout. Without it, the default workflow token
-can read only this repository and the submodule checkout fails. Local clones also
-need authentication for the app repository.
+## Documentation
 
-## Documentation source
+All website documentation lives in `content/docs/`. Edit the Markdown pages here.
+The build does not need the Poppet repository, a submodule, or a source-access
+secret. `data/docs.json` sets the navigation order for desktop and mobile.
 
-`sources/poppet` pins the app repository as a Git submodule. Hugo reads its
-Markdown guides as assets. The `app-guide` shortcode inserts them into the website
-pages. Edit those guides in the app repository.
+The user guides were copied from Poppet revision
+`3e677b0d7b521fef7ec9fab462ac162f2a725363`. They are maintained in this repository
+and do not update automatically when Poppet changes. Review the relevant pages
+when updating commands, configuration, or supported behavior.
 
-This repository holds page metadata, navigation, introductions, and the setup,
-web, monitoring, messaging overview, and troubleshooting guides. `data/docs.json`
-sets the navigation order for desktop and mobile.
-
-Links to user guides stay on the website. Links to development guides open the
-pinned app revision on GitHub and keep their heading fragments. The shortcode
-corrects one stale Discord sentence that calls WhatsApp planned. Remove that
-correction when the source guide is fixed.
-
-The generated site excludes the app source, credentials, and runtime.
-
-To update the imported documentation, select a reviewed app commit:
-
-```fish
-git -C sources/poppet fetch origin
-git -C sources/poppet checkout --detach 'replace-with-app-commit'
-```
-
-Set `revision` in `data/poppet.json` to the same full commit ID, review the setup
-walkthrough against the updated app, then rebuild. Commit the submodule pointer
-and revision metadata together.
+Relative Markdown links resolve to website pages. Links to app development
+references are ordinary GitHub links and are not read during the build.
 
 ## Content and branding
 
