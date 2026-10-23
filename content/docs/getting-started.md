@@ -114,7 +114,7 @@ set session_id 'paste-session-id-here'
 bun run start chat interactive $session_id
 ```
 
-Existing sessions retain their original provider and model. The [chat guide](chat.md) covers one-shot follow-ups, cancellation, and searching saved conversations.
+Existing sessions keep their original provider and model. The [chat guide](chat.md) covers one-shot follow-ups, cancellation, and searching saved conversations.
 
 ## Add what you need
 

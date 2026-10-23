@@ -6,12 +6,9 @@ next = "/docs/troubleshooting"
 
 # Command line
 
-Run commands from your Poppet checkout. Use `bun run start --help` for top-level help, or append `--help` to a command. If this is your first installation, follow [getting started](getting-started.md).
+Run commands from your Poppet checkout, with `bun run start`. Use `bun run start --help` for top-level help, or add `--help` to any command. If this is your first installation, follow [getting started](getting-started.md).
 
-Run commands from the repository root with `bun run start`. Run
-`bun run start --help` for the current command syntax. Angle-bracket values below
-are placeholders; replace them before running a command. Quote prompts and values
-that contain spaces.
+Angle-bracket values below are placeholders. Replace them before you run a command. Quote prompts and values that contain spaces.
 
 Every command has its own help, for example `bun run start tasks add --help` or
 `bun run start auth login -h`. Help works without valid configuration or credentials.
@@ -45,14 +42,14 @@ bun run start provider models
 bun run start provider verify
 ```
 
-`provider verify` exercises the shared message and continuation contract with
-two requests and a local tool round trip. It consumes provider usage. A model
-must be selected before verification opens credentials. The runtime builds only
-the selected provider's dependencies and never falls back to another model.
+`provider verify` sends two requests and a local tool round trip, to check how the provider
+handles messages and continuation. It uses provider usage. A model must be selected before
+verification opens credentials. Poppet loads only the selected provider and never switches to
+another model.
 
 To verify a provider without changing `POPPET_PROVIDER`, use
-`bun run start auth verify <model-id> --provider openrouter`. ChatGPT's browser
-login and `--consent` remain available through `auth login openai-chatgpt`.
+`bun run start auth verify <model-id> --provider openrouter`. ChatGPT sign-in and
+`--consent` still work through `auth login openai-chatgpt`.
 
 | Command                                            | Action                                             |
 | -------------------------------------------------- | -------------------------------------------------- |
@@ -75,7 +72,7 @@ for provider-specific setup and logout behavior.
 | -------------------- | -------------------------------------------------------------------------------- |
 | `mcp servers`        | Show configured permissions and connection state without launching servers.      |
 | `mcp status`         | Show connection diagnostics and available tools without launching servers.       |
-| `mcp tools <server>` | Explicitly discover the server's allowed tools using the owner or a local scope. |
+| `mcp tools <server>` | Discover the server's allowed tools on demand, using the owner or a local scope. |
 
 These commands need no model. They route through the worker when it is running.
 See [MCP tools](mcp.md) for configuration, permissions, and process ownership.
@@ -84,11 +81,12 @@ See [MCP tools](mcp.md) for configuration, permissions, and process ownership.
 
 | Command                   | Action                                                                            |
 | ------------------------- | --------------------------------------------------------------------------------- |
-| `web login [--key-stdin]` | Save a Brave Search key from the environment, hidden prompt, or explicit stdin.   |
+| `web login [--key-stdin]` | Save the selected provider's search key from the environment, hidden prompt, or explicit stdin. |
 | `web status`              | Show whether search is enabled and a key is configured, without a remote request. |
 | `web logout`              | Remove the saved search key.                                                      |
 
-These commands do not change inference credentials or require a selected model.
+These commands use `webSearchProvider`, which defaults to `brave` and also accepts `kagi`.
+They do not change inference credentials or require a selected model.
 Enable `webSearch` separately and restart any running worker. See
 [configuration](configuration.md#web-search) for credentials and query handling.
 
@@ -112,6 +110,10 @@ and [notes](notes.md) for the tools available during a run.
 | -------------------- | ---------------------------------------------------------- |
 | `skills list`        | List local skill directories without opening the database. |
 | `skills show <name>` | Read and validate a local SKILL.md file.                   |
+| `skills history <name>` | Show a learned skill's revisions. |
+| `skills revert <name> <revision>` | Restore an earlier learned skill revision as a new revision. |
+| `skills delete <name>` | Delete a learned skill, keeping its history. |
+| `skills promote <name>` | Copy a learned skill to a new owner skill file. |
 
 Use `--skill <name>` before a new chat message or task prompt to save the current
 procedure with that session or task. See [skills](skills.md) for examples and limits.
@@ -130,7 +132,7 @@ Select `--project <name>` before a new chat message or task prompt. See
 
 | Command                                            | Action                       |
 | -------------------------------------------------- | ---------------------------- |
-| `memory list [--project <name>]`                   | List explicitly saved facts. |
+| `memory list [--project <name>]`                   | List saved facts. |
 | `memory remember [--project <name>] <key> <value>` | Create a new fact.           |
 | `memory replace [--project <name>] <key> <value>`  | Change an existing fact.     |
 | `memory forget [--project <name>] <key>`           | Delete a saved fact.         |
@@ -161,7 +163,7 @@ See [memory](memory.md) for keys, limits, profiles, and deletion behavior.
 | `tasks work`                                                                                                                                                                            | Run scheduling only in the foreground.                             |
 
 See [scheduled tasks](tasks.md) for timezones, missed work, retry rules, and what
-`clear` deletes or retains. Tasks execute while a worker with scheduling enabled
+`clear` deletes or keeps. Tasks execute while a worker with scheduling enabled
 is running. Choose at most one messaging destination flag.
 
 `tasks add --monitor` selects [change-aware monitoring](tasks.md#change-aware-monitoring).
@@ -190,12 +192,12 @@ controls, and uncertain deliveries. The bot token is never accepted as a command
 | `worker run`       | Run scheduling and messaging in one foreground worker. |
 | `worker install`   | Install and start the macOS login worker.              |
 | `worker start`     | Start an installed worker.                             |
-| `worker stop`      | Stop it until the next login or explicit start.        |
+| `worker stop`      | Stop it until the next login or until you start it.        |
 | `worker status`    | Show launch agent, scheduling, and connection status.  |
 | `worker logs`      | Print the last 64 KiB of worker logs.                  |
-| `worker uninstall` | Stop and remove login startup, retaining saved data.   |
+| `worker uninstall` | Stop and remove login startup, keeping saved data.   |
 
 See [worker](worker.md) for foreground modes, macOS lifecycle commands, logs,
 interactive requests, and recovery. Only one worker mode can own a data directory
 at a time. Commands use the worker while it is running and run locally when it
-is stopped; a lost response does not cause command replay.
+is stopped; a lost response never runs the command a second time.

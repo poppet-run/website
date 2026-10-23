@@ -7,13 +7,13 @@ next = "/docs/troubleshooting"
 
 # Worker
 
-The worker runs scheduled tasks and handles messaging. Start it with `bun run start worker run` and leave the terminal open. Use a second terminal to inspect task results or connection status. Terminal chat also works without a worker.
+The worker runs scheduled tasks and handles messaging. Start it with `bun run start worker run`, and leave the terminal open. Use a second terminal to check task results or connection status. Terminal chat also works without a worker.
 
-Choose a [foreground mode](#foreground-modes) below or set up [macOS login startup](#macos-login-startup). Run only one worker per data directory. Check [status and logs](#status-and-logs) after setup.
+Pick a [foreground mode](#foreground-modes) below, or set up [macOS login startup](#macos-login-startup). Run only one worker per data directory. Check [status and logs](#status-and-logs) after setup.
 
 ## Foreground modes
 
-Choose one foreground mode for a data directory:
+Choose one foreground mode for each data directory:
 
 ```fish
 bun run start worker run    # Scheduling and messaging
@@ -21,40 +21,32 @@ bun run start tasks work    # Scheduling only
 bun run start gateway work  # Messaging only
 ```
 
-All three modes own enabled [MCP connections](mcp.md), started lazily on discovery
-or an eligible agent run and closed on shutdown. CLI discovery uses these same
-connections. `mcp status` inspects them without starting a process. Restart the
-worker after changing server configuration or to reconnect a failed server.
+All three modes start the enabled [MCP servers](mcp.md) when a discovery or an agent run needs
+them, and they stop them on shutdown. Restart the worker after you change a server's configuration,
+or to reconnect a server that failed.
 
-All three modes own one SQLite connection and serve task, chat, memory, and store-status commands
-through `store/tasks.sock`, protected by the `0700` store directory and `0600`
-socket. Commands use the worker when it is running and execute locally when it
-is stopped. Inspecting saved data needs no model or provider credentials.
-Task commands remain available in gateway-only mode, but no scheduled work is
-executed. Task-only mode does not initialize Discord or Telegram. `tasks status`
-reports the host's selected services; `gateway status` reports whether messaging
-is running. Only one mode can own a data directory at a time.
-Interactive, scheduled, and messaging model requests share one runner. Chat streams to the
-invoking terminal; Ctrl-C cancels that request and leaves the worker running.
-Stopping the worker interrupts active requests and releases the socket and owner lock. After a crash,
-a new owner automatically reclaims storage from a dead process; unfinished work
-needs an explicit retry. Already queued work survives restart, and a committed
-answer is recovered without repeating its request. Task commands can open the
-store even if a dead worker left its socket behind. A lost response to a delivered command does
-not trigger local fallback. Task outcomes and provider pauses commit together;
-recovery restores a quota pause from an unfinished occurrence's saved run.
+Commands such as `chat`, `memory`, `tasks`, and `store status` go through the worker while it is
+running, and they run locally when it is stopped. Reading saved data needs no model or provider
+credentials. Task commands still work in gateway-only mode, but no scheduled work runs. Task-only
+mode does not start Discord or Telegram. `tasks status` shows which services the worker has
+selected, and `gateway status` shows whether messaging is running.
+
+Chat requests from the terminal share one runner with scheduled and messaging requests. Ctrl-C cancels
+the request you are waiting on, and the worker keeps running. Stopping the worker interrupts active
+requests. After a crash, the next worker takes over the data directory and marks unfinished work as
+interrupted. Queued work survives a restart. Poppet does not repeat an interrupted request on its own,
+so run it again yourself if you still need it.
 
 ## Browser resources
 
-Optional [browser automation](browser.md) runs inside the process owning the chat.
-Worker-backed CLI and messaging chats get separate run-owned browser resources.
-Configuration changes require a restart. Cancelling a chat or stopping the worker
-closes those resources. Browser tools are omitted from scheduled tasks.
+[Browser automation](browser.md) runs inside the process that owns the chat. Worker-backed CLI and
+messaging chats each get their own browser. A configuration change needs a restart. Cancelling a chat
+or stopping the worker closes its browser. Scheduled tasks get no browser tools.
 
 ## macOS login startup
 
-On macOS, stop any foreground worker, then install a user LaunchAgent to start
-the combined `worker run` host at login and keep it running while you are logged in:
+On macOS, stop any foreground worker first. Then install a user LaunchAgent. It starts the combined
+`worker run` host at login and keeps it running while you are logged in:
 
 ```fish
 bun run start worker install
@@ -62,79 +54,67 @@ bun run start worker status
 bun run start worker logs
 ```
 
-Save persistent provider, model, notes-directory, and chat-limit settings in
-`<data directory>/config.json` before installing. See [configuration](configuration.md).
-Shell overrides apply to foreground commands and workers; installation does not
-save them for the background worker.
+Save your provider, model, notes directory, and chat-limit settings in `<data directory>/config.json`
+before you install. See [configuration](configuration.md). Shell overrides apply to foreground commands
+and workers. Installation does not save them for the background worker.
 
-Installation starts it immediately. It records the absolute Bun executable, CLI
-entry point, current working directory, and `POPPET_DATA_DIR`. The worker reads
-`config.json` on startup. After editing settings, use `worker stop` followed by
-`worker start`. Keep the checkout and Bun executable in place; moving either
-requires uninstalling and installing again. Each data directory has its own
-launch agent. Manage it with the same `POPPET_DATA_DIR`.
+Installing starts the worker straight away. The LaunchAgent records the absolute Bun executable, the CLI
+entry point, the current working directory, and `POPPET_DATA_DIR`. The worker reads `config.json` when
+it starts. After you change settings, run `worker stop` and then `worker start`. Keep the checkout and
+the Bun executable where they are. If you move either one, uninstall and install again. Each data
+directory has its own LaunchAgent. Manage it with the same `POPPET_DATA_DIR`.
 
-`worker stop`, `worker uninstall`, and `worker logs` use only the data directory.
-They remain available when `config.json` is invalid, so a configuration error does
-not prevent stopping the worker or reading its logs. `POPPET_DATA_DIR` must still
+`worker stop`, `worker uninstall`, and `worker logs` use only the data directory. They keep working when
+`config.json` is invalid, so you can still stop the worker and read its logs. `POPPET_DATA_DIR` must still
 be valid.
 
-Older installations saved ordinary settings and budget overrides in their
-LaunchAgent environment. Move the settings you want to keep into `config.json`,
-then run `worker uninstall` followed by `worker install` once to remove those
-saved overrides. Otherwise, they continue to take precedence over the file.
-Saved data and credentials are retained.
+Older installations saved regular settings and budget overrides in their LaunchAgent environment. Move
+the settings you want to keep into `config.json`. Then run `worker uninstall` and `worker install` once to
+remove the saved overrides. Until you do, those overrides still take precedence over the file. Saved data
+and credentials are kept.
 
-If an existing installation launches `tasks work`, use `worker uninstall` followed
-by `worker install` once to update it to `worker run`. Saved data and credentials
-are retained. Restarting that old installation alone keeps its saved command and
-now runs scheduling only.
+If an installation runs `tasks work`, run `worker uninstall` and then `worker install` once to update it
+to `worker run`. Saved data and credentials are kept. Restarting the old installation on its own keeps
+the saved command, which means it still runs scheduling only.
 
-API keys are excluded from the launch agent's environment. Save them first with
-`auth login openrouter` or `auth login opencode-go`; ChatGPT uses its existing
-protected sign-in storage. The worker refreshes credentials through the same
-provider code as chat. Installation does not verify live inference.
+API keys are left out of the LaunchAgent's environment. Save them first with `auth login openrouter` or
+`auth login opencode-go`. ChatGPT uses its own protected sign-in storage. The worker refreshes credentials
+the same way chat does. Installing does not check live inference.
 
-New installations use a background launcher to capture and rotate the worker's
-stdout and stderr. Existing installations need `worker uninstall` followed by
-`worker install` once to select this launcher. Saved data, credentials, and logs
-are retained. Foreground commands continue writing to the terminal.
+New installations use a background launcher to capture and rotate the worker's stdout and stderr.
+Existing installations need `worker uninstall` and then `worker install` once to switch to this launcher.
+Saved data, credentials, and logs are kept. Foreground commands still write to the terminal.
 
 ## Status and logs
 
-`worker status` reports whether the launch agent is installed and loaded, whether
-the worker is responding, its PID and active occurrence, task and pending counts,
-the next scheduled timestamp, provider pauses, and five recent outcomes. It also
-shows local connection metadata and the account and plan-usage permission where
-supported, with actions for login, consent, quota resume, and failed work.
-Running and stopped status include providers assigned to saved tasks, even when
-the current CLI default provider differs.
-Connection metadata is not a live provider verification. During an active
-credential-owning request, the last observed metadata is labelled `cached` with
-its observation time. `tasks status` works for the foreground worker too.
+`worker status` shows whether the LaunchAgent is installed and loaded, and whether the worker responds.
+It also shows the PID, the active occurrence, the task and pending counts, the next scheduled time,
+provider pauses, and the five most recent outcomes. It shows local connection details, along with the
+account and plan-usage permission where they apply. It also offers actions for sign-in, consent, quota
+resume, and failed work. Running and stopped status both include the providers assigned to saved tasks,
+even when the CLI's default provider is different.
 
-Inspect full task results using the existing commands:
+Connection details are not a live check of the provider. During a request that is using credentials, the
+last observed details are labelled `cached` with the time they were observed. `tasks status` also works
+with a foreground worker.
+
+To read full task results, use the existing commands:
 
 ```fish
 bun run start tasks list
 bun run start tasks show <task-id>
 ```
 
-Lifecycle logs go to `<data directory>/logs/worker.log`, with `0700` directory and
-`0600` file permissions. They exclude prompts, notes, model output, and tokens.
-The background launcher limits each new log file to 5 MiB and retains three
-archives, `worker.log.1` through `worker.log.3`, newest first. It appends after
-restart and rotates between writes, including when a single output chunk exceeds
-the file limit. An existing oversized log is archived intact on the next write
-and expires through the same retention policy. Archives have `0600` permissions;
-symlinks, hard links, and non-regular log files are rejected.
+Lifecycle logs go to `<data directory>/logs/worker.log`. The directory is `0700`, and the file is `0600`.
+The logs leave out prompts, notes, model output, and tokens. The background launcher limits each new log
+file to 5 MiB, and it keeps three archives: `worker.log.1` through `worker.log.3`, newest first. It appends
+after a restart, and it rotates between writes. Symlinks, hard links, and files that are not regular files
+are rejected.
 
-`worker logs` prints at most the last 64 KiB across the current file and archives,
-joining bytes across rotation boundaries. Reading logs does not rotate them.
-The launcher forwards shutdown signals, waits for the worker to exit, and drains
-its output before closing the log. A worker that does not exit within 25 seconds
-is killed to stay within launchd's exit deadline. A logging failure stops the
-worker rather than allowing it to run without captured diagnostics.
+`worker logs` prints at most the last 64 KiB across the current file and the archives. Reading the logs does
+not rotate them. On shutdown, the launcher waits for the worker to exit, then closes the log. A worker that
+has not exited after 25 seconds is killed, so it stays within launchd's exit limit. If logging fails, the
+worker stops, rather than running without a record of what it did.
 
 ## Stop, start, and uninstall
 
@@ -144,25 +124,18 @@ bun run start worker start
 bun run start worker uninstall
 ```
 
-Stopping removes the running launchd registration and sends SIGTERM. Scoped
-cleanup interrupts active work, records its outcome, closes the socket, and
-releases storage. `stop` keeps login startup configured; `uninstall` disables it
-and retains tasks, results, notes, credentials, and logs. Inspection errors fail
-the command and preserve the installed configuration. Lifecycle mutations finish
-before an interruption returns; each launchctl subprocess has a 35-second timeout.
-Starting an already
-loaded worker does not interrupt an active request.
+Stopping removes the running launchd registration and sends SIGTERM. The worker interrupts active work,
+records its outcome, and releases the data directory. `stop` keeps login startup configured. `uninstall`
+turns it off, and it keeps tasks, results, notes, credentials, and logs. If inspecting the installation
+fails, the command fails and the installed configuration stays as it is. Each launchctl call has a
+35-second timeout. Starting a worker that is already loaded does not interrupt an active request.
 
 ## Interactive commands
 
-Chat can [manage scheduled tasks](tasks.md#manage-tasks-through-chat) through the
-same worker and task repository. Task tools execute in the owning process and
-share the scheduler's command lock; they do not submit another chat or a loopback
-worker request. A running occurrence waiting for the shared agent does not block
-interactive task changes. The existing reconciliation timer picks up new work.
-Task changes are durable even when their final chat reply fails.
+Chat can [manage scheduled tasks](tasks.md#manage-tasks-through-chat) while the worker runs. A task change
+is saved even if the final chat reply fails.
 
-Chat, memory, session inspection, and `store status` work while it is running:
+Chat, memory, session inspection, and `store status` all work while the worker runs:
 
 ```fish
 bun run start memory remember project.name Acorn
@@ -174,67 +147,26 @@ bun run start memory list
 bun run start store status
 ```
 
-New chats use the invoking terminal's provider, model, and workload; continued
-chats use their saved selection. The worker's startup notes directory and budgets
-apply to remote requests, including conversation-search result limits. Search
-runs on the owning store connection and needs no provider request. Memory changes are loaded on the next run. Chat output
-and session IDs go to the client terminal and are excluded from worker logs.
-Request bodies have a 10-second read deadline and a 2 MiB transport limit,
-which leaves room for the supported 1 MiB serialized chat context and command
-metadata. Oversized requests report a size error without being retried.
-Only an absent socket or refused connection permits local fallback. A lost,
-incomplete, or incompatible response fails without replaying the command. Restart
-an older worker with `worker stop` followed by `worker start` after updating code.
+New chats use the invoking terminal's provider, model, and workload. Continued chats use their saved
+selection. The worker's notes directory and budgets apply to chats it handles, including the result limits
+for conversation search. Search does not need a provider request. Memory changes load on the next run. Chat
+output and session IDs go to the terminal you ran the command from. They are left out of worker logs.
+
+After an update, run `worker stop` and then `worker start`, so the running worker uses the new code.
 
 ## Sleep and missed schedules
 
-The worker does not keep the Mac awake. After sleep, it runs an overdue one-off
-once. For a delayed recurring task, it runs the earliest due occurrence once and
-records later missed occurrences as skipped. Summaries older than 24 hours expire.
-Restart skips recurring work missed while the process was stopped. Failed or
-interrupted requests are never automatically replayed.
+The worker does not keep the Mac awake. After sleep, an overdue one-off runs once. For a recurring task that
+was delayed, the worker runs the earliest due occurrence once, and it records the later missed occurrences as
+skipped. Summaries older than 24 hours expire. On restart, recurring work that was missed while the process
+was stopped is skipped. Failed or interrupted requests are never replayed automatically.
 
-## Manual validation
+## Running in the background on other systems
 
-To manually test background execution, first save your provider and model in
-`config.json`:
+Background installation works on macOS only. On other systems, run `worker run` in the foreground.
 
-```fish
-set when (date -u -v+1M +%Y-%m-%dT%H:%M:%SZ)
-bun run start tasks add background-summary --at $when "Read project.md and summarize it"
-bun run start worker install
-bun run start worker status
-# After the scheduled time, inspect the task ID returned by tasks add:
-bun run start tasks show <task-id>
-bun run start worker logs
-```
+## Titles and naming
 
-Use `worker start` instead of `install` if it is already installed. Repeat with a
-sleep/wake cycle, then stop/start the worker and confirm a completed occurrence
-does not run again. Automated tests simulate clock jumps, crash recovery, and
-SIGTERM cleanup. Actual login startup, physical sleep/wake, and live provider
-execution remain manual checks. Other platforms can use `worker run` in the
-foreground; background installation currently supports macOS only.
-
-Rotation tests exercise retention, restart, stdout/stderr capture, log inspection,
-and shutdown with isolated files and subprocesses. After reinstalling a real
-LaunchAgent, check `worker status` and `worker logs`, then stop/start it and confirm
-new log entries append. Native launchd behavior remains a manual check.
-
-## Optional naming work
-
-Chat rename commands use the same local-or-worker routing as chat inspection.
-`chat interactive [session]` uses the same worker transport for each entered
-message. Waiting at the prompt does not hold storage. Session metadata is returned
-with the existing stderr announcement, so one-shot clients keep their output and
-interactive clients can retain the session after a failed turn. Restart the worker
-after updating to this version before starting a new interactive session.
-
-After printing an interactive answer, the worker finishes the optional bounded
-title request before completing that command response. The gateway starts naming
-only after the answer's delivery chunks are confirmed sent. Naming shares the
-agent's serialized model access with chat and scheduled runs. Shutdown can cancel
-naming without changing the completed chat run, delivery state, or provider pause
-state. Durable attempt claims prevent a restart from repeating title inference.
-Managed thread synchronization considers each title once, with a one-time fetch
-to reconcile an uncertain update rather than a persistent retry queue.
+Each new session gets a title after its first answer. The title request runs after the answer is printed, and it
+shares the worker's model access with chat and scheduled runs. Stopping the worker can cancel that request, without
+changing the completed answer or any provider pause.
