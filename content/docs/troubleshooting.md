@@ -28,7 +28,7 @@ bun run start worker stop
 bun run start worker start
 ```
 
-For a foreground worker, use Ctrl-C in its terminal and run it again. Existing sessions and tasks retain their saved provider and model. Start a new session to try a changed selection.
+For a foreground worker, use Ctrl-C in its terminal and run it again. Existing sessions and tasks keep their saved provider and model. Start a new session to try a changed selection.
 
 ## Sign-in works but chat fails
 
@@ -85,7 +85,7 @@ If an optional tool is missing, check its setup:
 
 - [Search](/docs/web/): run `bun run start web status`. It needs both an API key and `webSearch` enabled.
 - [Browser](browser.md): check the pinned executables, `browser.enabled`, and allowed domains. Browser tools are unavailable to scheduled work.
-- [MCP](mcp.md): run `bun run start mcp status`. A server must be enabled and its tools explicitly allowed. Run `mcp tools` with the server ID to start discovery; status alone never starts it.
+- [MCP](mcp.md): run `bun run start mcp status`. A server must be enabled and its tools allowed. Run `mcp tools` with the server ID to start discovery; status alone never starts it.
 
 Restart the worker after changing configuration or to reconnect a failed MCP server. Do not broaden access just to suppress an error. Check the specific diagnostic first.
 

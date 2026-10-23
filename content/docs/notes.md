@@ -6,14 +6,14 @@ next = "/docs/memory"
 
 # Notes
 
-Give Poppet a directory of plain-text notes, then ask it to find or summarize them. Saving a note can replace an existing file, so name the intended destination in your request.
+Give Poppet a directory of plain-text notes, then ask it to find or summarize them. Saving a note can replace an existing file, so name the destination you want in your request.
 
-`read_note`, `search_notes`, and `save_note` operate within `POPPET_NOTES_DIR`.
-Use UTF-8 `.md`, `.markdown`, or `.txt` files. Relative paths are preferred;
-absolute paths must remain within the canonical notes directory. Root, parent,
-and file symlinks are rejected, as are hard-linked files. Searches skip symlinks.
+`read_note`, `search_notes`, and `save_note` work only inside `POPPET_NOTES_DIR`. Use UTF-8
+`.md`, `.markdown`, or `.txt` files. Relative paths are preferred. Absolute paths must stay
+inside the canonical notes directory. Root, parent, and file symlinks are rejected, and so are
+hard-linked files. Searches skip symlinks.
 
-Try the complete flow with an existing notes directory and a tool-capable model:
+To try the full flow with an existing notes directory and a tool-capable model:
 
 ```fish
 set -lx POPPET_NOTES_DIR "$HOME/Documents/Notes"
@@ -22,44 +22,37 @@ bun run start chat new "Find notes about Acorn, read them, and save a summary as
 
 ## File operations and limits
 
-Saving creates or atomically replaces a note. Existing content is replaced, so
-include the intended path in your request. New files have owner-only permissions;
-checked parent directories are created as needed. Each note write is limited to
-64 KiB of UTF-8 text. Reads scan at most 64 KiB per note and explicitly report
-truncation. Search uses literal case-insensitive text, returning relative paths,
-line numbers, and snippets. It scans at most 128 files and 128 directories,
-returns at most 100 matches, and rejects directories exceeding 1000 entries.
-The per-tool result budget can truncate read/search results further.
+Saving creates a note, or atomically replaces an existing one. Existing content is overwritten, so put
+the intended path in your request. New files get owner-only permissions. Parent directories that pass
+the checks are created as needed. Each write is limited to 64 KiB of UTF-8 text. A read scans at most
+64 KiB of a note, and it reports when the text was cut short. Search matches literal text, ignoring case.
+It returns relative paths, line numbers, and snippets. It scans at most 128 files and 128 directories,
+returns at most 100 matches, and rejects any directory with more than 1000 entries. The per-tool result
+limit can shorten read and search results further.
 
 ## Project note selections
 
-A [project](projects.md#select-notes) can save up to eight relative paths in
-`notes.json`. Its runs search, read, and write only those paths, subject to the
-normal checks and permissions. The path list stays fixed with the session/task;
-contents stay current and are read lazily. Missing notes fail without a fallback.
-No selection preserves the configured root policy; `[]` permits no notes.
+A [project](projects.md#select-notes) can save up to eight relative paths in `notes.json`. Its runs
+search, read, and write only those paths, subject to the usual checks and permissions. The path list is
+fixed with the session or task. The contents stay current, and they are read only when needed. A missing
+note is an error, with no fallback. With no selection, the configured root policy applies. An empty `[]`
+allows no notes.
 
 ## Tool execution
 
-Runs default to eight model turns and sixteen tool calls. Every requested batch
-is checked against the run's allowed tools and argument schemas before any call
-in that batch executes. A batch is not executed unless another model turn remains
-to consume its results. Tool results and definitions count toward context size;
-the current exchange is kept whole and fails if it cannot fit. The five-minute
-run deadline includes all model turns and tools. The 128 KiB text limit applies
-across all turns, and each serialized completion is limited to 1 MiB.
+A run allows eight model turns and sixteen tool calls by default. Each batch of requested tools is checked
+against the run's allowed tools and argument schemas before any call in it runs. A batch does not run unless
+another model turn is left to use its results. Tool results and definitions count toward the context size.
+The current exchange is always kept whole, and it fails if it cannot fit. The five-minute run deadline covers
+all model turns and tools. The 128 KiB text limit applies across all turns, and each serialized completion
+is limited to 1 MiB.
 
 ## Saved outcomes and recovery
 
-Inputs, complete tool requests, execution states, and results are saved in SQLite.
-`chat show` includes a `toolCalls` list. Results are recorded atomically with their
-transcript messages. Graceful cancellation waits for an in-flight save and its
-result recording before stopping. On reopening, queued calls become interrupted
-and started calls without recorded results become uncertain. A write can succeed
-before its result is saved; inspect the file before manually retrying an uncertain
-write. Failed or interrupted exchanges remain inspectable and are excluded from
-later model context. Calls and writes are never automatically replayed.
-
-Local tests cover the full note flow,
-boundaries, limits, cancellation, and uncertain outcomes. They use injected models
-and do not establish fresh live provider access.
+Inputs, complete tool requests, execution states, and results are saved locally. `chat show` includes a
+`toolCalls` list. Results are recorded in the same transaction as their transcript messages. A graceful
+cancellation waits for any save in progress and for its result to be recorded, then stops. When the store
+reopens, queued calls become interrupted, and started calls with no recorded result become unknown. A write
+can succeed before its result is saved. Check the file before you retry an unknown write by hand. Failed and
+interrupted exchanges stay visible, but they are left out of later model context. Calls and writes are never
+replayed automatically.

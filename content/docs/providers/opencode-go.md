@@ -21,8 +21,7 @@ bun run start provider verify
 
 The initial Go adapter supports `gpt-6-luna` through Responses and `glm-5.3`
 through Chat Completions. Discovery lists those models when they appear in the
-remote catalog. Other Go models, including the Messages protocol, are not yet
-supported. Both protocols send `poppet/0.0.0` and a stable `x-opencode-session`
+remote catalog. Other Go models, including the Messages protocol, are not supported. Both protocols send `poppet/0.0.0` and a stable `x-opencode-session`
 header for the exchange.
 
 Go documents coding-agent traffic. Poppet's Go adapter requires a `coding`
@@ -37,5 +36,4 @@ overrides, stdin input, and logout. OpenCode Go uses `POPPET_OPENCODE_GO_API_KEY
 and `<POPPET_DATA_DIR>/auth/opencode-go.json`.
 
 Use `chat new --coding` for a coding session; see [chat](../chat.md). Verification
-consumes provider usage. Local tests do not establish live account access; see
-[development and validation](https://github.com/poppet-run/poppet/blob/3e677b0d7b521fef7ec9fab462ac162f2a725363/docs/development.md#validation).
+consumes provider usage. 

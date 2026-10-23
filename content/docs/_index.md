@@ -17,7 +17,7 @@ Terminal chat works without a background worker. For setup problems, see [troubl
 ## Use Poppet
 
 - [Notes](/docs/notes/): find, read, and save files in a directory you choose.
-- [Memory](/docs/memory/): retain preferences and facts you explicitly ask Poppet to save.
+- [Memory](/docs/memory/): keep preferences and facts you ask Poppet to save.
 - [Projects](/docs/projects/): save instructions, facts, and a list of notes for related chats and tasks.
 - [Skills](/docs/skills/): select a reusable procedure for a chat or task.
 
@@ -30,7 +30,7 @@ Terminal chat works without a background worker. For setup problems, see [troubl
 ## Connect services
 
 - [Messaging](/docs/gateways/): choose Discord, Telegram, or WhatsApp and connect your account.
-- [Read and search the web](/docs/web/): summarize a public page or enable optional Brave Search.
+- [Read and search the web](/docs/web/): summarize a public page or enable optional web search with Brave or Kagi.
 - [Browser automation](/docs/browser/): read rendered websites and request specific interactions.
 - [MCP tools](/docs/mcp/): choose which tools Poppet can use from trusted local programs.
 
@@ -42,4 +42,4 @@ Terminal chat works without a background worker. For setup problems, see [troubl
 - [Storage](/docs/storage/): inspect local records and understand recovery.
 - [Troubleshooting](/docs/troubleshooting/): check configuration, provider access, workers, and missing tools.
 
-For architecture, compatibility tests, and development plans, see the [app repository](https://github.com/poppet-run/poppet).
+For the app's source code, see the [app repository](https://github.com/poppet-run/poppet).

@@ -34,11 +34,11 @@ metadata. Models that generate images or audio and dynamic model routers such as
 
 Requests require support for every requested parameter and disable provider
 fallbacks. A stable `session_id` groups the exchange. Plain reasoning and the
-complete structured reasoning sequence survive tool calls. Credit exhaustion,
+complete structured reasoning sequence are kept through tool calls. Credit exhaustion,
 rate limits, upstream failures, and interrupted streams produce typed errors;
 requests are not automatically retried.
 [OpenRouter routing](https://openrouter.ai/docs/guides/routing/provider-selection),
 [reasoning continuation](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens),
 and [stream errors](https://openrouter.ai/docs/api/reference/streaming).
 
-See [provider selection](../cli.md#providers-and-models) for verification with an explicit provider and [development and validation](https://github.com/poppet-run/poppet/blob/3e677b0d7b521fef7ec9fab462ac162f2a725363/docs/development.md#validation) for test coverage and live-check limits.
+See [provider selection](../cli.md#providers-and-models) for verification with a chosen provider.
