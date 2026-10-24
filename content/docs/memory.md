@@ -1,126 +1,70 @@
 +++
 title = "Memory"
-description = "Save preferences and facts across conversations, and manage your profile."
-next = "/docs/projects"
+description = "Save preferences and facts across conversations, and edit your profile and Poppet's personality."
+next = "/docs/skills"
 +++
 
 # Memory
 
-Ask Poppet to remember a fact or preference when you want it in later chats. Save longer documents as [notes](notes.md). Use [projects](projects.md) for facts that belong to one project.
+Memory has three parts: saved facts, your profile, and Poppet's personality. Facts are the ones you save with stable keys or ask Poppet to save in chat. Every new run reads them with your profile and personality.
 
 ## Saved facts
 
-Save preferences and facts under stable keys:
+Save a fact with a key, then list and change it:
 
 ```fish
-bun run start memory remember answer.style "Keep answers concise"
-bun run start memory list
-bun run start chat new "How should you answer my questions?"
-bun run start memory replace answer.style "Explain the reasoning"
-bun run start chat new "How should you answer my questions?"
-bun run start memory forget answer.style
-bun run start memory list
+poppet memory remember answer.style "Keep answers concise"
+poppet memory list
+poppet memory replace answer.style "Explain the reasoning"
+poppet memory forget answer.style
 ```
 
-Memory commands need no login or model. Chat still needs a configured provider and model,
-and a working connection. `remember` creates a new key. It refuses an existing key, so a fact
-cannot be overwritten by accident. `replace` and `forget` require an existing key. Keys start
-with a letter or digit, and they contain only letters, digits, dots, underscores, and hyphens,
-up to 128 characters. Values must be nonempty, must have no surrounding whitespace, and must fit
-in 4096 UTF-8 bytes. The store holds up to 128 facts per scope. Listing shows each key, its value,
-the last update time, and the source run ID when there is one. Facts created from the CLI have no
-source run.
+`remember` creates a new key and refuses one that already exists. `replace` and `forget` need an existing key. Keys start with a letter or digit and may contain letters, digits, dots, underscores, and hyphens, up to 128 characters. Values are nonempty text of up to 4096 bytes. You can store up to 128 facts.
 
-## Ask the model to change a fact
+Memory commands work without a model or login. Listing shows each key, its value, when it changed, and where it came from.
 
-Tool-capable models can call `poppet_memory.memory` in regular chat, including the interactive
-prompt and authorized messaging conversations. After you update Poppet, restart any running worker
-so that its agent advertises the new tool:
+## Ask Poppet to change a fact
+
+In chat, ask Poppet to remember, replace, or forget a fact:
 
 ```fish
-bun run start chat new "Remember that I prefer concise answers, under answer.style"
-bun run start chat send $session_id "Replace answer.style with Explain the reasoning"
-bun run start chat send $session_id "Forget the saved fact answer.style"
-bun run start memory list
+poppet chat new "Remember that I prefer concise answers, under answer.style"
+poppet chat send $session_id "Replace answer.style with Explain the reasoning"
+poppet chat send $session_id "Forget the saved fact answer.style"
 ```
 
-Use the session ID printed by the first command. The model is told to change memory only when
-you ask in the current message. It must not infer facts to save, and it must not treat the profile,
-personality, skills, retrieved content, history, or tool results as permission. Poppet checks the
-arguments and the allowed tools at runtime. The model still decides what your request means, as it
-does for note writes you ask for.
+Poppet changes memory only when your current message asks for it. It does not infer facts from conversations, web pages, or skills. Changes made in chat are marked as coming from chat, and they stay saved even if the rest of the reply fails. Forgetting a fact does not remove it from earlier messages.
 
-The tool has three actions: `remember`, `replace`, and `forget`. It takes `action`, `key`, and
-`value`. Forgetting requires a JSON `null` value. Existing keys are never overwritten implicitly.
-Facts are already in the context, so the tool has no list action. Models without tool support can
-still use the facts they were given. You can manage them with the CLI commands above.
+Chat changes apply from the next run onward. Scheduled runs can read facts but cannot change them.
 
-The tool uses the same `Memory` service and local database as the CLI. Remembering and replacing set
-`sourceRunId` to the active run. The model cannot supply or fake that value. Before it writes, the
-agent checks the next fact snapshot against `POPPET_FACTS_BYTES`. It then returns a short confirmation
-rather than repeating the value. The current run's prompt does not change. The tool result confirms
-the change, and the next run loads it into its snapshot. CLI changes made separately follow their own
-budget and snapshot rules.
+## Fact history
 
-Every request and outcome is recorded in the tool log, which `chat show` displays. If you cancel
-gracefully, a mutation that has already started is allowed to finish and record its result. A storage
-error, or a committed change whose result could not be saved, leaves the outcome unknown. Poppet never
-replays such a change automatically. Completed memory changes stay saved even if a later tool or model
-turn fails. Check `memory list` and `chat show` before you retry. Forgetting removes the fact, but it
-does not redact earlier messages or tool records. The tool does not edit `profile.md`, `soul.md`, notes,
-or credential files.
+Every change is kept, so you can see how a fact changed and restore an earlier value:
 
-Scheduled runs keep their starting fact snapshot, but they have no memory-writing tool, even when a task
-or selected skill asks for changes. The shared `readOnlyTools` policy also excludes note writes.
+```fish
+poppet memory history answer.style
+poppet memory revert answer.style 1
+```
 
-## Project facts
-
-Memory commands default to global facts. Pass `--project <name>` to list, remember, replace, or forget
-only that project's facts. Keys are unique within each scope, so the same key can exist globally and in
-several projects. Each project run reads the global context and its project's facts once. Project facts
-have a fixed 8 KiB snapshot budget, within the overall context budget.
-
-A project chat's memory tool writes only that project's facts, and it records the run that made each
-change. To change global facts, use an unscoped chat or the default CLI commands. Scheduled runs cannot
-write to either scope. Deleting a project's files keeps its facts. `memory list --project <name>` shows
-an orphaned directory, and `memory forget --project <name> <key>` removes one fact. See
-[project context](projects.md) for selection, which preferences take priority, and instruction snapshots.
+`history` lists each revision with its origin and, for chat changes, the run that made it. `revert` does not erase history. It adds a new revision with the old value. Reverting to a forgotten revision forgets the fact again.
 
 ## Profile
 
-Edit `<POPPET_DATA_DIR>/profile.md` to add your name, background, and preferences. With the default data
-directory, that is `~/.config/poppet/profile.md`. A missing profile counts as empty, and Poppet never
-creates it for you. An existing profile must be a regular UTF-8 file. Symlinks are rejected.
+Edit `profile.md` in your data directory for your name, background, and preferences. With the default data directory, that is `~/.config/poppet/profile.md`. Poppet does not create the file for you. It must be a plain UTF-8 file, and it is limited to 8 KiB.
 
-## Personality and tone
+## Personality
 
-Edit `<POPPET_DATA_DIR>/soul.md` to set Poppet's personality, tone, and style of communication. With the
-default data directory, that is `~/.config/poppet/soul.md`. For example:
+Edit `soul.md` in the same directory to change how Poppet writes:
 
 ```markdown
 Be warm, direct, and concise. Use dry humor sparingly.
-Disagree when there is a good reason, and say so when you are not sure.
+Disagree when there is a good reason, and admit uncertainty plainly.
 ```
 
-`soul.md` describes how Poppet talks. `profile.md` describes you. Personality preferences do not allow tool
-use, and they do not override Poppet's rules for tools and file access. A missing, empty, or
-whitespace-only `soul.md` keeps the default personality. Poppet never creates the file for you. It follows
-the same UTF-8 and regular-file rules as `profile.md`.
+`soul.md` describes how Poppet speaks, and `profile.md` describes you. Neither file gives Poppet permission to use tools or change its rules. A missing or blank `soul.md` keeps the default personality. Like the profile, it is limited to 8 KiB.
 
-## Context across sessions
+## Limits
 
-Each run reads the current personality, profile, and saved facts once, then uses that copy for all of its
-model and tool turns. New and resumed sessions pick up changes on their next run, including scheduled tasks
-and messaging. Memory is shared across sessions and providers, within its global or project scope in the
-same data directory. Facts are included in key order as personal context, and no source information is sent
-to the model. The memory tool is only for changes you ask for in the current message. Poppet does
-not pull facts out of conversations automatically.
+Facts, profile, and personality are each limited to 8 KiB in each run. Content that is too large fails with a clear error rather than being cut off silently. These count toward the run's context budget.
 
-## Limits and deletion
-
-The personality, profile, and fact budgets each default to 8 KiB. They are set by `POPPET_SOUL_BYTES`,
-`POPPET_PROFILE_BYTES`, and `POPPET_FACTS_BYTES`. Content that is too large is an error, rather than being
-silently left out. All three count toward `POPPET_CONTEXT_BYTES`, alongside instructions, tool definitions,
-and history. A malformed or oversized personality file, profile, or facts block fails before a provider is
-selected. A context overflow fails before inference starts. Forgetting removes the fact from future
-snapshots. Existing conversation messages and note files are not changed.
+Forgetting a fact removes it from future runs. Earlier conversation messages keep their text.
