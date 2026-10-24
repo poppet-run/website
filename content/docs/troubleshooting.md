@@ -1,96 +1,94 @@
 +++
 title = "Troubleshooting"
-description = "Check setup, provider access, background workers, messaging connections, and optional tools."
+description = "Check setup, provider access, background workers, Discord, and optional tools."
 +++
 
 # Troubleshooting
 
-Run these commands from your Poppet checkout. Keep the full error message when reporting a problem.
+Run these commands from any directory. Keep the full error message when you report a problem.
 
 ## Poppet will not start
 
 ```fish
 bun --version
-bun run start --help
-bun run start config
+poppet --help
+poppet config
 ```
 
-Use Bun 1.4.3 and install dependencies with `bun install --frozen-lockfile`. A configuration error can come from malformed JSON, an unknown key, an invalid value, or an invalid environment override. Fix the reported field before trying chat again. See [configuration](configuration.md).
+Use Bun 1.4.3 and install dependencies with `bun install --frozen-lockfile`. A configuration error usually means malformed JSON, an unknown key, a wrong type, or an empty value. Fix the field named in the error, then try again. See [configuration](configuration.md).
 
-## Settings differ from config.json
+## Settings are not what you expect
 
-Check the output of `bun run start config`, especially `configFile.path`, `configFile.exists`, and `environmentOverrides`. Use JSON numbers and booleans rather than quoted strings. Literal `~` is not expanded in configured paths.
+Check `poppet config`. It shows the config file location and whether it exists.
 
-Environment values override saved settings. A running worker keeps the configuration it loaded at startup. For an installed macOS worker:
+A running worker keeps the settings it read when it started. After you change `config.json`, restart it. For a worker that runs at login:
 
 ```fish
-bun run start worker stop
-bun run start worker start
+poppet worker stop
+poppet worker start
 ```
 
-For a foreground worker, use Ctrl-C in its terminal and run it again. Existing sessions and tasks keep their saved provider and model. Start a new session to try a changed selection.
+For a foreground worker, press Ctrl-C in its terminal and start it again.
 
-## Sign-in works but chat fails
+Existing sessions and tasks keep the provider and model they were saved with. Start a new chat to use a different one.
 
-Replace the provider below if you use OpenRouter or OpenCode Go:
+## Chat fails
+
+Check the connection and model for your provider. Replace the provider name if you use OpenRouter or OpenCode Go:
 
 ```fish
-bun run start auth status openai-chatgpt
-bun run start auth models openai-chatgpt
+poppet provider status openai-chatgpt
+poppet provider models openai-chatgpt
 ```
 
-Check that the saved model exists in that provider's catalog. ChatGPT also needs plan-usage consent. OpenCode Go requires `--coding` for new chats. Follow the matching [provider guide](/docs/providers/) for credential and quota errors.
+Check that the model in `config.json` appears in the list. ChatGPT also needs plan-usage consent. OpenCode Go accepts only coding chats, so start one with `--coding`. For credential and quota errors, see the [provider guides](/docs/providers/).
 
-To test the selected provider and model:
+## A task did not run
+
+Keep a [worker](worker.md) running, then check the task in a second terminal:
 
 ```fish
-bun run start provider verify
+poppet tasks list
+poppet tasks show <task-id>
 ```
 
-This sends two model requests and tests a local tool call. It uses your provider account's quota.
-
-## A task has not run
-
-Keep a [worker](worker.md) running and check task status in a second terminal:
+`tasks show` lists the next time, past runs, pauses, failures, and results. Check the timezone you saved, and check whether the provider is paused:
 
 ```fish
-bun run start tasks status
-bun run start tasks list
+poppet worker providers
 ```
 
-Use `bun run start tasks show` with the task ID to inspect its next time, occurrences, pauses, failures, and results. Check the schedule's timezone and the saved provider selection. Installed workers read saved credentials and `config.json`, not your current shell overrides.
-
-On macOS, inspect login startup and logs:
+On macOS, check the login worker and its log:
 
 ```fish
-bun run start worker status
-bun run start worker logs
+poppet worker status
+poppet worker logs
 ```
 
-Do not start a second worker for the same data directory. A sleeping or stopped computer cannot execute work on time. See [missed work and retries](tasks.md#missed-work-pauses-and-retries) before retrying.
+Only one worker can run for a data directory. A computer that is asleep or shut down cannot run tasks. Read [missed runs and retries](tasks.md#missed-runs-pauses-and-retries) before you retry a task.
 
-## Messaging does not reply
+## Discord does not reply
 
 ```fish
-bun run start gateway status
+poppet gateway status
 ```
 
-Check the connection state, configured owner ID, and allowed chat or channel. Restart the worker after changing messaging settings. For Telegram, another polling client or an existing webhook can prevent reception. For Discord, check bot permissions and the Message Content intent.
+Check the connection state, your owner ID, and the server ID in `config.json`. Poppet replies only to the owner, and only in the configured server. Make sure the bot has the permissions and the Message Content intent listed in the [Discord guide](gateways/discord.md). Restart the worker after changing Discord settings.
 
-Follow the [service guide](/docs/gateways/) for setup and supported message types. If delivery is uncertain, inspect the saved answer before reposting it; the service may already have received it.
+If a reply's delivery is uncertain, check the saved answer with `poppet chat show <session-id>` before you post it again. Discord may already have received it.
 
 ## Search, browser, or MCP tools are missing
 
-If an optional tool is missing, check its setup:
+- [Web search](web.md): run `poppet web status`. Search needs both `webSearch` set to `true` and a saved key.
+- [Browser](browser.md): check `browser.enabled`, the allowed domains, and the pinned executables. Scheduled tasks never get browser tools.
+- [MCP tools](mcp.md): run `poppet mcp status`. A server must be enabled, and each tool must be listed. `poppet mcp tools <server-id>` starts a server to discover its tools. `status` does not.
 
-- [Search](/docs/web/): run `bun run start web status`. It needs both an API key and `webSearch` enabled.
-- [Browser](browser.md): check the pinned executables, `browser.enabled`, and allowed domains. Browser tools are unavailable to scheduled work.
-- [MCP](mcp.md): run `bun run start mcp status`. A server must be enabled and its tools allowed. Run `mcp tools` with the server ID to start discovery; status alone never starts it.
+Restart the worker after changing configuration, or to reconnect a failed MCP server.
 
-Restart the worker after changing configuration or to reconnect a failed MCP server. Do not broaden access just to suppress an error. Check the specific diagnostic first.
+## A run failed after a tool ran
 
-## A run failed after using a tool
+Inspect the session with `poppet chat show <session-id>`. It shows the error and each tool call. A tool call that may have changed something is marked uncertain. Check the file or service it affected before asking Poppet to try again. Poppet never replays an uncertain action on its own.
 
-Use `bun run start chat show` with the session ID to inspect the saved error and tool calls. An uncertain call may have changed a file or external service before Poppet saved the result. Check the file or service before requesting another attempt. Poppet does not automatically replay uncertain actions.
+## Where your data is
 
-See [storage](storage.md) for database access and recovery details. Keep your data directory while investigating. Deleting it removes saved data.
+Keep your data directory while you investigate. Deleting it removes your saved conversations, facts, tasks, and credentials. See [storage](storage.md).

@@ -1,66 +1,64 @@
 +++
 title = "Storage"
-description = "Inspect local data, understand saved records, and recover from interrupted work."
+description = "Find local data, check the database, and understand what is saved and how interrupted work is handled."
 next = "/docs/troubleshooting"
 +++
 
 # Storage
 
-Conversations, task results, and facts you save live in your local data directory. Use the status command below to inspect the database without contacting a model provider.
+Poppet keeps everything in your data directory, which defaults to `~/.config/poppet`. Set `POPPET_DATA_DIR` to use another one. Each data directory has its own configuration, credentials, database, and logs.
 
-Open or inspect the local database:
-
-```fish
-bun run start store status
+```text
+config.json       settings
+profile.md        your profile (you write it)
+soul.md           Poppet's personality (you write it)
+skills/           your skill files
+auth/             provider and search credentials
+channels/         Discord settings and bot token
+store/            conversations, facts, tasks, and search index
+logs/             worker log
 ```
 
-This opens `<POPPET_DATA_DIR>/store/poppet.sqlite`, applies any pending upgrades, and prints
-its path, schema version, and session, message, and run counts. It needs no login or selected
-model. Help, configuration, and auth commands do not open the database. To try things in a
-separate directory:
+Check the database at any time:
 
 ```fish
-set -lx POPPET_DATA_DIR /tmp/poppet-storage-test
-bun run start store status
+poppet store status
 ```
+
+This opens the database, applies any pending upgrades, and prints its path, schema version, and counts of sessions, messages, and runs. It needs no model or login. To try Poppet in a separate directory, set `POPPET_DATA_DIR` to a temporary path first.
 
 ## What is saved
 
-- **Conversations:** sessions, messages in order, and each run's state, output, usage, and failure.
-- **Tool records:** every tool call and its result, so `chat show` can explain what happened.
-- **Facts:** the facts you saved with `memory`, in global and project scopes.
-- **Learned skills:** procedures Poppet saved itself, with their revision history, when learned skills are on.
-- **Tasks:** definitions, occurrences, results, skipped intervals, and monitoring decisions.
-- **Snapshots:** the skill and project instructions a session or task was created with. Later
-  edits to those files do not change them.
-- **Messaging:** inbox entries, the delivery queue, and polling progress for each service.
+- **Conversations.** Each session keeps its provider, model, and workload. Messages are kept in order, with their tool calls and results. Each run is saved as it starts, then marked as completed, failed, or interrupted.
+- **Facts.** Every change is kept as a revision with where it came from. `poppet memory history` shows them.
+- **Tasks.** Each run keeps the task settings it used. Changing a task later does not change earlier runs. Clearing tasks removes their run history, but keeps chats and queued replies.
+- **Skills.** A session or task keeps a copy of the skill it selected.
+- **Search index.** Your messages and Poppet's final answers are indexed for `chat search`. Failed input and tool results are not indexed.
 
-Saved data stays on your computer. Credentials are kept in the separate `auth` directory, and
-channel settings in `channels`.
-
-## Permissions
-
-The store directory is `0700`. The database and its temporary write-ahead files are `0600`.
+Credentials are kept in `auth/` and never in the database.
 
 ## Upgrades
 
-Poppet applies database upgrades automatically when it opens the store. Each upgrade runs in one
-transaction, so a failed upgrade is rolled back. Upgrades never reset your data. A database created
-by an older build that Poppet no longer recognizes needs a new data directory.
+Each part of the database upgrades itself when Poppet starts. Poppet refuses a database made by a newer version, or by a different application, and it does not reset anything automatically. If that happens, point `POPPET_DATA_DIR` at a fresh directory or restore a backup.
 
-## Ownership and recovery
+## Permissions
 
-Only one process can own the store at a time. Commands go through a running worker, so they share
-its connection. A process that crashed releases its ownership, and the next Poppet process takes
-over automatically. Do not delete the `store/owner.lock.sqlite` file while Poppet is running.
+The store directory is `0700`, and the database files are `0600`. Credentials are kept in `auth/`, which has the same protection.
 
-When the store reopens after a crash or a forced stop, any run that was still in progress is marked
-as interrupted, with the reason `process-exit`. Poppet does not replay interrupted runs, tool calls,
-or writes. Check the file, note, or external service first, then ask again if you still need the result.
+## Interrupted work
 
-## Temporary files
+If Poppet stops in the middle of a run, the run is marked as interrupted with a reason. Poppet does not replay it. Send the message again yourself if you still need the answer.
 
-Raw PDF and audio files from messaging attachments are written to `<data directory>/attachment-tmp`
-in private folders, and they are removed when processing finishes, fails, or is cancelled. Startup
-removes any folders left behind by an interrupted run. The extracted text and transcripts are kept
-with the conversation, even after the raw files are gone.
+Only one Poppet process can use a data directory at a time. If a process crashes, the next one takes over automatically, even if the old process ID has been reused. Do not delete the `.lock.sqlite` files while Poppet is running. They contain no credentials, and they can stay in place after you log out.
+
+## Back up
+
+Stop any running worker first: press Ctrl-C in its terminal, or run `poppet worker stop` if it runs at login. Then copy the whole data directory:
+
+```fish
+cp -R ~/.config/poppet ~/Backups/poppet-(date +%F)
+```
+
+Start the worker again when the copy finishes.
+
+Keep the copy private. It contains your conversations and credentials.
