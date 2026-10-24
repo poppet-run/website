@@ -1,11 +1,11 @@
 +++
 title = "Documentation"
-description = "Set up Poppet, send your first message, then add notes, projects, scheduled work, and messaging."
+description = "Set up Poppet, send your first message, then add memory, skills, scheduled work, and Discord."
 +++
 
 # Poppet documentation
 
-Poppet runs on your computer and uses your chosen model provider. Follow the setup guide to send your first message, then pick a guide below for what you want to do next.
+Poppet runs on your computer and uses a model provider you choose. Follow the setup guide to send your first message, then pick a guide below for what you want to do next.
 
 ## Start here
 
@@ -16,30 +16,26 @@ Terminal chat works without a background worker. For setup problems, see [troubl
 
 ## Use Poppet
 
-- [Notes](/docs/notes/): find, read, and save files in a directory you choose.
-- [Memory](/docs/memory/): keep preferences and facts you ask Poppet to save.
-- [Projects](/docs/projects/): save instructions, facts, and a list of notes for related chats and tasks.
-- [Skills](/docs/skills/): select a reusable procedure for a chat or task.
+- [Memory](/docs/memory/): keep your profile, Poppet's personality, and facts you ask it to save.
+- [Skills](/docs/skills/): write a reusable procedure and select it for a chat or task.
+- [Run commands](/docs/commands/): let Poppet run shell commands, with a review before each one.
 
 ## Schedule work
 
-- [Scheduled tasks](/docs/tasks/): schedule a prompt and manage its next run.
-- [Monitoring](/docs/monitoring/): check a source regularly and report changes to a specific value.
-- [Worker](/docs/worker/): keep scheduling and messaging running, in a terminal or at macOS login.
+- [Scheduled tasks](/docs/tasks/): schedule a prompt, then edit, pause, skip, or snooze it.
+- [Worker](/docs/worker/): keep scheduling and Discord running, in a terminal or at macOS login.
 
 ## Connect services
 
-- [Messaging](/docs/gateways/): choose Discord, Telegram, or WhatsApp and connect your account.
-- [Read and search the web](/docs/web/): summarize a public page or enable optional web search with Brave or Kagi.
-- [Browser automation](/docs/browser/): read rendered websites and request specific interactions.
+- [Discord](/docs/gateways/): chat with Poppet in Discord threads, and send scheduled results to a channel.
+- [Read and search the web](/docs/web/): read public pages, or turn on web search with Brave or Kagi.
+- [Browser automation](/docs/browser/): open and read websites, and fill in forms when you ask.
 - [MCP tools](/docs/mcp/): choose which tools Poppet can use from trusted local programs.
 
 ## Reference
 
-- [Providers](/docs/providers/): compare ChatGPT, OpenRouter, and OpenCode Go and connect one.
-- [Configuration](/docs/configuration/): save settings, understand overrides, and set limits.
+- [Providers](/docs/providers/): compare ChatGPT, OpenRouter, and OpenCode Go, and connect one.
+- [Configuration](/docs/configuration/): save settings in `config.json`, and manage API keys and optional tools.
 - [Command line](/docs/cli/): look up commands and options.
-- [Storage](/docs/storage/): inspect local records and understand recovery.
-- [Troubleshooting](/docs/troubleshooting/): check configuration, provider access, workers, and missing tools.
-
-For the app's source code, see the [app repository](https://github.com/poppet-run/poppet).
+- [Storage](/docs/storage/): find your data, check the database, and understand interrupted work.
+- [Troubleshooting](/docs/troubleshooting/): check configuration, provider access, the worker, Discord, and optional tools.

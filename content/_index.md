@@ -11,29 +11,24 @@ description = "Chat in your terminal, come back to saved sessions, and search pa
 guide = "docs/chat/"
 
 [[capabilities]]
-title = "Notes in a folder you choose."
-description = "Read, search, and save notes in a directory you pick. Give Poppet a profile and saved facts to use across sessions."
-guide = "docs/notes/"
-
-[[capabilities]]
-title = "Separate context for each project."
-description = "Give related chats and tasks their own instructions, facts, and selected notes. Pick a reusable skill for work you repeat."
-guide = "docs/projects/"
+title = "Memory and skills."
+description = "Keep a profile and facts that Poppet uses across chats. Save reusable procedures and pick one for a chat or task."
+guide = "docs/memory/"
 
 [[capabilities]]
 title = "Scheduled tasks."
-description = "Run a prompt later or on a schedule. Edit, pause, or snooze tasks, and watch a source for changes to a specific value."
+description = "Run a prompt later or on a schedule. Edit, pause, skip, or snooze tasks, and read the results whenever you like."
 guide = "docs/tasks/"
 
 [[capabilities]]
-title = "Chat from messaging apps."
-description = "Chat in Discord threads or private Telegram and WhatsApp chats. Send documents through Telegram, with optional local voice transcription."
+title = "Chat from Discord."
+description = "Talk to Poppet in Discord threads that only its owner can use. Send scheduled results to a channel you choose."
 guide = "docs/gateways/"
 
 [[capabilities]]
 title = "Optional tools."
-description = "Read public pages, turn on web search, or add browser automation and tools from local MCP servers you trust. Each one has its own settings and permissions."
+description = "Read public pages, turn on web search, automate a browser, or run shell commands with a review first. Each one has its own settings and permissions."
 guide = "docs/web/"
 +++
 
-Chat in your terminal or messaging app, work with your notes, and schedule tasks. Poppet runs on your computer, saves your sessions locally, and connects to a model provider you choose.
+Chat in your terminal or Discord, keep useful facts and procedures, and schedule tasks. Poppet runs on your computer, saves your sessions locally, and connects to a model provider you choose.

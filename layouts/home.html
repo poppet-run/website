@@ -20,7 +20,7 @@
   <div class="section-intro">
     <p class="eyebrow">A little help, on your terms</p>
     <h2 id="capabilities-heading">Pick up a conversation.<br>Leave a task for later.</h2>
-    <p>Start with a conversation. Add project context, scheduled work, or connected tools when you need them.</p>
+    <p>Start with a conversation. Add memory, scheduled work, or optional tools when you need them.</p>
   </div>
   <ol class="capabilities">
     {{ range .Params.capabilities }}
@@ -45,8 +45,8 @@
   </div>
   <div class="terminal-example">
     <div class="terminal-label">Start from source <span>fish</span></div>
-    {{ highlight "git clone https://github.com/poppet-run/poppet.git\ncd poppet\nbun install --frozen-lockfile\nbun run start --help" "fish" "" }}
-    <p>Model requests use your provider account. Sessions and notes are stored locally.</p>
+    {{ highlight "git clone https://github.com/poppet-run/poppet.git\ncd poppet\nbun install --frozen-lockfile\nbun link\npoppet --help" "fish" "" }}
+    <p>Model requests use your provider account. Sessions and facts are stored locally.</p>
   </div>
 </section>
 </main>

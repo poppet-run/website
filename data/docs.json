@@ -10,17 +10,15 @@
     "title": "Use Poppet",
     "pages": [
       "/docs/chat",
-      "/docs/notes",
       "/docs/memory",
-      "/docs/projects",
-      "/docs/skills"
+      "/docs/skills",
+      "/docs/commands"
     ]
   },
   {
     "title": "Schedule work",
     "pages": [
       "/docs/tasks",
-      "/docs/monitoring",
       "/docs/worker"
     ]
   },
