@@ -6,39 +6,43 @@ weight = 20
 
 # OpenRouter
 
-For OpenRouter, discovery uses its public catalog without an API key. Select a
-concrete model ID and save a key through login:
+OpenRouter gives you access to many models with one API key. Requests use your OpenRouter credits.
+
+## Connect
 
 ```fish
-set -lx POPPET_PROVIDER openrouter
-bun run start provider models
-set -lx POPPET_MODEL anthropic/claude-sonnet-4.5
-bun run start auth login openrouter
-bun run start provider verify
+poppet provider models openrouter
+poppet provider login openrouter
 ```
+
+`models` lists the models that Poppet can use, without needing a key. `login` asks for your key without showing it. In a script, pipe the key with `--key-stdin`. Keys are never accepted as command-line arguments.
+
+Then save a model from the list in `config.json`:
+
+```json
+{
+  "provider": "openrouter",
+  "model": "replace-with-model-id"
+}
+```
+
+## Models
+
+Poppet only sends requests that the chosen model supports, and it does not route them to other providers. Models that generate images or audio are excluded. Dynamic routers such as `openrouter/auto` and `openrouter/free` are excluded too. Both coding and general chats work with OpenRouter.
 
 ## Credentials
 
-See [API keys](../configuration.md#api-keys) for protected storage, environment
-overrides, stdin input, and logout. OpenRouter uses `POPPET_OPENROUTER_API_KEY`
-and `<POPPET_DATA_DIR>/auth/openrouter.json`.
+Your key is saved in `<data directory>/auth/openrouter.json`, readable only by your user. The `POPPET_OPENROUTER_API_KEY` environment variable overrides the saved key. See [API keys](../configuration.md#api-keys).
 
-## Models and requests
+```fish
+poppet provider status openrouter
+poppet provider logout openrouter
+```
 
-Verification requires a catalog model with tool support and makes two requests
-that consume OpenRouter credits. The key is redacted and omitted from `config`.
-The adapter accepts both assistant and coding workloads through Chat Completions.
-It derives tools, temperature, output limits, and context size from catalog
-metadata. Models that generate images or audio and dynamic model routers such as
-`openrouter/auto` and `openrouter/free` are excluded.
+`logout` removes the saved key. It does not revoke the key on OpenRouter's side.
 
-Requests require support for every requested parameter and disable provider
-fallbacks. A stable `session_id` groups the exchange. Plain reasoning and the
-complete structured reasoning sequence are kept through tool calls. Credit exhaustion,
-rate limits, upstream failures, and interrupted streams produce typed errors;
-requests are not automatically retried.
-[OpenRouter routing](https://openrouter.ai/docs/guides/routing/provider-selection),
-[reasoning continuation](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens),
-and [stream errors](https://openrouter.ai/docs/api/reference/streaming).
+## Errors
 
-See [provider selection](../cli.md#providers-and-models) for verification with a chosen provider.
+Out-of-credit errors, rate limits, provider outages, and interrupted responses are shown as errors. Poppet does not retry them or switch to another model. Send the message again when you are ready.
+
+See [configuration](../configuration.md) for your default provider and model.

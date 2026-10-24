@@ -6,105 +6,91 @@ next = "/docs/worker"
 
 # Discord
 
-Connect a model provider, then create a Discord bot and a private parent channel. After setup, mention the bot in that channel. It should create a thread and reply there.
+Discord lets you chat with Poppet from a server you control. Only the owner you configure can use the bot. You talk to it in threads, and scheduled results can be posted to a home channel.
 
-## Bot setup
+## Create the bot
 
-Create a bot in the [Discord Developer Portal](https://discord.com/developers/applications).
-Turn on its Message Content intent, and install it in your server with the bot scope. In the
-parent text channel you want, give it View Channel, Read Message History, Create Public Threads,
-Send Messages in Threads, and Add Reactions. It does not need Administrator. Use Discord's
-Developer Mode to copy the bot user's ID, your user ID, the server ID, and the parent channel ID.
+In the [Discord Developer Portal](https://discord.com/developers/applications), create an application and add a bot. Turn on the **Message Content** intent, and invite the bot to your server with the `bot` scope.
 
-Start with a private parent channel that only trusted people can read. Only the configured user
-can invoke Poppet. Anyone with access to the channel can read the replies, and those can include
-your saved memory and notes.
+Give it these permissions in the channels you want to use: View Channel, Read Message History, Send Messages, Create Public Threads, Send Messages in Threads, and Add Reactions. It does not need Administrator.
 
-Select an assistant-capable provider and model, then save the bot token through stdin. The token
-is never accepted as an argument. For fish:
+With Discord's Developer Mode on, copy the IDs for your user, your server, and a home channel. Choose a home channel that only trusted people can read. Everyone with access to a channel can read Poppet's replies in it, including saved facts and conversation content.
+
+## Connect
+
+Run setup and choose Discord when prompted:
+
+```fish
+poppet setup
+```
+
+Or save the settings yourself. The token is read from standard input, so it never appears in your shell history:
 
 ```fish
 read --silent --prompt-str 'Discord bot token: ' discord_token
-printf '%s\n' $discord_token | bun run start gateway discord setup <bot-id> <your-user-id> <server-id> <parent-channel-id> --key-stdin
+printf '%s\n' $discord_token | poppet gateway discord setup <your-user-id> <server-id> <home-channel-id> --key-stdin
 set -e discord_token
-bun run start gateway work
 ```
 
-Replace the angle-bracket placeholders with Discord IDs before you run the setup command. You can
-add more parent channel IDs after the first one. Settings and the redacted token are saved in
-`<POPPET_DATA_DIR>/channels/discord.json`. The file is `0600`, and its directory is `0700`. Model
-provider credentials are kept separately. Restart an existing worker after you change channel settings.
-On macOS, run `worker stop` and then `worker start`. The installed worker reads the saved settings, and
-the bot token never goes into its LaunchAgent environment.
+The settings go into the `discord` section of `config.json`. The token is saved in a protected file in your data directory. Restart the worker after changing Discord settings:
 
-## Thread sessions
+```fish
+poppet worker run
+```
 
-Mention `@Poppet` with a message in an allowed parent text channel. The bot starts a thread and replies
-there. Inside any thread under an allowed parent channel, your text messages go to the bot without a
-mention. The first message attaches a session, and later messages continue it. Each thread keeps its own
-history and selected model, across worker restarts, renames, and archiving. For a new session, start a new
-thread. Earlier messages in an existing thread are not imported.
+On macOS, if the login worker is installed, run `poppet worker stop` and then `poppet worker start`.
 
-Use `@Poppet /new --skill weekly-review Review Acorn` to start a fresh session with a saved
-[local skill](../skills.md#messaging-sessions). This works in a new thread or an existing one. Add
-`--project acorn` to select [project context](../projects.md), with or without a skill. `/new <message>`
-starts without either selection. Earlier session history is kept, and regular follow-ups keep both
-snapshots. Options come before the prompt. A selection error leaves the active session unchanged.
+## Start a conversation
 
-## Progress and controls
+Mention the bot in any text channel of your server, with your message. It opens a thread and replies there. You can also mention it inside an existing thread to attach a session. After that, follow-up messages in the thread do not need a mention.
 
-The bot shows Discord's typing indicator while it works, including during tool calls. It refreshes the
-indicator every eight seconds, and it stops refreshing when the request finishes, fails, or is cancelled.
-Discord clears the indicator after a reply, or within ten seconds of the last refresh. A failed indicator
-does not interrupt the request.
+Each thread keeps its own session, with its own history and model, even after a restart. Poppet does not import earlier messages from a thread.
 
-Poppet also adds a 👀 reaction to the original message when processing starts. After a successful run, it
-replaces that with ✅. A failed or cancelled request removes the bot's 👀 and does not add a ✅. These markers
-are best effort. If the bot lacks reaction permissions, chat still works. A crash or network error can leave a
-stale marker behind.
+To start a fresh session, use `/new`. Add `--skill <name>` to use a [skill](../skills.md):
 
-In a thread that is attached to a session, `@Poppet /status` shows its session, selected skill and project, and
-latest run. `@Poppet /cancel` interrupts the active request and cancels its queued requests. These are text
-messages, not registered Discord slash commands. The bot ignores other users, bots, and webhooks. DMs, forums,
-attachments, voice, and streamed message edits are not supported.
+```text
+@Poppet /new --skill weekly-review Review my Acorn project
+```
 
-## Status and delivery
+In a thread, `/status` shows the session, its skill, and its latest run. `/cancel` stops the active request and any that are queued.
 
-Run `bun run start gateway status` to see the connection state, the counts of rejected and dropped events while
-running, and the saved queue and delivery counts. Each registration has an entry in `channels`. The entry shows
-its ID, display name, enabled state, connection details, or configuration error. The queue and delivery totals
-appear at the top level, and each one is counted once across all channels. When the gateway is stopped, status
-reads the settings without opening a messaging connection. Completed answers are saved before they are sent. A
-delivery retry never runs the model or any tool again.
+These are plain messages, not Discord slash commands. The bot ignores other bots, webhooks, and anyone who is not the owner. Direct messages, forum channels, attachments, and voice are not supported.
 
-A send with an unknown outcome is recorded, and it is not sent again automatically, because Discord may already
-have posted it. Use the session ID and `chat show <session>` to read the saved answer before you repost it by hand.
-If a thread becomes inaccessible, no reply is redirected to another channel. [Scheduled tasks](../tasks.md#deliver-results-to-discord)
-can target a specific thread with `--discord-thread`. Run the combined worker to execute and deliver them. Scheduled
-results use the same queue, and they do not change thread sessions. [Telegram private chat](telegram.md) and
-[WhatsApp private chat](whatsapp.md) are also supported.
+While it works, the bot shows the typing indicator. It also adds 👀 to your message, then replaces it with ✅ when the run succeeds. If the bot lacks reaction permission, chat still works.
+
+## Replies and failures
+
+Poppet saves each answer before it sends it. Temporary send failures are retried without asking the model again. If a send's result is unclear, Poppet does not send it again, because Discord may have already posted it. Check the saved answer with `poppet chat show <session-id>` and post it yourself if needed.
+
+Poppet never moves a reply to another channel. If a thread can no longer be used, the reply is not sent there.
+
+Use `poppet gateway status` to check the connection and delivery queue.
+
+## Scheduled results
+
+To send a task's results to the home channel, add `--channel discord` when you create it:
+
+```fish
+poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --channel discord "Summarize my recent conversations"
+```
+
+Add `--conversation <channel-or-thread-id>` to send results somewhere else in the same server. Results are posted as standalone messages. They do not change any conversation. Scheduled results need the combined worker: `poppet worker run`. See [scheduled tasks](../tasks.md#deliver-results-to-discord).
+
+## Approve commands
+
+If a command needs your approval before Poppet runs it, the bot posts the command in the thread. Reply with the ID shown:
+
+```text
+/approve <id>
+/deny <id>
+```
+
+Only the owner can answer, and each approval covers one command. Requests expire after two minutes. See [run commands](../commands.md).
 
 ## Thread names
 
-New threads get a fallback name based on the message that started them. After the answer is delivered, Poppet may
-generate a short session title and sync it to the managed thread. `chat rename` also updates a managed thread while
-the gateway is running. `/status` shows the local session title.
-
-Poppet changes thread names only when the source message and the bot's ownership show that it created the thread.
-This also lets it recover after a lost creation acknowledgement. Existing threads that were attached keep their
-names. Before each rename, the adapter checks the current access and compares the remote name with the last name
-the bot confirmed. If it finds an edit made outside Poppet, it turns off sync, even if the user later restores the
-old name. Discord names respect its 100 UTF-16-unit limit, and they do not split a Unicode character.
-
-The saved answer is delivered before optional model naming starts. Naming and remote updates each have their own
-time limits. Missing permissions, rate limits, disconnects, and deleted or locked threads leave chat results
-intact. A lost rename acknowledgement is checked against the current name, and the rename is not sent again.
-Failures can stop sync, while the local session title keeps working. Discord has no atomic compare-and-rename, so
-a user edit made between the last fetch and the update can still collide with the bot. 
+Poppet names the threads it creates, using a title from the conversation once the first answer is sent. Renaming a session with `poppet chat rename` also renames its thread, while the worker is running. Poppet only renames threads it created. If you rename a thread yourself, Poppet stops changing its name.
 
 ## Schedule through chat
 
-With a tool-capable model, you can ask in this authorized conversation to create, inspect, pause, or resume a task.
-Ask for delivery here to save this conversation as the result destination, after an access check. The model cannot
-pick another chat or identity. See [task management](../tasks.md#manage-tasks-through-chat) for timing, receipts, and
-recovery. Scheduled runs cannot manage other tasks.
+Ask Poppet in the thread to create or manage a task. A task created this way posts to the home channel by default. Ask for the current thread, or for a specific channel by mention, to change where it posts. See [scheduled tasks](../tasks.md#manage-tasks-from-chat).

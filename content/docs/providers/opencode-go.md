@@ -6,34 +6,47 @@ weight = 30
 
 # OpenCode Go
 
-For OpenCode Go, discovery uses its public catalog without an API key. Log in
-with a hidden key prompt, then select a model:
+OpenCode Go is meant for coding agents. Poppet supports it for coding chats only. For general chat and scheduled summaries, use ChatGPT or OpenRouter.
+
+## Connect
 
 ```fish
-set -lx POPPET_PROVIDER opencode-go
-set -lx POPPET_MODEL glm-5.3
-bun run start auth login opencode-go
-bun run start provider models
-bun run start provider verify
+poppet provider login opencode-go
+poppet provider models opencode-go
 ```
 
-## Models and workloads
+`login` asks for your key without showing it. In a script, pipe the key with `--key-stdin`. The model list is public, so you can check it before you log in.
 
-The initial Go adapter supports `gpt-6-luna` through Responses and `glm-5.3`
-through Chat Completions. Discovery lists those models when they appear in the
-remote catalog. Other Go models, including the Messages protocol, are not supported. Both protocols send `poppet/0.0.0` and a stable `x-opencode-session`
-header for the exchange.
+Save a supported model in `config.json`:
 
-Go documents coding-agent traffic. Poppet's Go adapter requires a `coding`
-workload and rejects general assistant, notes, and scheduled-summary requests
-before reading its key or making inference requests.
-[OpenCode Go requirements and endpoints](https://opencode.ai/v2/docs/console/go/)
+```json
+{
+  "provider": "opencode-go",
+  "model": "glm-5.3"
+}
+```
+
+Poppet currently supports `glm-5.3` and `gpt-6-luna`. Other OpenCode Go models are not supported yet.
+
+## Start a coding chat
+
+Every chat with OpenCode Go must be a coding chat:
+
+```fish
+poppet chat new --coding "Explain how to structure a TypeScript CLI"
+```
+
+Use `--coding` with `chat interactive` for a new session, and with `tasks add` for a scheduled task. Poppet refuses a general chat with this provider before it reads your key or sends a request.
 
 ## Credentials
 
-See [API keys](../configuration.md#api-keys) for protected storage, environment
-overrides, stdin input, and logout. OpenCode Go uses `POPPET_OPENCODE_GO_API_KEY`
-and `<POPPET_DATA_DIR>/auth/opencode-go.json`.
+Your key is saved in `<data directory>/auth/opencode-go.json`, readable only by your user. The `POPPET_OPENCODE_GO_API_KEY` environment variable overrides it. See [API keys](../configuration.md#api-keys).
 
-Use `chat new --coding` for a coding session; see [chat](../chat.md). Verification
-consumes provider usage. 
+```fish
+poppet provider status opencode-go
+poppet provider logout opencode-go
+```
+
+`logout` removes the saved key. It does not revoke the key on OpenCode's side.
+
+See [configuration](../configuration.md) for your default provider and model.

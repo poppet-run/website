@@ -1,66 +1,57 @@
 +++
 title = "Read and search the web"
-description = "Read public pages without a browser, or enable web search with Brave or Kagi."
+description = "Read public pages without a browser, or turn on web search with Brave or Kagi."
 next = "/docs/browser"
 +++
 
 # Read and search the web
 
-Ask Poppet to read a public page by including its URL in your message. To find pages through search, turn on web search with Brave or Kagi below.
+Poppet can read public web pages in any chat that uses tools, including scheduled tasks. Web search is optional. When it is on, the model can search with Brave or Kagi, then read the pages it finds.
 
 ## Read a page
 
-With a connected model that supports tools:
+Include a public `http` or `https` address in your message:
 
 ```fish
-bun run start chat new "Summarize https://example.com/ and cite the source"
+poppet chat new "Summarize https://example.com/ and cite the source"
 ```
 
-Include the URL in your current message each time you want a fresh read. Poppet reads static HTML or UTF-8 text and records the source and tool result in the session. It does not execute JavaScript, log in, read PDFs, or crawl links.
+Poppet reads plain text and static HTML. It removes scripts, styles, and hidden content, and it does not run JavaScript. It cannot read PDFs, pages behind a login, or downloads. Use [browser automation](browser.md) for pages that need JavaScript.
 
-If you need a rendered site or an interaction, use [browser automation](browser.md). See [page-reading limits](chat.md#read-a-supplied-url) for supported URLs and network checks.
+Each read has a 15-second limit, follows at most three redirects, and is capped at 1 MiB. The address must resolve only to public IP addresses, and it must use a standard port. Addresses with a username or password in them are rejected. The result includes the final address, the page title, the text, and whether it was shortened.
 
-## Enable search
+A page is read only when the address appears in your current message. Addresses found in earlier conversations, skills, or other pages do not count.
 
-Get an API key from [Brave Search](https://api-dashboard.search.brave.com/app/documentation/web-search) or [Kagi](https://kagi.com/api/keys). Brave is the default provider. To use Kagi, set `webSearchProvider` as well as `webSearch`.
+## Turn on web search
 
-Add `"webSearch": true` to your existing `config.json`, keeping your provider and model fields. For Kagi, add `"webSearchProvider": "kagi"` too:
+Choose a search provider, turn search on, then save that provider's key:
 
 ```json
 {
-  "provider": "openai-chatgpt",
-  "model": "replace-with-model-id",
   "webSearch": true,
-  "webSearchProvider": "kagi"
+  "webSearchProvider": "brave"
 }
 ```
 
-Enter the key for the provider you selected when `web login` prompts:
+Use `"kagi"` for Kagi. Brave is the default.
 
 ```fish
-bun run start web login
-bun run start web status
+poppet web login
+poppet web status
 ```
 
-Keep the provider and model you selected during setup. Save the API key through `web login`, separate from this file. Restart a running worker after changing settings or credentials.
+`web login` prompts for the key without showing it. Pipe a key with `--key-stdin` in a script. Get a key from [Brave's Web Search API](https://api-dashboard.search.brave.com/app/documentation/web-search) or from [Kagi's API keys page](https://kagi.com/api/keys). `web status` reports whether search is enabled and has a key, and it does not contact the provider.
 
-Run `web status` again. It shows the provider, and whether search is enabled and configured. This checks local settings without contacting the search provider. Try a search to check that the key works:
+Each provider's key is saved separately, so you can switch between Brave and Kagi without losing either key. `web logout` removes the saved key for the selected provider. Restart a running worker after changing search settings or keys.
 
-```fish
-bun run start chat new "Search for recent Bun releases, read a source, and cite it"
-```
+If search is off or has no key, the search tool is not offered to the model. Reading pages still works.
 
-Search queries go to the provider you selected and may use its API quota. The model writes the query, and it can include private details from your request. Search results and page content cannot authorize changes to your notes or memory.
+## How search works
 
-See [search configuration](configuration.md#web-search) for credentials and overrides, and [search behavior](chat.md#search-the-web) for source access, limits, and citations.
+The model sends its query to the selected provider. Poppet sends only the query and fixed search options. It does not send your conversation, profile, or any inference keys. The model writes the query, so it may include details from your request. Do not ask for searches that would reveal information you want to keep private.
 
-## Inspect a result
+Each search returns up to five results, with a title, URL, and snippet. Each search has a 15-second limit and a 1 MiB response limit. Poppet does not retry or fall back to the other provider.
 
-Copy the session ID printed by the chat command:
+Pages that appear in search results can be read in the same run. That permission lasts only for that run. Links that appear only in snippets or page text do not get this permission. Search results are treated as data, so they cannot change memory or tasks.
 
-```fish
-set session_id 'paste-session-id-here'
-bun run start chat show $session_id
-```
-
-The saved tool calls show whether Poppet read a page or used a search snippet. They also record search and page-reading errors.
+See [chat](chat.md#search-the-web) for how answers cite sources.

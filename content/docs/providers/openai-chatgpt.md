@@ -6,70 +6,34 @@ weight = 10
 
 # ChatGPT
 
-## Sign in and verify
+ChatGPT connects through browser sign-in, so you do not need an API key. Requests use your ChatGPT account and its plan limits.
 
-Sign in through the system browser, then verify subscription access:
+## Sign in
 
 ```fish
-bun run start auth login openai-chatgpt
-bun run start auth models openai-chatgpt
-bun run start auth verify --provider openai-chatgpt
-bun run start auth status openai-chatgpt
+poppet provider login openai-chatgpt
+poppet provider models openai-chatgpt
+poppet provider status openai-chatgpt
 ```
 
-## Registration and consent
+`login` opens your system browser. Choose the account and workspace, and approve plan-usage access if asked. The browser then shows a confirmation page. Return to the terminal, where Poppet runs its final checks.
 
-Initial sign-in registers Poppet with its own host identifier and issued client
-ID. The browser handles account and workspace selection and plan-usage consent.
-The local callback displays a confirmation page before its listener closes.
-Return to the terminal for the final identity and permission checks.
-Later sign-ins reuse the registration and host identifier until logout. The next
-login after logout creates a fresh registration and host identifier. Poppet currently stores
-one account and rejects a returning identity that does not match it until logout.
-[OpenAI registration and sign-in](https://developers.openai.com/siwc/token-sharing-open-source/sign-in)
+If sign-in works but plan-usage access was not granted, `status` shows `planUsage: false`. Run `poppet provider login openai-chatgpt` again to approve it. Poppet asks for it again only when the saved sign-in lacks that access.
 
-`auth verify` selects the first visible model in the account's catalog. Pass a
-model slug from `auth models` to choose another, for example
-`bun run start auth verify <slug> --provider openai-chatgpt`. Verification makes two streamed Responses
-requests, which consume ChatGPT plan usage. It requests a local tool, supplies a
-random token as the tool result, and requires the completed answer to return that
-token. Success records the model and verification time; it does not guarantee
-future quota or eligibility.
-[Subscription inference](https://developers.openai.com/siwc/token-sharing-open-source/models-and-inference)
+Poppet stores one ChatGPT account. If you sign in with a different account, log out first.
 
-If identity sign-in succeeds without plan-usage permission, status reports
-`planUsage: false`. Run `bun run start auth login openai-chatgpt --consent` to request consent
-again. Usage limits, ineligible accounts, temporary failures, and interrupted
-streams produce separate errors. Model requests are not automatically retried.
-The flow uses OAuth credentials and requires no API key or client secret.
+`provider models` always fetches the current list. If your account is not eligible, or you have reached a usage limit, Poppet shows that error. It does not retry the request for you.
 
-Model resolution reuses a successful catalog lookup for up to one minute within
-the same process, including across interactive CLI turns and worker requests.
-Each lookup still checks current authentication. Credential changes, an expired
-entry, or a model absent from the cached catalog trigger a fresh request.
-`auth models` and `auth verify` always fetch a fresh catalog. Failed responses
-are not cached, and nothing is written to disk. Separate one-shot CLI processes
-do not share the cache. Enable [timing logs](../configuration.md#timing-logs) to
-see catalog hits and misses.
+## Credentials
 
-## Credential storage
+Sign-in details are saved in `<data directory>/auth/connection.json`, readable only by your user. Access tokens are refreshed automatically before they expire. Tokens never appear in command output.
 
-Credentials live in `<POPPET_DATA_DIR>/auth/connection.json`, with owner-only file
-permissions (`0600`) inside a protected directory (`0700`). Writes use atomic
-replacement. Tokens are redacted in application values and omitted from command
-output. Near-expiry access tokens are refreshed with rotating credentials saved
-together. An exclusive `auth/owner.lock` prevents concurrent authentication
-commands and is removed on normal shutdown or interruption. After a process
-crash, remove a remaining lock only after confirming no Poppet auth command is
-running.
+## Log out
 
-## Logout
+```fish
+poppet provider logout openai-chatgpt
+```
 
-`bun run start auth logout openai-chatgpt` deletes the saved connection file,
-including account identity, tokens, verification, registration, and host identifier,
-then attempts remote revocation. Status does not recreate those details.
-Other providers' credentials are preserved. If remote revocation cannot
-be confirmed, the command reports this so you can disconnect Poppet in ChatGPT
-Settings.
+This deletes the saved sign-in and attempts to revoke it with OpenAI. If revocation cannot be confirmed, Poppet says so. To finish, disconnect Poppet in ChatGPT's settings. Logout does not touch your other providers.
 
-See [provider selection](../cli.md#providers-and-models) for configuring inference and [chat](../chat.md) for saved sessions.
+See [configuration](../configuration.md) for your default provider and model, and [chat](../chat.md) for saved sessions.
