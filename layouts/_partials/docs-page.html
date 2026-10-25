@@ -1,4 +1,7 @@
 {{ $toc := replace .TableOfContents `id="TableOfContents"` `class="table-of-contents"` }}
+{{- /* The table of contents starts at level 2, so the page's h1 alone does not need one. */ -}}
+{{ $hasToc := false }}
+{{ range .Fragments.HeadingsMap }}{{ if ge .Level 2 }}{{ $hasToc = true }}{{ end }}{{ end }}
 <main class="docs-layout" id="main" tabindex="-1">
   <aside class="docs-sidebar">{{ partial "docs-nav.html" . }}</aside>
   <div class="docs-body">
@@ -6,7 +9,7 @@
       <summary>Browse the docs</summary>
       {{ partial "docs-nav.html" . }}
     </details>
-    {{ if .Fragments.Headings }}
+    {{ if $hasToc }}
     <details class="docs-mobile-toc">
       <summary>On this page</summary>
       {{ $toc | safeHTML }}
@@ -34,8 +37,10 @@
       <span>In early development</span>
     </footer>
   </div>
+  {{ if $hasToc }}
   <aside class="docs-toc" aria-label="On this page">
     <p class="nav-group">On this page</p>
     {{ $toc | safeHTML }}
   </aside>
+  {{ end }}
 </main>
