@@ -5,7 +5,7 @@ description = "Start a conversation, resume saved sessions, and search earlier a
 
 # Chat
 
-Chat with Poppet from your terminal or a Discord thread. Sessions are saved locally, so you can resume them or search earlier answers later. Complete [getting started](getting-started.md) first if you have not connected a provider.
+Chat with Poppet from your terminal or a Discord thread. Poppet saves sessions locally, so you can resume them or search earlier answers later. If you have not connected a provider yet, start with [getting started](getting-started.md).
 
 ## Start and continue a session
 
@@ -30,7 +30,7 @@ poppet chat show $session_id
 ```
 {{< /shell >}}
 
-`chat new` and `chat send` each submit one message. `chat show` prints the messages, tool calls, run outcomes, and usage as JSON. Provider continuation data is stored privately and left out of this output. Listing and inspecting sessions need no model selection or login.
+`chat new` and `chat send` each submit one message. `chat show` prints the messages, tool calls, run outcomes, and usage as JSON. Poppet stores provider continuation data separately and leaves it out of this output. Listing and inspecting sessions need no model selection or login.
 
 ## Interactive prompt
 
@@ -41,9 +41,9 @@ poppet chat interactive $session_id
 
 Enter one message at each `You>` prompt and wait for the answer before typing the next. Every turn uses the session's saved provider, model, and skill. Blank lines are ignored. `/exit`, Ctrl-D on an empty prompt, or Ctrl-C leaves the prompt.
 
-Ctrl-C during an answer cancels that request and exits. The interrupted run stays in `chat show`, and earlier answers stay saved. Poppet never retries automatically.
+Ctrl-C during an answer cancels that request and exits. The interrupted run stays in `chat show`, and earlier answers stay saved. Poppet never retries the request on its own.
 
-For a new session, `--coding` and `--skill <name>` work as they do with `chat new`. A session is created only when you send its first message. If a failed first turn leaves a session behind, send another message to continue it.
+For a new session, `--coding` and `--skill <name>` work as they do with `chat new`. Poppet creates the session when you send its first message. If a failed first turn leaves a session behind, send another message to continue it.
 
 The prompt accepts one line per message, with your terminal's line editing. It does not keep an input history. Both stdin and stdout must be terminals, so use the one-shot commands in scripts.
 
@@ -53,7 +53,7 @@ The prompt accepts one line per message, with your terminal's line editing. It d
 poppet chat new --skill weekly-review "Review my Acorn project"
 ```
 
-The session saves a copy of the skill when it is created. Later turns use that copy, even if the file changes or is deleted. See [skills](skills.md).
+The session saves a copy of the skill when it starts. Later turns use that copy, even if the file changes or is deleted. See [skills](skills.md).
 
 ## Save memory
 
@@ -90,7 +90,7 @@ poppet chat search "project TypeScript"
 poppet chat show <session-id-from-search>
 ```
 
-Search returns up to ten matches, ranked by relevance. Each match includes its session and message IDs, the session title, and a short excerpt. Search queries are plain text, at most 256 characters. Every word must match. Operators such as `OR` are treated as ordinary text.
+Search returns up to ten matches, ranked by relevance. Each match includes its session and message IDs, the session title, and a short excerpt. Search queries are plain text, at most 256 characters. Every word must match. Search treats operators such as `OR` as ordinary words.
 
 Search covers your messages and Poppet's final answers from completed runs. It leaves out failed input, tool results, and intermediate text. It needs no model or login.
 
@@ -120,7 +120,7 @@ With [browser automation](browser.md) turned on, interactive and messaging chats
 
 ## Run commands
 
-With the [command tool](commands.md) available, the model can run shell commands on your computer. Each command is reviewed first. Commands that need your approval wait for it in Discord, and CLI commands that need approval stop with instructions.
+With the [command tool](commands.md) available, the model can run shell commands on your computer. A separate review checks each command before it runs. Commands that need your approval wait for it in Discord, and CLI commands that need approval stop with instructions.
 
 ## Provider and model
 
@@ -134,14 +134,14 @@ poppet chat new --coding "Explain how to structure a TypeScript CLI"
 
 ## Failures and cancellation
 
-Poppet saves each message before it asks the model for an answer. Only a completed answer is saved as the answer. Provider errors, Ctrl-C, closed output, and time limits leave a failed or interrupted run that you can inspect with `chat show`. A failed message stays in the history but is left out of later context. To try again, send a new message. Poppet never retries a request or switches to another provider or model by itself.
+Poppet saves each message before it asks the model for an answer. Only a completed answer is saved as the answer. Provider errors, Ctrl-C, closed output, and time limits leave a failed or interrupted run that you can inspect with `chat show`. A failed message stays in the history, but Poppet leaves it out of later context. To try again, send a new message. Poppet never retries a request or switches to another provider or model by itself.
 
 ## Context and limits
 
 Each run includes recent complete exchanges, up to 20, within a 256 KiB context budget. Poppet keeps room for the answer, and it refuses a message that cannot fit. Trimming affects only what is sent to the model, not the saved history.
 
-Each run has a time limit set by `chat.runDeadlineSeconds` (300 seconds by default), and each model request has a 60-second limit. A run allows eight model turns and sixteen tool calls. Each tool result is capped at 16 KiB. Answers are capped at 128 KiB of text.
+Each run has a time limit set by `chat.runDeadlineSeconds`, which defaults to 300 seconds. Each model request also has its own 60-second limit. A run allows eight model turns and sixteen tool calls. Each tool result is capped at 16 KiB. Answers are capped at 128 KiB of text.
 
-Recorded usage adds up every model turn, if each turn reports usage. Otherwise it is shown as unknown.
+Recorded usage is the sum of every model turn. If any turn does not report usage, Poppet shows the total as unknown.
 
 See [worker](worker.md#chat-while-the-worker-runs) for chat while a worker is running.

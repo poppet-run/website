@@ -27,7 +27,7 @@ poppet worker run --tasks-only
 ```
 {{< /shell >}}
 
-The worker prints a line when a task starts, finishes, fails, is cancelled, or is skipped. Failures show a reason code. Prompts and answers are kept in the saved results, not the console.
+The worker prints a line when a task starts, finishes, fails, is cancelled, or is skipped. Failures show a reason code. Prompts and answers go to the saved results, not the console.
 
 Leave the worker running, then use a second terminal with the same `POPPET_DATA_DIR`:
 
@@ -46,7 +46,7 @@ Use a five-field cron expression and a timezone:
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London "Summarize my recent conversations"
 ```
 
-One-off times need `Z` or a UTC offset, such as `2099-10-22T09:00:00+01:00`. Recurring schedules keep the same local time across daylight saving changes. A time that is skipped by a change moves forward, and a repeated time runs once.
+One-off times need `Z` or a UTC offset, such as `2099-10-22T09:00:00+01:00`. Recurring schedules keep the same local time across daylight saving changes. A time that a change skips moves forward, and a time that happens twice runs once.
 
 Each run starts a fresh session. It has the current profile, saved facts, conversation search, page reading, and web search if it is set up. Scheduled runs cannot change memory, and they cannot manage tasks.
 
@@ -71,7 +71,7 @@ An edit changes only the fields you give. A new schedule needs both a cron expre
 | Command     | What it does                                                                                                                               |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | `skip-next` | Skips the next run only. A recurring task keeps its schedule. A one-off task has no later run.                                            |
-| `snooze`    | Delays the next run until a later time. Missed cron times during the snooze are not run later.                                             |
+| `snooze`    | Delays the next run until a later time. Cron times missed during the snooze do not run later.                                             |
 | `run`       | Queues a normal run now, without changing the schedule. It confirms that the run is queued, not that it finished.                          |
 
 A name or prompt change replaces a run that has not started yet, and the original run stays in `tasks show` as cancelled. A schedule change cancels pending work and works out the next future time. Editing a finished one-off's name or prompt does not run it again. Give it a new future time to run it again.
@@ -100,7 +100,7 @@ poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --channel d
 
 Add `--conversation <channel-or-thread-id>` to send results to another channel or thread in your server. The worker checks access before saving the task, and it checks again before each send. A result never goes to a different conversation from the one you chose.
 
-Only completed results are sent. `tasks show` lists each message's delivery state. Temporary failures are retried with a limit. Failed or uncertain sends stay visible, and Poppet does not resend an uncertain one. Check the saved output before posting it again by hand.
+Only completed results are sent. `tasks show` lists each message's delivery state. Poppet retries temporary failures a limited number of times. Failed or uncertain sends stay visible, and Poppet does not resend an uncertain one. Check the saved output before posting it again by hand.
 
 Results are standalone posts. They do not change the conversation they were posted to.
 
@@ -132,7 +132,7 @@ Search errors fail that run. The task does not retry, and it does not pause the 
 
 ## Missed runs, pauses, and retries
 
-The worker runs one task at a time. A recurring time that passes while the worker is stopped is skipped. If the worker was only briefly unavailable, it runs the most recent missed time once, within `tasks.catchUpMinutes` (60 minutes by default). An overdue one-off runs once. A recurring task has at most one pending or running run. Other due times are recorded as skipped.
+The worker runs one task at a time. The worker skips a recurring time that passes while it is stopped. If it was only briefly unavailable, it runs the most recent missed time once, as long as that time is within `tasks.catchUpMinutes`. The default is 60 minutes. An overdue one-off runs once. A recurring task has at most one pending or running run. Other due times are recorded as skipped.
 
 Pending recurring runs expire after 24 hours. One-off runs do not expire.
 
@@ -145,7 +145,7 @@ poppet worker providers
 poppet worker resume-provider openai-chatgpt
 ```
 
-A quota failure pauses scheduled runs for that provider until you run `worker resume-provider`. Temporary and rate-limit failures delay later runs by 30 seconds, doubling after each failure up to five minutes. A failed run is never retried automatically. `retry` starts a fresh session for it. Resume a paused task before retrying it.
+A quota failure pauses scheduled runs for that provider until you run `worker resume-provider`. Temporary and rate-limit failures delay later runs by 30 seconds, doubling after each failure up to five minutes. Poppet never retries a failed run on its own. `retry` starts a fresh session for it. Resume a paused task before retrying it.
 
 ## Clear tasks
 

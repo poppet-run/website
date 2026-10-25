@@ -81,7 +81,7 @@ poppet chat new "Use reference to look up record 123"
 
 A server connects the first time a chat needs it. If it fails, the built-in tools keep working. Poppet tries to reconnect after 30 seconds, doubling the wait up to 10 minutes. `mcp servers` shows when the next try is due.
 
-Tool calls are not retried automatically. If a call fails after it was sent, Poppet records it as uncertain and does not repeat it. Check the server's state before asking for the action again.
+Poppet does not retry tool calls. If a call fails after it was sent, Poppet records it as uncertain and does not repeat it. Check the server's state before asking for the action again.
 
 ## Permissions
 
@@ -89,13 +89,13 @@ Only tools in `tools` are offered to the model. In chat, a tool call still needs
 
 `scheduledTools` is empty by default. Add a tool there only after you have checked that it is read-only. Scheduled runs can use only tools listed in both `tools` and `scheduledTools`. Server annotations do not grant access.
 
-Results from MCP servers are treated as data. They cannot authorize memory changes, task changes, or page reads.
+Poppet treats results from MCP servers as data. They cannot authorize memory changes, task changes, or page reads.
 
 ## Limits
 
 - Up to 8 servers. Each server can expose up to 128 tools.
 - Tool descriptions are up to 4096 characters. Input and output schemas are up to 16 KiB.
-- Vendor schema keywords that start with `x-`, such as FastMCP's `x-fastmcp-wrap-result`, are ignored when Poppet checks a schema. Property names that start with `x-` are still checked.
+- Poppet ignores vendor schema keywords that start with `x-`, such as FastMCP's `x-fastmcp-wrap-result`, when it checks a schema. Property names that start with `x-` are still checked.
 - Each tool call can take up to 10 seconds. Starting a server and listing its tools has an 8-second limit.
 - HTTP JSON responses and individual server-sent events are capped at 256 KiB while streaming. Redirects stay on the endpoint's origin, or move to its HTTPS version, and must keep the request method.
 - A dropped HTTP stream fails that connection. Poppet then reconnects with a new session, on the same backoff schedule as stdio servers.

@@ -8,7 +8,7 @@ next = "/docs/chat"
 
 Poppet runs from source. You need Git, Bun 1.4.3, and an account with one of the providers below.
 
-Each model request uses your provider account's quota. Choose ChatGPT or OpenRouter for general chat. OpenCode Go supports coding requests only.
+Each model request comes out of your provider account's quota. If you already pay for ChatGPT, start there. It needs no API key. OpenRouter works for general chat too. OpenCode Go only handles coding chats.
 
 ## 1. Install Poppet
 
@@ -28,7 +28,7 @@ bun install --frozen-lockfile
 bun link
 ```
 
-`bun link` puts `poppet` in Bun's global bin directory. If `poppet` is not found, add that directory to your `PATH`:
+`bun link` puts `poppet` in Bun's global bin directory. If your shell cannot find `poppet`, add that directory to your `PATH`:
 
 {{< shell >}}
 ```bash
@@ -53,7 +53,7 @@ poppet --help
 poppet setup
 ```
 
-Setup asks you to choose a provider, sign in if needed, and pick a model from its list. You can also configure Discord and, on macOS, install the background worker. It saves your choices in `config.json` and your credentials in protected files. Rerunning it keeps your existing settings as defaults.
+Setup asks you to choose a provider, sign in if needed, and pick a model from its list. You can also configure Discord and, on macOS, install the background worker. It saves your choices in `config.json` and your credentials in protected files. Run it again later and it offers your current settings as the defaults.
 
 Setup needs an interactive terminal. If you prefer to configure things yourself, continue with step 3.
 
@@ -67,9 +67,9 @@ poppet provider models openai-chatgpt
 poppet provider status openai-chatgpt
 ```
 
-Complete account selection and plan-usage consent in the browser, then return to the terminal. The [ChatGPT guide](providers/openai-chatgpt.md) explains consent, credentials, and logout.
+Pick your account and approve plan usage in the browser, then come back to the terminal. The [ChatGPT guide](providers/openai-chatgpt.md) explains consent, credentials, and logout.
 
-For OpenRouter or OpenCode Go, follow their guides: [OpenRouter](providers/openrouter.md) or [OpenCode Go](providers/opencode-go.md).
+For OpenRouter or OpenCode Go, follow the [OpenRouter guide](providers/openrouter.md) or the [OpenCode Go guide](providers/opencode-go.md) instead.
 
 Save the provider and a model ID from the list in `~/.config/poppet/config.json`:
 

@@ -28,17 +28,17 @@ This opens the database, applies any pending upgrades, and prints its path, sche
 
 ## What is saved
 
-- **Conversations.** Each session keeps its provider, model, and workload. Messages are kept in order, with their tool calls and results. Each run is saved as it starts, then marked as completed, failed, or interrupted.
+- **Conversations.** Each session keeps its provider, model, and workload. Messages are kept in order, with their tool calls and results. Poppet saves each run as it starts, then marks it completed, failed, or interrupted.
 - **Facts.** Every change is kept as a revision with where it came from. `poppet memory history` shows them.
 - **Tasks.** Each run keeps the task settings it used. Changing a task later does not change earlier runs. Clearing tasks removes their run history, but keeps chats and queued replies.
 - **Skills.** A session or task keeps a copy of the skill it selected.
-- **Search index.** Your messages and Poppet's final answers are indexed for `chat search`. Failed input and tool results are not indexed.
+- **Search index.** Your messages and Poppet's final answers are indexed for `chat search`. Failed input and tool results stay out of the index.
 
 Credentials are kept in `auth/` and never in the database.
 
 ## Upgrades
 
-Each part of the database upgrades itself when Poppet starts. Poppet refuses a database made by a newer version, or by a different application, and it does not reset anything automatically. If that happens, point `POPPET_DATA_DIR` at a fresh directory or restore a backup.
+Each part of the database upgrades itself when Poppet starts. Poppet refuses a database made by a newer version, or by a different application, and it never resets anything on its own. If that happens, point `POPPET_DATA_DIR` at a fresh directory or restore a backup.
 
 ## Permissions
 
@@ -46,13 +46,13 @@ The store directory is `0700`, and the database files are `0600`. Credentials ar
 
 ## Interrupted work
 
-If Poppet stops in the middle of a run, the run is marked as interrupted with a reason. Poppet does not replay it. Send the message again yourself if you still need the answer.
+If Poppet stops in the middle of a run, it marks the run as interrupted, with a reason. Poppet does not replay it. Send the message again yourself if you still need the answer.
 
-Only one Poppet process can use a data directory at a time. If a process crashes, the next one takes over automatically, even if the old process ID has been reused. Do not delete the `.lock.sqlite` files while Poppet is running. They contain no credentials, and they can stay in place after you log out.
+Only one Poppet process can use a data directory at a time. If a process crashes, the next one takes over, even if the old process ID has been reused. Do not delete the `.lock.sqlite` files while Poppet is running. They contain no credentials, and they can stay in place after you log out.
 
 ## Back up
 
-Stop any running worker first: press Ctrl-C in its terminal, or run `poppet worker stop` if it runs at login. Then copy the whole data directory:
+Stop any running worker first. Press Ctrl-C in its terminal, or run `poppet worker stop` if it runs at login. Then copy the whole data directory:
 
 {{< shell >}}
 ```bash

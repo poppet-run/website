@@ -5,7 +5,7 @@ description = "Save preferences and facts across conversations, and edit your pr
 
 # Memory
 
-Memory has three parts: saved facts, your profile, and Poppet's personality. Facts are the ones you save with stable keys or ask Poppet to save in chat. Every new run reads them with your profile and personality.
+Memory has three parts: saved facts, your profile, and Poppet's personality. Facts are short values saved under a key, either by you or by Poppet when you ask in chat. Every new run reads them with your profile and personality.
 
 ## Saved facts
 
@@ -32,7 +32,7 @@ poppet chat send $session_id "Replace answer.style with Explain the reasoning"
 poppet chat send $session_id "Forget the saved fact answer.style"
 ```
 
-Poppet changes memory only when your current message asks for it. It does not infer facts from conversations, web pages, or skills. Changes made in chat are marked as coming from chat, and they stay saved even if the rest of the reply fails. Forgetting a fact does not remove it from earlier messages.
+Poppet changes memory only when your current message asks for it. It does not infer facts from conversations, web pages, or skills. Poppet marks changes made in chat with that origin, and they stay saved even if the rest of the reply fails. Forgetting a fact does not remove it from earlier messages.
 
 Chat changes apply from the next run onward. Scheduled runs can read facts but cannot change them.
 
@@ -64,6 +64,4 @@ Disagree when there is a good reason, and admit uncertainty plainly.
 
 ## Limits
 
-Facts, profile, and personality are each limited to 8 KiB in each run. Content that is too large fails with a clear error rather than being cut off silently. These count toward the run's context budget.
-
-Forgetting a fact removes it from future runs. Earlier conversation messages keep their text.
+Facts, profile, and personality are each limited to 8 KiB in each run. If one is too large, the run fails with an error. Poppet never trims them to fit. All three count toward the run's context budget.

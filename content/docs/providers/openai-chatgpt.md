@@ -26,7 +26,7 @@ Poppet stores one ChatGPT account. If you sign in with a different account, log 
 
 ## Credentials
 
-Sign-in details are saved in `<data directory>/auth/connection.json`, readable only by your user. Access tokens are refreshed automatically before they expire. Tokens never appear in command output.
+Sign-in details are saved in `<data directory>/auth/connection.json`, readable only by your user. Poppet refreshes access tokens before they expire. Tokens never appear in command output.
 
 ## Log out
 
@@ -34,6 +34,6 @@ Sign-in details are saved in `<data directory>/auth/connection.json`, readable o
 poppet provider logout openai-chatgpt
 ```
 
-This deletes the saved sign-in and attempts to revoke it with OpenAI. If revocation cannot be confirmed, Poppet says so. To finish, disconnect Poppet in ChatGPT's settings. Logout does not touch your other providers.
+This deletes the saved sign-in and tries to revoke it with OpenAI. If revocation cannot be confirmed, Poppet says so. To finish, disconnect Poppet in ChatGPT's settings. Logout does not touch your other providers.
 
 See [configuration](../configuration.md) for your default provider and model, and [chat](../chat.md) for saved sessions.

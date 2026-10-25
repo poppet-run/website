@@ -45,7 +45,7 @@ Add a `browser` section to `config.json` and list the hostnames it may visit:
 
 Hostnames are lowercase, without `https://`, ports, paths, or `*`. Include any CDN hosts a site needs. Each allowed hostname covers all its ports. An empty or missing list keeps browsing off.
 
-`"allowedDomains": ["*"]` allows every HTTP or HTTPS site, including local and private network addresses. Use it only if you understand the risk. Set `"enabled": false` to turn browsing off. Restart the worker after changing these settings.
+`"allowedDomains": ["*"]` allows every HTTP or HTTPS site, including local and private network addresses. That includes your router's admin page and other services on your network, so avoid it unless you need it. Set `"enabled": false` to turn browsing off. Restart the worker after changing these settings.
 
 ## Use it
 
@@ -59,10 +59,10 @@ Each run gets a fresh, isolated browser. Cookies, tabs, and logins do not carry 
 
 ## Permissions
 
-Clicking, filling in forms, and pressing Enter can submit forms or change things on a site. Poppet only does these when you ask. Text on a web page is treated as data, so it cannot give the model new instructions or permissions.
+Clicking, filling in forms, and pressing Enter can submit forms or change things on a site. Poppet only does these when you ask. Poppet treats text on a web page as data, so it cannot give the model new instructions or permissions.
 
-Browser traffic is not subject to the same address checks as page reading. Allowed hosts can resolve to private addresses on your network. Only allow sites you trust.
+The browser skips the public-address check that page reading uses. Allowed hosts can resolve to private addresses on your network. Only allow sites you trust.
 
-Not supported: saved logins, file uploads and downloads, screenshots, PDFs, arbitrary JavaScript, and clipboard access.
+Poppet does not support saved logins, file uploads or downloads, screenshots, PDFs, running arbitrary JavaScript, or clipboard access.
 
 See the upstream [agent-browser security notes](https://agent-browser.dev/security) for more about its limits.

@@ -28,7 +28,7 @@ Then save a model from the list in `config.json`:
 
 ## Models
 
-Poppet only sends requests that the chosen model supports, and it does not route them to other providers. Models that generate images or audio are excluded. Dynamic routers such as `openrouter/auto` and `openrouter/free` are excluded too. Both coding and general chats work with OpenRouter.
+Poppet only sends requests that the chosen model supports, and it does not route them to other providers. The model list leaves out models that generate images or audio, and dynamic routers such as `openrouter/auto` and `openrouter/free`. Both coding and general chats work with OpenRouter.
 
 ## Credentials
 
@@ -43,6 +43,6 @@ poppet provider logout openrouter
 
 ## Errors
 
-Out-of-credit errors, rate limits, provider outages, and interrupted responses are shown as errors. Poppet does not retry them or switch to another model. Send the message again when you are ready.
+Poppet reports out-of-credit errors, rate limits, provider outages, and interrupted responses as errors. It does not retry them or switch to another model. Send the message again when you are ready.
 
 See [configuration](../configuration.md) for your default provider and model.

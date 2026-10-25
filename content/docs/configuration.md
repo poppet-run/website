@@ -22,7 +22,7 @@ Save settings in `<data directory>/config.json`, which defaults to `~/.config/po
 
 `POPPET_DATA_DIR` is the only environment variable that changes where Poppet looks for its files. Set it before running any command to use another data directory. Credentials and channel tokens stay in protected files beside the data, not in `config.json`.
 
-A missing file means Poppet uses its defaults, and it creates nothing. The file must be valid JSON, at most 64 KiB, owned by your user, and not writable by other users. Symlinks and hard links are rejected. Unknown keys, wrong types, and empty text values fail with an error. Literal `~` is not expanded in any path.
+A missing file means Poppet uses its defaults, and it creates nothing. The file must be valid JSON, at most 64 KiB, owned by your user, and not writable by other users. Poppet rejects symlinks and hard links. Unknown keys, wrong types, and empty text values are errors. Poppet does not expand `~` in paths, so write paths in full.
 
 Restart a running worker after you edit the file. New chats and tasks use the new defaults. Existing sessions and tasks keep the provider and model they were saved with.
 
@@ -106,7 +106,7 @@ Brave is the default. Kagi uses its v1 API with a bearer key. Each provider's ke
 
 ## Reasoning and timing logs
 
-`chat.logReasoning` writes readable model reasoning to `<data directory>/logs/worker.log` and to CLI stderr. `chat.logTimings` writes the duration of each stage in milliseconds. Both are off by default and apply to chat, scheduled, and messaging runs. Logs can contain private prompt or tool content, so keep them local. Answers are never changed by these settings.
+`chat.logReasoning` writes readable model reasoning to `<data directory>/logs/worker.log` and to CLI stderr. `chat.logTimings` writes the duration of each stage in milliseconds. Both are off by default and apply to chat, scheduled, and messaging runs. Logs can contain private prompt or tool content, so keep them local. These settings never change answers.
 
 Set either one in `config.json` and restart the worker so it reads the change.
 

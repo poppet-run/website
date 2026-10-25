@@ -15,13 +15,13 @@ Before each command, a separate request to your current model reviews it against
 
 The reviewer returns one of three decisions:
 
-- **Allow**: the command runs once, exactly as reviewed.
-- **Needs approval**: a person must approve it first. In Discord, Poppet asks you there. A CLI command stops with instructions, and a scheduled task fails.
-- **Deny**: the command does not run, and the run ends.
+- **Allow.** The command runs once, exactly as reviewed.
+- **Needs approval.** A person must approve it first. In Discord, Poppet asks you there. A CLI command stops with instructions, and a scheduled task fails.
+- **Deny.** The command does not run, and the run ends.
 
 If the reviewer fails, times out, or returns an unreadable answer, nothing runs. A denied command cannot be retried within the same run.
 
-Review is a model decision, so it can be wrong. It cannot predict what a script or file will do after it has been reviewed. Keep that in mind when you ask Poppet to run scripts.
+The reviewer is a model, so it can be wrong. It reads the command, not the scripts that command runs, and a script can change after review. Treat review as a second opinion, not a sandbox.
 
 ## Approve commands in Discord
 
@@ -36,7 +36,7 @@ Only the owner can answer, in the same conversation. An approval covers that one
 
 ## Scheduled tasks
 
-A scheduled task never waits for approval. If a command needs it, that run fails right away, and the worker logs a reason code. The details are kept in `poppet tasks show <task-id>`, and nothing is posted to the task's destination. The recurring schedule keeps running. Commands that finished before the failure are not undone, so check the machine before you retry.
+A scheduled task never waits for approval. If a command needs it, that run fails right away, and the worker logs a reason code. `poppet tasks show <task-id>` has the details, and nothing is posted to the task's destination. The recurring schedule keeps running. Poppet does not undo commands that finished before the failure, so check the machine before you retry.
 
 Successful results still go to the task's destination.
 
@@ -45,7 +45,7 @@ Successful results still go to the task's destination.
 - A timeout from 1 to 300 seconds, set by the model for each command.
 - A standard input that is closed, so a command cannot wait for typed input.
 - The output from stdout and stderr, the exit code, and whether the output was cut short.
-- Bash started without your shell profile.
+- A Bash shell that skips your shell profile.
 
 A timeout or cancellation stops the command and its child processes. Poppet does not replay a command that was interrupted. To keep a service running, use your system's service manager, not `command &`.
 

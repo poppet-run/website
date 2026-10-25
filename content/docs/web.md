@@ -17,9 +17,9 @@ poppet chat new "Summarize https://example.com/ and cite the source"
 
 Poppet reads plain text and static HTML. It removes scripts, styles, and hidden content, and it does not run JavaScript. It cannot read PDFs, pages behind a login, or downloads. Use [browser automation](browser.md) for pages that need JavaScript.
 
-Each read has a 15-second limit, follows at most three redirects, and is capped at 1 MiB. The address must resolve only to public IP addresses, and it must use a standard port. Addresses with a username or password in them are rejected. The result includes the final address, the page title, the text, and whether it was shortened.
+Each read has a 15-second limit, follows at most three redirects, and is capped at 1 MiB. The address must resolve only to public IP addresses, and it must use a standard port. Poppet rejects addresses that contain a username or password. The result includes the final address, the page title, the text, and whether it was shortened.
 
-A page is read only when the address appears in your current message. Addresses found in earlier conversations, skills, or other pages do not count.
+Poppet reads a page only when its address is in your current message. Addresses found in earlier conversations, skills, or other pages do not count.
 
 ## Turn on web search
 
@@ -51,6 +51,6 @@ The model sends its query to the selected provider. Poppet sends only the query 
 
 Each search returns up to five results, with a title, URL, and snippet. Each search has a 15-second limit and a 1 MiB response limit. Poppet does not retry or fall back to the other provider.
 
-Pages that appear in search results can be read in the same run. That permission lasts only for that run. Links that appear only in snippets or page text do not get this permission. Search results are treated as data, so they cannot change memory or tasks.
+Pages that appear in search results can be read in the same run. That permission lasts only for that run. Links that appear only in snippets or page text do not get this permission. Poppet treats search results as data, so they cannot change memory or tasks.
 
 See [chat](chat.md#search-the-web) for how answers cite sources.

@@ -41,7 +41,7 @@ Save your provider, model, and other settings in `config.json` before you instal
 
 Keep the checkout and the Bun executable where they are. If you move either, run `poppet worker uninstall` and then `poppet worker install` again. Each data directory has its own LaunchAgent, so use the same `POPPET_DATA_DIR` for every command.
 
-API keys are not stored in the LaunchAgent. Save them first with `poppet provider login openrouter` or `poppet provider login opencode-go`. ChatGPT uses its own protected sign-in. Installing does not check live inference.
+The LaunchAgent does not hold API keys. Save them first with `poppet provider login openrouter` or `poppet provider login opencode-go`. ChatGPT uses its own protected sign-in. Installing does not check live inference.
 
 Older installations may have settings saved in the LaunchAgent. Move the ones you want to keep into `config.json`, then run `poppet worker uninstall` and `poppet worker install` once. Older installations that run `tasks work` need the same reinstall to run `worker run`. Saved data and credentials are kept.
 
@@ -58,7 +58,7 @@ poppet worker logs
 
 Connection details shown by `worker status` are not a live check of your provider.
 
-Lifecycle logs are written to `<data directory>/logs/worker.log`. The directory is `0700` and the file is `0600`. Logs leave out prompts, model output, and tokens. Each log file is limited to 5 MiB, and three archives are kept. `worker logs` prints the last 64 KiB across them.
+The worker writes lifecycle logs to `<data directory>/logs/worker.log`. The directory is `0700` and the file is `0600`. Logs leave out prompts, model output, and tokens. Each log file is limited to 5 MiB, and three archives are kept. `worker logs` prints the last 64 KiB across them.
 
 ## Stop, start, and uninstall
 
@@ -88,7 +88,7 @@ After you update Poppet, run `poppet worker stop` and then `poppet worker start`
 
 ## Sleep and missed runs
 
-The worker does not keep your Mac awake. After sleep, an overdue one-off task runs once. A recurring task runs its most recent missed time once, if that time is within `tasks.catchUpMinutes` (60 minutes by default). Earlier missed times are skipped. Failed or interrupted requests are never replayed automatically.
+The worker does not keep your Mac awake. After sleep, an overdue one-off task runs once. A recurring task runs its most recent missed time once, if that time is within `tasks.catchUpMinutes`, which defaults to 60 minutes. Earlier missed times are skipped. Poppet never replays failed or interrupted requests on its own.
 
 ## Other systems
 

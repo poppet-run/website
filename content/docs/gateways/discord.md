@@ -23,7 +23,7 @@ Run setup and choose Discord when prompted:
 poppet setup
 ```
 
-Or save the settings yourself. The token is read from standard input, so it never appears in your shell history:
+Or save the settings yourself. Poppet reads the token from standard input, so it never appears in your shell history:
 
 {{< shell >}}
 ```bash
@@ -67,9 +67,9 @@ While it works, the bot shows the typing indicator. It also adds 👀 to your me
 
 ## Replies and failures
 
-Poppet saves each answer before it sends it. Temporary send failures are retried without asking the model again. If a send's result is unclear, Poppet does not send it again, because Discord may have already posted it. Check the saved answer with `poppet chat show <session-id>` and post it yourself if needed.
+Poppet saves each answer before it sends it. Poppet retries temporary send failures without asking the model again. If a send's result is unclear, Poppet does not send it again, because Discord may have already posted it. Check the saved answer with `poppet chat show <session-id>` and post it yourself if needed.
 
-Poppet never moves a reply to another channel. If a thread can no longer be used, the reply is not sent there.
+Poppet never moves a reply to another channel. If it can no longer post in a thread, the reply stays unsent, and the saved answer is still in `chat show`.
 
 Use `poppet gateway status` to check the connection and delivery queue.
 
@@ -81,7 +81,7 @@ To send a task's results to the home channel, add `--channel discord` when you c
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --channel discord "Summarize my recent conversations"
 ```
 
-Add `--conversation <channel-or-thread-id>` to send results somewhere else in the same server. Results are posted as standalone messages. They do not change any conversation. Scheduled results need the combined worker: `poppet worker run`. See [scheduled tasks](../tasks.md#deliver-results-to-discord).
+Add `--conversation <channel-or-thread-id>` to send results somewhere else in the same server. Poppet posts results as standalone messages, so they do not change any conversation. Scheduled results need the combined worker, `poppet worker run`. See [scheduled tasks](../tasks.md#deliver-results-to-discord).
 
 ## Approve commands
 

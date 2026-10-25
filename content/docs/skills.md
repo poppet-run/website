@@ -31,7 +31,7 @@ poppet chat new --skill weekly-review "Review my Acorn project"
 poppet tasks add weekly-review --cron "0 9 * * 1" --tz Europe/London --skill weekly-review "Review my Acorn project"
 ```
 
-Put `--skill` before the message or prompt, and select at most one skill. `skills show` checks the file and prints it, so use it to confirm a new skill is valid. Symlinks, hard links, non-regular files, invalid UTF-8, and oversized files are rejected. Listing and showing skills need no model or login.
+Put `--skill` before the message or prompt, and select at most one skill. `skills show` checks the file and prints it, so use it to confirm a new skill is valid. Poppet rejects symlinks, hard links, non-regular files, invalid UTF-8, and oversized files. Listing and showing skills need no model or login.
 
 When Poppet starts a chat or task with a skill, it saves the skill's name and text with that session or task. Later messages and retries use that saved copy, even if you edit or delete the file. To use an updated skill, start a new chat or create a new task.
 
