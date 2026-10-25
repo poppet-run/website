@@ -11,11 +11,11 @@ OpenRouter gives you access to many models with one API key. Requests use your O
 ## Connect
 
 ```sh
-poppet provider models openrouter
 poppet provider login openrouter
+poppet provider models openrouter
 ```
 
-`models` lists the models that Poppet can use, without needing a key. `login` asks for your key without showing it. In a script, pipe the key with `--key-stdin`. Keys are never accepted as command-line arguments.
+`login` asks for your key without showing it. In a script, pipe the key with `--key-stdin`. Keys are never accepted as command-line arguments. `models` lists the models that Poppet can use, without needing a key.
 
 Then save a model from the list in `config.json`:
 
