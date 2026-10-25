@@ -66,7 +66,7 @@ An entry with `url` instead of `command` connects over Streamable HTTP:
 - Header names must be unique, ignoring case. Poppet manages `Accept`, `Content-Type`, `Content-Length`, `Host`, `Last-Event-ID`, `Mcp-Session-Id`, and `Mcp-Protocol-Version`, so you cannot set them.
 - A missing reference makes that server unavailable. Header values are redacted from results, like environment values.
 
-Set `mcpServers` to `[]` to turn all servers off. Restart the worker after any change.
+Set `mcpServers` to `[]` to turn all servers off. Restart the worker after you change any server.
 
 ## Check and use tools
 

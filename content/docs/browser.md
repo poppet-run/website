@@ -45,7 +45,7 @@ Add a `browser` section to `config.json` and list the hostnames it may visit:
 
 Hostnames are lowercase, without `https://`, ports, paths, or `*`. Include any CDN hosts a site needs. Each allowed hostname covers all its ports. An empty or missing list keeps browsing off.
 
-`"allowedDomains": ["*"]` allows every HTTP or HTTPS site, including local and private network addresses. That includes your router's admin page and other services on your network, so avoid it unless you need it. Set `"enabled": false` to turn browsing off. Restart the worker after changing these settings.
+`"allowedDomains": ["*"]` allows every HTTP or HTTPS site, including local and private network addresses. That includes your router's admin page and other services on your network, so avoid it unless you need it. Set `"enabled": false` to turn browsing off. Restart the worker after you change these settings.
 
 ## Use it
 

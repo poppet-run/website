@@ -17,15 +17,11 @@ poppet worker run --tasks-only    # Scheduling only
 poppet gateway work               # Messaging only
 ```
 
-The worker starts your enabled [MCP tool servers](mcp.md) when they are needed, and stops them when it shuts down. Restart it after changing their configuration.
+The worker starts your enabled [MCP tool servers](mcp.md) when they are needed, and stops them when it shuts down. Restart the worker after you change their configuration.
 
-Commands such as `chat`, `memory`, `tasks`, and `store status` go through a running worker. When no worker is running, they run locally. Reading saved data needs no model or provider credentials.
+Commands such as `chat`, `memory`, `tasks`, and `store status` go through a running worker. When no worker is running, they run locally. Reading saved data needs no model or login.
 
 Only one worker can run for a data directory at a time. Stopping the worker cancels active requests. After a crash, the next worker takes over and marks unfinished work as interrupted. Queued work survives a restart, but Poppet does not repeat an interrupted request on its own. Run it again yourself if you still need it.
-
-## Browser resources
-
-[Browser automation](browser.md) runs inside the process that owns the chat. Each worker-backed chat gets its own browser. Restart the worker after changing browser settings. Scheduled tasks get no browser.
 
 ## macOS login startup
 
@@ -85,6 +81,10 @@ poppet store status
 Chats started from your terminal use your current `config.json` settings. Ctrl-C cancels the request you are waiting on, and the worker keeps running. Memory changes apply from the next run. Chat output stays in your terminal and is not written to the worker log.
 
 After you update Poppet, run `poppet worker stop` and then `poppet worker start`, so the worker runs the new code.
+
+## Browser resources
+
+[Browser automation](browser.md) runs inside the process that owns the chat. Each worker-backed chat gets its own browser. Restart the worker after you change browser settings. Scheduled tasks get no browser.
 
 ## Sleep and missed runs
 

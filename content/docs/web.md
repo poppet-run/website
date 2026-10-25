@@ -41,7 +41,7 @@ poppet web status
 
 `web login` prompts for the key without showing it. Pipe a key with `--key-stdin` in a script. Get a key from [Brave's Web Search API](https://api-dashboard.search.brave.com/app/documentation/web-search) or from [Kagi's API keys page](https://kagi.com/api/keys). `web status` reports whether search is enabled and has a key, and it does not contact the provider.
 
-Each provider's key is saved separately, so you can switch between Brave and Kagi without losing either key. `web logout` removes the saved key for the selected provider. Restart a running worker after changing search settings or keys.
+Each provider's key is saved separately, so you can switch between Brave and Kagi without losing either key. `web logout` removes the saved key for the selected provider. Restart the worker after you change search settings or keys.
 
 If search is off or has no key, the search tool is not offered to the model. Reading pages still works.
 

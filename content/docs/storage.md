@@ -31,7 +31,7 @@ This opens the database, applies any pending upgrades, and prints its path, sche
 - **Conversations.** Each session keeps its provider, model, and workload. Messages are kept in order, with their tool calls and results. Poppet saves each run as it starts, then marks it completed, failed, or interrupted.
 - **Facts.** Every change is kept as a revision with where it came from. `poppet memory history` shows them.
 - **Tasks.** Each run keeps the task settings it used. Changing a task later does not change earlier runs. Clearing tasks removes their run history, but keeps chats and queued replies.
-- **Skills.** A session or task keeps a copy of the skill it selected.
+- **Skills.** A session or task keeps a copy of the skill it was given.
 - **Search index.** Your messages and Poppet's final answers are indexed for `chat search`. Failed input and tool results stay out of the index.
 
 Credentials are kept in `auth/` and never in the database.

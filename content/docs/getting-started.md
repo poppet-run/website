@@ -111,14 +111,14 @@ poppet chat send $session_id "What should I build first?"
 
 To chat interactively in a terminal, run `poppet chat interactive`, or add a session ID to resume one. Enter one message per line and use `/exit` to leave.
 
-If a request fails, see [troubleshooting](/docs/troubleshooting/).
+If a request fails, see [troubleshooting](troubleshooting.md).
 
 ## Add what you need
 
 You can keep chatting without setting up anything else.
 
-- [Memory](/docs/memory/) keeps your profile and facts you ask Poppet to save.
-- [Skills](/docs/skills/) select a reusable procedure for a chat or task.
-- [Scheduled tasks](/docs/tasks/) run prompts later. They need the [worker](/docs/worker/) running.
-- [Discord](/docs/gateways/) lets you chat from a Discord thread.
-- [Web search](/docs/web/), [browser automation](/docs/browser/), and [MCP tools](/docs/mcp/) add optional tools.
+- [Memory](memory.md) keeps your profile and facts you ask Poppet to save.
+- [Skills](skills.md) let you choose a reusable procedure for a chat or task.
+- [Scheduled tasks](tasks.md) run prompts later. They need the [worker](worker.md) running.
+- [Discord](gateways/_index.md) lets you chat from a Discord thread.
+- [Web search](web.md), [browser automation](browser.md), and [MCP tools](mcp.md) add optional tools.

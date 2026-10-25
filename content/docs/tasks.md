@@ -9,7 +9,7 @@ Run a prompt once at a future time, or repeat it on a schedule. Tasks run while 
 
 ## Create and inspect a task
 
-Each task saves the provider and model you select when you add it. The worker uses those saved choices even if you change `config.json` later.
+Each task saves the provider and model from `config.json` when you add it. The worker uses those saved choices even if you change `config.json` later.
 
 For a quick test, schedule a task one minute from now and run the worker for scheduled work only:
 
@@ -106,7 +106,7 @@ Results are standalone posts. They do not change the conversation they were post
 
 Tasks without a destination keep their results local.
 
-## Select a skill
+## Choose a skill
 
 Add `--skill <name>` before the prompt to save a [skill](skills.md) with a new task. Each run uses the copy saved with the task. To use an edited skill, create a new task.
 
@@ -157,4 +157,3 @@ poppet tasks clear
 
 This works whether the worker is running or stopped. An active run is stopped first. Chat sessions, facts, credentials, and provider pauses are kept.
 
-See [worker modes](worker.md#foreground-modes) to run scheduling with messaging.

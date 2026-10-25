@@ -41,7 +41,7 @@ poppet provider status openai-chatgpt
 poppet provider models openai-chatgpt
 ```
 
-Check that the model in `config.json` appears in the list. ChatGPT also needs plan-usage consent. OpenCode Go accepts only coding chats, so start one with `--coding`. For credential and quota errors, see the [provider guides](/docs/providers/).
+Check that the model in `config.json` appears in the list. ChatGPT also needs plan-usage consent. OpenCode Go accepts only coding chats, so start one with `--coding`. For credential and quota errors, see the [provider guides](providers/_index.md).
 
 ## A task did not run
 
@@ -73,7 +73,7 @@ Only one worker can run for a data directory. A computer that is asleep or shut 
 poppet gateway status
 ```
 
-Check the connection state, your owner ID, and the server ID in `config.json`. Poppet replies only to the owner, and only in the configured server. Make sure the bot has the permissions and the Message Content intent listed in the [Discord guide](gateways/discord.md). Restart the worker after changing Discord settings.
+Check the connection state, your owner ID, and the server ID in `config.json`. Poppet replies only to the owner, and only in the configured server. Make sure the bot has the permissions and the Message Content intent listed in the [Discord guide](gateways/discord.md). Restart the worker after you change Discord settings.
 
 If a reply's delivery is uncertain, check the saved answer with `poppet chat show <session-id>` before you post it again. Discord may already have received it.
 
@@ -83,7 +83,7 @@ If a reply's delivery is uncertain, check the saved answer with `poppet chat sho
 - [Browser](browser.md): check `browser.enabled`, the allowed domains, and the pinned executables. Scheduled tasks never get browser tools.
 - [MCP tools](mcp.md): run `poppet mcp status`. A server must be enabled, and each tool must be listed. `poppet mcp tools <server-id>` starts a server to discover its tools. `status` does not.
 
-Restart the worker after changing configuration, or to reconnect a failed MCP server.
+Restart the worker after you change configuration, or to reconnect a failed MCP server.
 
 ## A run failed after a tool ran
 

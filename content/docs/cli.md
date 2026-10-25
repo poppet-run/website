@@ -5,7 +5,7 @@ description = "Look up commands for chat, providers, memory, skills, tasks, mess
 
 # Command line
 
-After [installing the command](getting-started.md#1-install-poppet), run `poppet` from any directory. Run `poppet --help` for the top-level list, or add `--help` to any command, for example `poppet tasks add --help`. Help works without credentials.
+After [installing the command](getting-started.md#1-install-poppet), run `poppet` from any directory. Run `poppet --help` for the top-level list, or add `--help` to any command, for example `poppet tasks add --help`. Help needs no model or login.
 
 Angle-bracket values are placeholders. Replace them before you run a command, and quote prompts and values that contain spaces. The remaining words of a message, memory value, or task prompt are joined with spaces. Use `--` before text that begins with `--help` or `-h`.
 
@@ -41,8 +41,8 @@ Provider commands take a provider ID, or `--provider <id>`. Without one, they us
 | `chat interactive [session] [--coding] [--skill <name>]` | Open a terminal prompt for a new or saved session.           |
 | `chat sessions`                                          | List saved sessions.                                         |
 | `chat show <session>`                                    | Print messages, tool calls, and run outcomes as JSON.        |
-| `chat rename <session> <title>`                          | Rename a session. Needs no model.                            |
-| `chat search <query>`                                    | Search completed conversations. Needs no model.              |
+| `chat rename <session> <title>`                          | Rename a session. Needs no model or login.                   |
+| `chat search <query>`                                    | Search completed conversations. Needs no model or login.     |
 
 See [chat](chat.md).
 
@@ -88,6 +88,22 @@ Use `--skill <name>` before a new chat message or task prompt. See [skills](skil
 
 Options for `tasks add`: `--coding`, `--skill <name>`, and `--channel <id>`, which can be followed by `--conversation <id>` to choose a channel or thread. See [scheduled tasks](tasks.md). Tasks run while a worker with scheduling is running.
 
+## Worker
+
+| Command                             | Action                                                |
+| ----------------------------------- | ----------------------------------------------------- |
+| `worker run [--tasks-only]`         | Run scheduling and messaging, or scheduling only, in the foreground. |
+| `worker install`                    | Install and start the macOS login worker.             |
+| `worker start`                      | Start an installed worker.                            |
+| `worker stop`                       | Stop it until you start it again or log in.           |
+| `worker status`                     | Show the login agent, scheduling, and connection status. |
+| `worker logs`                       | Print the last 64 KiB of worker logs.                 |
+| `worker providers`                  | Show provider pauses and temporary backoff.           |
+| `worker resume-provider <provider>` | Allow scheduled runs for a paused provider again.     |
+| `worker uninstall`                  | Stop and remove login startup. Keeps saved data.      |
+
+See [worker](worker.md).
+
 ## Messaging
 
 | Command                                                                     | Action                                                   |
@@ -117,19 +133,3 @@ See [web search](web.md).
 | `mcp tools <server>` | Start a server to discover its allowed tools.                                       |
 
 See [MCP tools](mcp.md).
-
-## Worker
-
-| Command                             | Action                                                |
-| ----------------------------------- | ----------------------------------------------------- |
-| `worker run [--tasks-only]`         | Run scheduling and messaging, or scheduling only, in the foreground. |
-| `worker install`                    | Install and start the macOS login worker.             |
-| `worker start`                      | Start an installed worker.                            |
-| `worker stop`                       | Stop it until you start it again or log in.           |
-| `worker status`                     | Show the login agent, scheduling, and connection status. |
-| `worker logs`                       | Print the last 64 KiB of worker logs.                 |
-| `worker providers`                  | Show provider pauses and temporary backoff.           |
-| `worker resume-provider <provider>` | Allow scheduled runs for a paused provider again.     |
-| `worker uninstall`                  | Stop and remove login startup. Keeps saved data.      |
-
-See [worker](worker.md).

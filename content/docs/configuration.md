@@ -24,7 +24,7 @@ Save settings in `<data directory>/config.json`, which defaults to `~/.config/po
 
 A missing file means Poppet uses its defaults, and it creates nothing. The file must be valid JSON, at most 64 KiB, owned by your user, and not writable by other users. Poppet rejects symlinks and hard links. Unknown keys, wrong types, and empty text values are errors. Poppet does not expand `~` in paths, so write paths in full.
 
-Restart a running worker after you edit the file. New chats and tasks use the new defaults. Existing sessions and tasks keep the provider and model they were saved with.
+Restart the worker after you edit the file. New chats and tasks use the new defaults. Existing sessions and tasks keep the provider and model they were saved with.
 
 Check the result with:
 
@@ -33,6 +33,24 @@ poppet config
 ```
 
 It prints the validated settings and the config file's location. It does not open storage or contact a provider.
+
+## Data directory
+
+To keep data somewhere other than `~/.config/poppet`, set `POPPET_DATA_DIR`:
+
+{{< shell >}}
+```bash
+export POPPET_DATA_DIR="$HOME/.local/share/poppet"
+poppet config
+```
+
+```fish
+set -lx POPPET_DATA_DIR "$HOME/.local/share/poppet"
+poppet config
+```
+{{< /shell >}}
+
+Use the same value for every command, including the worker's LaunchAgent. Each data directory has its own configuration, credentials, and database.
 
 ## Settings
 
@@ -55,6 +73,21 @@ It prints the validated settings and the config file's location. It does not ope
 
 Context size, conversation history, model turns, tool calls, and tool output use fixed limits. They are not settings. See [chat limits](chat.md#context-and-limits).
 
+## API keys
+
+Login saves each API key in `<data directory>/auth/<provider>.json`. The file is `0600`, inside a `0700` directory. Login uses the key from the environment if one is set. Otherwise it prompts without echoing. Scripts can pipe a key with `--key-stdin`. Keys are never accepted as command-line arguments.
+
+These variables override the saved key for the matching service. An empty or invalid value is an error, and Poppet does not fall back to the saved key:
+
+| Variable                        | Used for           |
+| ------------------------------- | ------------------ |
+| `POPPET_OPENROUTER_API_KEY`     | OpenRouter         |
+| `POPPET_OPENCODE_GO_API_KEY`    | OpenCode Go        |
+| `POPPET_BRAVE_SEARCH_API_KEY`   | Brave web search   |
+| `POPPET_KAGI_SEARCH_API_KEY`    | Kagi web search    |
+
+`provider logout` removes the saved key. It does not revoke the key with the provider, and it does not unset an environment variable. See [OpenRouter](providers/openrouter.md) and [OpenCode Go](providers/opencode-go.md) for login examples.
+
 ## Discord
 
 `poppet gateway discord setup` saves the ordinary Discord settings in `config.json` and the bot token in a protected file:
@@ -70,21 +103,6 @@ Context size, conversation history, model turns, tool calls, and tool output use
 ```
 
 Use your own IDs. Removing the `discord` section turns Discord off and keeps the saved token. See [Discord](gateways/discord.md) for setup and permissions.
-
-## API keys
-
-Login saves each API key in `<data directory>/auth/<provider>.json`. The file is `0600`, inside a `0700` directory. Login uses the key from the environment if one is set. Otherwise it prompts without echoing. Scripts can pipe a key with `--key-stdin`. Keys are never accepted as command-line arguments.
-
-These variables override the saved key for the matching service. An empty or invalid value is an error, and Poppet does not fall back to the saved key:
-
-| Variable                        | Used for           |
-| ------------------------------- | ------------------ |
-| `POPPET_OPENROUTER_API_KEY`     | OpenRouter         |
-| `POPPET_OPENCODE_GO_API_KEY`    | OpenCode Go        |
-| `POPPET_BRAVE_SEARCH_API_KEY`   | Brave web search   |
-| `POPPET_KAGI_SEARCH_API_KEY`    | Kagi web search    |
-
-`provider logout` removes the saved key. It does not revoke the key with the provider, and it does not unset an environment variable. See [OpenRouter](providers/openrouter.md) and [OpenCode Go](providers/opencode-go.md) for login examples.
 
 ## Web search
 
@@ -102,7 +120,7 @@ poppet web login
 poppet web status
 ```
 
-Brave is the default. Kagi uses its v1 API with a bearer key. Each provider's key is stored separately, so switching providers keeps both keys. `web status` shows whether search is enabled and configured, without making a remote request. Restart a running worker after changing search settings or keys. See [web search](web.md).
+Brave is the default. Kagi uses its v1 API with a bearer key. Each provider's key is stored separately, so switching providers keeps both keys. `web status` shows whether search is enabled and configured, without making a remote request. Restart the worker after you change search settings or keys. See [web search](web.md).
 
 ## Reasoning and timing logs
 
@@ -113,21 +131,3 @@ Set either one in `config.json` and restart the worker so it reads the change.
 ## Skill files
 
 Skills live in `<data directory>/skills/<name>/SKILL.md`. There is no path setting. See [skills](skills.md).
-
-## Data directory
-
-To keep data somewhere other than `~/.config/poppet`, set `POPPET_DATA_DIR`:
-
-{{< shell >}}
-```bash
-export POPPET_DATA_DIR="$HOME/.local/share/poppet"
-poppet config
-```
-
-```fish
-set -lx POPPET_DATA_DIR "$HOME/.local/share/poppet"
-poppet config
-```
-{{< /shell >}}
-
-Use the same value for every command, including the worker's LaunchAgent. Each data directory has its own configuration, credentials, and database.

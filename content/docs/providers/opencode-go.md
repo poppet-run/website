@@ -1,6 +1,6 @@
 +++
 title = "OpenCode Go"
-description = "Connect Poppet to OpenCode Go with an API key for coding workloads."
+description = "Connect Poppet to OpenCode Go with an API key, choose a model for coding chats, and manage credentials."
 weight = 30
 +++
 
@@ -12,10 +12,18 @@ OpenCode Go is meant for coding agents. Poppet supports it for coding chats only
 
 ```sh
 poppet provider login opencode-go
+poppet provider status opencode-go
+```
+
+`login` asks for your key without showing it. In a script, pipe the key with `--key-stdin`. Keys are never accepted as command-line arguments.
+
+## Models
+
+```sh
 poppet provider models opencode-go
 ```
 
-`login` asks for your key without showing it. In a script, pipe the key with `--key-stdin`. The model list is public, so you can check it before you log in.
+`models` lists the models that Poppet can use, without needing a key. Poppet currently supports `glm-5.3` and `gpt-6-luna`. Other OpenCode Go models are not supported yet.
 
 Save a supported model in `config.json`:
 
@@ -26,9 +34,7 @@ Save a supported model in `config.json`:
 }
 ```
 
-Poppet currently supports `glm-5.3` and `gpt-6-luna`. Other OpenCode Go models are not supported yet.
-
-## Start a coding chat
+## Coding chats
 
 Every chat with OpenCode Go must be a coding chat:
 
@@ -40,10 +46,11 @@ Use `--coding` with `chat interactive` for a new session, and with `tasks add` f
 
 ## Credentials
 
-Your key is saved in `<data directory>/auth/opencode-go.json`, readable only by your user. The `POPPET_OPENCODE_GO_API_KEY` environment variable overrides it. See [API keys](../configuration.md#api-keys).
+Your key is saved in `<data directory>/auth/opencode-go.json`, readable only by your user. The `POPPET_OPENCODE_GO_API_KEY` environment variable overrides the saved key. See [API keys](../configuration.md#api-keys).
+
+## Log out
 
 ```sh
-poppet provider status opencode-go
 poppet provider logout opencode-go
 ```
 

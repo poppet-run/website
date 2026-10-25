@@ -20,7 +20,7 @@ poppet memory forget answer.style
 
 `remember` creates a new key and refuses one that already exists. `replace` and `forget` need an existing key. Keys start with a letter or digit and may contain letters, digits, dots, underscores, and hyphens, up to 128 characters. Values are nonempty text of up to 4096 bytes. You can store up to 128 facts.
 
-Memory commands work without a model or login. Listing shows each key, its value, when it changed, and where it came from.
+Memory commands need no model or login. Listing shows each key, its value, when it changed, and where it came from.
 
 ## Ask Poppet to change a fact
 
