@@ -1,7 +1,6 @@
 +++
 title = "Getting started"
 description = "Install Poppet from source, connect a model provider, save your settings, and send your first message."
-weight = 10
 next = "/docs/chat"
 +++
 

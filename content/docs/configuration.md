@@ -1,7 +1,6 @@
 +++
 title = "Configuration"
 description = "Save settings in config.json, set the data directory, and manage API keys and optional tools."
-weight = 20
 +++
 
 # Configuration

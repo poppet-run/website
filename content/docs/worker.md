@@ -1,7 +1,6 @@
 +++
 title = "Worker"
 description = "Run scheduling and messaging in the foreground or at macOS login, and inspect status and logs."
-weight = 30
 +++
 
 # Worker
