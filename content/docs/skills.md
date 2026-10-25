@@ -1,7 +1,6 @@
 +++
 title = "Skills"
 description = "Save a reusable Markdown procedure and select it for a chat or task."
-next = "/docs/commands"
 +++
 
 # Skills

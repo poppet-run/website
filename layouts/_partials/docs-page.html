@@ -15,12 +15,20 @@
     <article class="prose" aria-label="{{ .Title }}">
       {{ .Content }}
     </article>
+    {{ $next := false }}
     {{ with .Params.next }}
-      {{ with site.GetPage . }}
-      <p class="doc-next"><a href="{{ .RelPermalink }}">Next: {{ .Title }} <span aria-hidden="true">→</span></a></p>
-      {{ else }}
-        {{ errorf "Missing next guide %s" . }}
+      {{ $next = site.GetPage . }}
+      {{ if not $next }}{{ errorf "Missing next guide %s" . }}{{ end }}
+    {{ else }}
+      {{ $order := partial "docs-order.html" . }}
+      {{ range $i, $page := $order }}
+        {{ if and (eq $page $) (lt (add $i 1) (len $order)) }}
+          {{ $next = index $order (add $i 1) }}
+        {{ end }}
       {{ end }}
+    {{ end }}
+    {{ with $next }}
+      <p class="doc-next"><a href="{{ .RelPermalink }}">Next: {{ .Title }} <span aria-hidden="true">→</span></a></p>
     {{ end }}
     <footer class="doc-footer">
       <span>In early development</span>

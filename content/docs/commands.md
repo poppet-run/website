@@ -1,7 +1,6 @@
 +++
 title = "Run commands"
 description = "Let Poppet run shell commands on your computer, with a review before each one and your approval in Discord when it is needed."
-next = "/docs/tasks"
 +++
 
 # Run commands

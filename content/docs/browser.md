@@ -1,7 +1,6 @@
 +++
 title = "Browser automation"
 description = "Turn on optional browsing for rendered pages and the form actions you request."
-next = "/docs/mcp"
 +++
 
 # Browser automation

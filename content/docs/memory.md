@@ -1,7 +1,6 @@
 +++
 title = "Memory"
 description = "Save preferences and facts across conversations, and edit your profile and Poppet's personality."
-next = "/docs/skills"
 +++
 
 # Memory

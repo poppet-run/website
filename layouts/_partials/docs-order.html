@@ -1,0 +1,15 @@
+{{- /* Docs pages in sidebar order: each page in data/docs.json, followed by its section's pages. */ -}}
+{{- $pages := slice -}}
+{{- range hugo.Data.docs -}}
+  {{- range .pages -}}
+    {{- with site.GetPage . -}}
+      {{- $pages = $pages | append . -}}
+      {{- if .IsSection -}}
+        {{- range .RegularPages.ByWeight -}}
+          {{- $pages = $pages | append . -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $pages -}}

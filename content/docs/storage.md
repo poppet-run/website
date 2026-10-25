@@ -1,7 +1,6 @@
 +++
 title = "Storage"
 description = "Find local data, check the database, and understand what is saved and how interrupted work is handled."
-next = "/docs/troubleshooting"
 +++
 
 # Storage

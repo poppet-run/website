@@ -1,7 +1,6 @@
 +++
 title = "Chat"
 description = "Start a conversation, resume saved sessions, and search earlier answers."
-next = "/docs/memory"
 +++
 
 # Chat

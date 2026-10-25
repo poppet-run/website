@@ -1,7 +1,6 @@
 +++
 title = "MCP tools"
 description = "Connect trusted local tool servers, and allow only the tools you choose for chat and scheduled tasks."
-next = "/docs/configuration"
 +++
 
 # MCP tools

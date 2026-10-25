@@ -1,7 +1,6 @@
 +++
 title = "Command line"
 description = "Look up commands for chat, providers, memory, skills, tasks, messaging, web search, MCP, and the worker."
-next = "/docs/storage"
 +++
 
 # Command line

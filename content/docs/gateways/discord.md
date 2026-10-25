@@ -1,7 +1,6 @@
 +++
 title = "Discord"
 description = "Connect a bot and chat in owner-authorized Discord threads."
-next = "/docs/worker"
 +++
 
 # Discord

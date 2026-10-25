@@ -1,7 +1,6 @@
 +++
 title = "Scheduled tasks"
 description = "Schedule prompts, inspect results, and edit, pause, snooze, or run saved tasks."
-next = "/docs/worker"
 +++
 
 # Scheduled tasks

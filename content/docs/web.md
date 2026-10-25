@@ -1,7 +1,6 @@
 +++
 title = "Read and search the web"
 description = "Read public pages without a browser, or turn on web search with Brave or Kagi."
-next = "/docs/browser"
 +++
 
 # Read and search the web
