@@ -18,19 +18,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      GO_VERSION: 1.25.6
-      NODE_VERSION: 24.13.0
       TZ: Europe/London
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Setup Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-          cache: false
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v6
@@ -48,11 +39,7 @@ jobs:
           echo "${HOME}/.local/hugo" >> "${GITHUB_PATH}"
       - name: Verify installations
         run: |
-          echo "Go: $(go version)"
           echo "Hugo: $(hugo version)"
-      - name: Configure Git
-        run: |
-          git config core.quotepath false
       - name: Cache restore
         id: cache-restore
         uses: actions/cache/restore@v5
