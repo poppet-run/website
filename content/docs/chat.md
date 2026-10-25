@@ -9,24 +9,32 @@ Chat with Poppet from your terminal or a Discord thread. Sessions are saved loca
 
 ## Start and continue a session
 
-```fish
+```sh
 poppet chat new "Help me plan a small TypeScript project"
 poppet chat sessions
 ```
 
 The answer streams to stdout. The session and run IDs print to stderr. To continue or inspect a session later, copy its ID:
 
+{{< shell >}}
+```bash
+session_id='paste-session-id-here'
+poppet chat send $session_id "What should I build first?"
+poppet chat show $session_id
+```
+
 ```fish
 set session_id 'paste-session-id-here'
 poppet chat send $session_id "What should I build first?"
 poppet chat show $session_id
 ```
+{{< /shell >}}
 
 `chat new` and `chat send` each submit one message. `chat show` prints the messages, tool calls, run outcomes, and usage as JSON. Provider continuation data is stored privately and left out of this output. Listing and inspecting sessions need no model selection or login.
 
 ## Interactive prompt
 
-```fish
+```sh
 poppet chat interactive
 poppet chat interactive $session_id
 ```
@@ -41,7 +49,7 @@ The prompt accepts one line per message, with your terminal's line editing. It d
 
 ## Choose a skill
 
-```fish
+```sh
 poppet chat new --skill weekly-review "Review my Acorn project"
 ```
 
@@ -69,7 +77,7 @@ A new session takes a title from its first message. After the first answer, Popp
 
 Rename a session at any time:
 
-```fish
+```sh
 poppet chat rename $session_id "Weekly project review"
 ```
 
@@ -77,7 +85,7 @@ Names you set win over automatic titles. Renaming needs no model or credentials.
 
 ## Search past conversations
 
-```fish
+```sh
 poppet chat search "project TypeScript"
 poppet chat show <session-id-from-search>
 ```
@@ -90,7 +98,7 @@ Models with tool access can also search earlier conversations and read the conte
 
 ## Read a web page
 
-```fish
+```sh
 poppet chat new "Summarize https://example.com/ and cite the source"
 ```
 
@@ -100,7 +108,7 @@ When a message includes a public `http` or `https` URL, the model can read that 
 
 With [web search](web.md) set up, the model can search and then read the sources it finds:
 
-```fish
+```sh
 poppet chat new "Search for recent Bun releases, read a source, and cite it"
 ```
 
@@ -120,7 +128,7 @@ New sessions use the `provider` and `model` in `config.json`. Existing sessions 
 
 OpenCode Go only accepts coding requests, so start its sessions with `--coding`:
 
-```fish
+```sh
 poppet chat new --coding "Explain how to structure a TypeScript CLI"
 ```
 

@@ -10,7 +10,7 @@ OpenRouter gives you access to many models with one API key. Requests use your O
 
 ## Connect
 
-```fish
+```sh
 poppet provider models openrouter
 poppet provider login openrouter
 ```
@@ -34,7 +34,7 @@ Poppet only sends requests that the chosen model supports, and it does not route
 
 Your key is saved in `<data directory>/auth/openrouter.json`, readable only by your user. The `POPPET_OPENROUTER_API_KEY` environment variable overrides the saved key. See [API keys](../configuration.md#api-keys).
 
-```fish
+```sh
 poppet provider status openrouter
 poppet provider logout openrouter
 ```

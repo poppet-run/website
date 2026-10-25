@@ -13,7 +13,7 @@ Poppet uses [agent-browser](https://agent-browser.dev/) to control the browser. 
 
 Poppet is tested with agent-browser **0.39.1** and Chrome for Testing **155.0.8059.84**, on macOS and Linux. Install agent-browser with Node 24 or later:
 
-```fish
+```sh
 npm install -g agent-browser@0.39.1
 agent-browser --version
 ```
@@ -49,7 +49,7 @@ Hostnames are lowercase, without `https://`, ports, paths, or `*`. Include any C
 
 ## Use it
 
-```fish
+```sh
 poppet chat new "Use the browser to open https://example.com and summarize its rendered page"
 ```
 

@@ -116,11 +116,18 @@ Skills live in `<data directory>/skills/<name>/SKILL.md`. There is no path setti
 
 ## Data directory
 
-To keep data somewhere other than `~/.config/poppet`, set `POPPET_DATA_DIR` in fish:
+To keep data somewhere other than `~/.config/poppet`, set `POPPET_DATA_DIR`:
+
+{{< shell >}}
+```bash
+export POPPET_DATA_DIR="$HOME/.local/share/poppet"
+poppet config
+```
 
 ```fish
 set -lx POPPET_DATA_DIR "$HOME/.local/share/poppet"
 poppet config
 ```
+{{< /shell >}}
 
 Use the same value for every command, including the worker's LaunchAgent. Each data directory has its own configuration, credentials, and database.

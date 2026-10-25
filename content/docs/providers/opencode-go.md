@@ -10,7 +10,7 @@ OpenCode Go is meant for coding agents. Poppet supports it for coding chats only
 
 ## Connect
 
-```fish
+```sh
 poppet provider login opencode-go
 poppet provider models opencode-go
 ```
@@ -32,7 +32,7 @@ Poppet currently supports `glm-5.3` and `gpt-6-luna`. Other OpenCode Go models a
 
 Every chat with OpenCode Go must be a coding chat:
 
-```fish
+```sh
 poppet chat new --coding "Explain how to structure a TypeScript CLI"
 ```
 
@@ -42,7 +42,7 @@ Use `--coding` with `chat interactive` for a new session, and with `tasks add` f
 
 Your key is saved in `<data directory>/auth/opencode-go.json`, readable only by your user. The `POPPET_OPENCODE_GO_API_KEY` environment variable overrides it. See [API keys](../configuration.md#api-keys).
 
-```fish
+```sh
 poppet provider status opencode-go
 poppet provider logout opencode-go
 ```

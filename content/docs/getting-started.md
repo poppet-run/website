@@ -14,7 +14,7 @@ Each model request uses your provider account's quota. Choose ChatGPT or OpenRou
 
 Install Git and Bun 1.4.3, then clone the app:
 
-```fish
+```sh
 git clone https://github.com/poppet-run/poppet.git
 cd poppet
 ```
@@ -23,26 +23,33 @@ If you use [mise](https://mise.jdx.dev/), run `mise install` here to install the
 
 Install the dependencies and link the `poppet` command from this checkout:
 
-```fish
+```sh
 bun install --frozen-lockfile
 bun link
 ```
 
 `bun link` puts `poppet` in Bun's global bin directory. If `poppet` is not found, add that directory to your `PATH`:
 
+{{< shell >}}
+```bash
+# Add this line to ~/.zshrc or ~/.bashrc, then open a new terminal
+export PATH="$(bun pm bin -g):$PATH"
+```
+
 ```fish
 fish_add_path (bun pm bin -g)
 ```
+{{< /shell >}}
 
 The command runs from this checkout, so keep the checkout in place. Source changes take effect without linking again. Check the install from any directory:
 
-```fish
+```sh
 poppet --help
 ```
 
 ## 2. Run setup
 
-```fish
+```sh
 poppet setup
 ```
 
@@ -54,7 +61,7 @@ Setup needs an interactive terminal. If you prefer to configure things yourself,
 
 For ChatGPT, sign in through your browser, then list the models available to your account:
 
-```fish
+```sh
 poppet provider login openai-chatgpt
 poppet provider models openai-chatgpt
 poppet provider status openai-chatgpt
@@ -75,13 +82,13 @@ Save the provider and a model ID from the list in `~/.config/poppet/config.json`
 
 Keep credentials out of this file. Check the result:
 
-```fish
+```sh
 poppet config
 ```
 
 ## 4. Send a message
 
-```fish
+```sh
 poppet chat new "Help me plan a small TypeScript project"
 poppet chat sessions
 ```
@@ -90,10 +97,17 @@ Poppet streams the answer to your terminal and saves the conversation. Session a
 
 To continue a conversation, copy its session ID:
 
+{{< shell >}}
+```bash
+session_id='paste-session-id-here'
+poppet chat send $session_id "What should I build first?"
+```
+
 ```fish
 set session_id 'paste-session-id-here'
 poppet chat send $session_id "What should I build first?"
 ```
+{{< /shell >}}
 
 To chat interactively in a terminal, run `poppet chat interactive`, or add a session ID to resume one. Enter one message per line and use `/exit` to leave.
 

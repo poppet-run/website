@@ -136,6 +136,10 @@ pre { margin: 0; padding: 22px; font-size: 12px; line-height: 1.85; tab-size: 2;
 .code-scroll { overflow-x: auto; }
 .copy-button { padding: 4px 10px; border: 1px solid transparent; border-radius: 4px; background: none; color: var(--muted); font: inherit; cursor: pointer; }
 .copy-button:hover { border-color: var(--line); color: var(--cream); }
+.shell-switch { display: flex; gap: 4px; margin-left: -10px; }
+.shell-switch button { padding: 4px 10px; border: 1px solid transparent; border-radius: 4px; background: none; color: var(--muted); font: inherit; cursor: pointer; }
+.shell-switch button:hover { color: var(--cream); }
+.shell-switch [aria-pressed="true"] { border-color: var(--line); color: var(--apricot); }
 .table-scroll { max-width: 100%; overflow-x: auto; margin: 28px 0; border: 1px solid var(--line); border-radius: 4px; }
 .prose table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.7; }
 .prose th, .prose td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; min-width: 140px; }

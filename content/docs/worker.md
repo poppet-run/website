@@ -11,7 +11,7 @@ The worker runs scheduled tasks and handles messaging. Start it in a terminal an
 
 Choose one mode for each data directory:
 
-```fish
+```sh
 poppet worker run                 # Scheduling and messaging
 poppet worker run --tasks-only    # Scheduling only
 poppet gateway work               # Messaging only
@@ -31,7 +31,7 @@ Only one worker can run for a data directory at a time. Stopping the worker canc
 
 On macOS, stop any foreground worker, then install a user LaunchAgent. It starts `worker run` at login and keeps it running while you are logged in:
 
-```fish
+```sh
 poppet worker install
 poppet worker status
 poppet worker logs
@@ -49,7 +49,7 @@ Older installations may have settings saved in the LaunchAgent. Move the ones yo
 
 ## Status and logs
 
-```fish
+```sh
 poppet worker status
 poppet worker logs
 ```
@@ -62,7 +62,7 @@ Lifecycle logs are written to `<data directory>/logs/worker.log`. The directory 
 
 ## Stop, start, and uninstall
 
-```fish
+```sh
 poppet worker stop
 poppet worker start
 poppet worker uninstall
@@ -74,7 +74,7 @@ poppet worker uninstall
 
 Chat, memory, saved sessions, and `store status` all work while the worker is running:
 
-```fish
+```sh
 poppet memory remember project.name Acorn
 poppet chat new "What is the project called?"
 poppet chat interactive

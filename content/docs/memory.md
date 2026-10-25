@@ -11,7 +11,7 @@ Memory has three parts: saved facts, your profile, and Poppet's personality. Fac
 
 Save a fact with a key, then list and change it:
 
-```fish
+```sh
 poppet memory remember answer.style "Keep answers concise"
 poppet memory list
 poppet memory replace answer.style "Explain the reasoning"
@@ -26,7 +26,7 @@ Memory commands work without a model or login. Listing shows each key, its value
 
 In chat, ask Poppet to remember, replace, or forget a fact:
 
-```fish
+```sh
 poppet chat new "Remember that I prefer concise answers, under answer.style"
 poppet chat send $session_id "Replace answer.style with Explain the reasoning"
 poppet chat send $session_id "Forget the saved fact answer.style"
@@ -40,7 +40,7 @@ Chat changes apply from the next run onward. Scheduled runs can read facts but c
 
 Every change is kept, so you can see how a fact changed and restore an earlier value:
 
-```fish
+```sh
 poppet memory history answer.style
 poppet memory revert answer.style 1
 ```

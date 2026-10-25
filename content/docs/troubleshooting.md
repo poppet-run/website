@@ -9,7 +9,7 @@ Run these commands from any directory. Keep the full error message when you repo
 
 ## Poppet will not start
 
-```fish
+```sh
 bun --version
 poppet --help
 poppet config
@@ -23,7 +23,7 @@ Check `poppet config`. It shows the config file location and whether it exists.
 
 A running worker keeps the settings it read when it started. After you change `config.json`, restart it. For a worker that runs at login:
 
-```fish
+```sh
 poppet worker stop
 poppet worker start
 ```
@@ -36,7 +36,7 @@ Existing sessions and tasks keep the provider and model they were saved with. St
 
 Check the connection and model for your provider. Replace the provider name if you use OpenRouter or OpenCode Go:
 
-```fish
+```sh
 poppet provider status openai-chatgpt
 poppet provider models openai-chatgpt
 ```
@@ -47,20 +47,20 @@ Check that the model in `config.json` appears in the list. ChatGPT also needs pl
 
 Keep a [worker](worker.md) running, then check the task in a second terminal:
 
-```fish
+```sh
 poppet tasks list
 poppet tasks show <task-id>
 ```
 
 `tasks show` lists the next time, past runs, pauses, failures, and results. Check the timezone you saved, and check whether the provider is paused:
 
-```fish
+```sh
 poppet worker providers
 ```
 
 On macOS, check the login worker and its log:
 
-```fish
+```sh
 poppet worker status
 poppet worker logs
 ```
@@ -69,7 +69,7 @@ Only one worker can run for a data directory. A computer that is asleep or shut 
 
 ## Discord does not reply
 
-```fish
+```sh
 poppet gateway status
 ```
 

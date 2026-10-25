@@ -24,7 +24,7 @@ The first heading and the start of the first paragraph describe the skill to the
 
 ## Use a skill
 
-```fish
+```sh
 poppet skills list
 poppet skills show weekly-review
 poppet chat new --skill weekly-review "Review my Acorn project"

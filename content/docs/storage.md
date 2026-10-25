@@ -20,7 +20,7 @@ logs/             worker log
 
 Check the database at any time:
 
-```fish
+```sh
 poppet store status
 ```
 
@@ -54,9 +54,15 @@ Only one Poppet process can use a data directory at a time. If a process crashes
 
 Stop any running worker first: press Ctrl-C in its terminal, or run `poppet worker stop` if it runs at login. Then copy the whole data directory:
 
+{{< shell >}}
+```bash
+cp -R ~/.config/poppet ~/Backups/poppet-$(date +%F)
+```
+
 ```fish
 cp -R ~/.config/poppet ~/Backups/poppet-(date +%F)
 ```
+{{< /shell >}}
 
 Start the worker again when the copy finishes.
 

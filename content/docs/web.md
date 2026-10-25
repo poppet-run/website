@@ -11,7 +11,7 @@ Poppet can read public web pages in any chat that uses tools, including schedule
 
 Include a public `http` or `https` address in your message:
 
-```fish
+```sh
 poppet chat new "Summarize https://example.com/ and cite the source"
 ```
 
@@ -34,7 +34,7 @@ Choose a search provider, turn search on, then save that provider's key:
 
 Use `"kagi"` for Kagi. Brave is the default.
 
-```fish
+```sh
 poppet web login
 poppet web status
 ```

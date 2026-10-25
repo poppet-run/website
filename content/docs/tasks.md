@@ -13,27 +13,25 @@ Each task saves the provider and model you select when you add it. The worker us
 
 For a quick test, schedule a task one minute from now and run the worker for scheduled work only:
 
-Bash / POSIX sh:
-
-```sh
+{{< shell >}}
+```bash
 when=$(bun -e 'console.log(new Date(Date.now() + 60_000).toISOString())')
 poppet tasks add summary --at "$when" "Summarize my recent conversations"
 poppet worker run --tasks-only
 ```
-
-fish:
 
 ```fish
 set when (bun -e 'console.log(new Date(Date.now() + 60_000).toISOString())')
 poppet tasks add summary --at $when "Summarize my recent conversations"
 poppet worker run --tasks-only
 ```
+{{< /shell >}}
 
 The worker prints a line when a task starts, finishes, fails, is cancelled, or is skipped. Failures show a reason code. Prompts and answers are kept in the saved results, not the console.
 
 Leave the worker running, then use a second terminal with the same `POPPET_DATA_DIR`:
 
-```fish
+```sh
 poppet tasks list
 poppet tasks show <task-id>
 poppet tasks pause <task-id>
@@ -44,7 +42,7 @@ poppet tasks resume <task-id>
 
 Use a five-field cron expression and a timezone:
 
-```fish
+```sh
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London "Summarize my recent conversations"
 ```
 
@@ -58,7 +56,7 @@ Pass `--coding` before the prompt only for coding work that your provider accept
 
 Edit a task without changing its ID or losing its history:
 
-```fish
+```sh
 poppet tasks edit <task-id> --name "Morning review"
 poppet tasks edit <task-id> --prompt "Summarize open decisions from recent conversations."
 poppet tasks edit <task-id> --cron "30 8 * * 1-5" --tz Europe/London
@@ -96,7 +94,7 @@ A task change is saved even if the chat reply fails afterwards. Check `tasks lis
 
 Set up [Discord](gateways/discord.md), start the combined worker with `poppet worker run`, and send results to your home channel:
 
-```fish
+```sh
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --channel discord "Summarize my recent conversations"
 ```
 
@@ -116,7 +114,7 @@ Add `--skill <name>` before the prompt to save a [skill](skills.md) with a new t
 
 A task prompt can include a public URL, and the run can read it:
 
-```fish
+```sh
 poppet tasks add page-summary --cron "0 9 * * *" --tz Europe/London "Summarize https://example.com/ and cite the source"
 ```
 
@@ -126,7 +124,7 @@ A URL mentioned only in a skill, an earlier conversation, or a fetched page does
 
 With [web search](web.md) set up, a prompt can ask for research without a URL:
 
-```fish
+```sh
 poppet tasks add weekly-research --cron "0 9 * * 5" --tz Europe/London "Search for recent Bun releases, read relevant sources, and cite them"
 ```
 
@@ -140,7 +138,7 @@ Pending recurring runs expire after 24 hours. One-off runs do not expire.
 
 To cancel a run that is pending or running, or to retry a failed one:
 
-```fish
+```sh
 poppet tasks cancel <occurrence-id>
 poppet tasks retry <occurrence-id>
 poppet worker providers
@@ -153,7 +151,7 @@ A quota failure pauses scheduled runs for that provider until you run `worker re
 
 To remove every task and its run history:
 
-```fish
+```sh
 poppet tasks clear
 ```
 

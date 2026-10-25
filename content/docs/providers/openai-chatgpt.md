@@ -10,7 +10,7 @@ ChatGPT connects through browser sign-in, so you do not need an API key. Request
 
 ## Sign in
 
-```fish
+```sh
 poppet provider login openai-chatgpt
 poppet provider models openai-chatgpt
 poppet provider status openai-chatgpt
@@ -30,7 +30,7 @@ Sign-in details are saved in `<data directory>/auth/connection.json`, readable o
 
 ## Log out
 
-```fish
+```sh
 poppet provider logout openai-chatgpt
 ```
 

@@ -19,21 +19,29 @@ With Discord's Developer Mode on, copy the IDs for your user, your server, and a
 
 Run setup and choose Discord when prompted:
 
-```fish
+```sh
 poppet setup
 ```
 
 Or save the settings yourself. The token is read from standard input, so it never appears in your shell history:
+
+{{< shell >}}
+```bash
+printf 'Discord bot token: '; read -rs discord_token; echo
+printf '%s\n' "$discord_token" | poppet gateway discord setup <your-user-id> <server-id> <home-channel-id> --key-stdin
+unset discord_token
+```
 
 ```fish
 read --silent --prompt-str 'Discord bot token: ' discord_token
 printf '%s\n' $discord_token | poppet gateway discord setup <your-user-id> <server-id> <home-channel-id> --key-stdin
 set -e discord_token
 ```
+{{< /shell >}}
 
 The settings go into the `discord` section of `config.json`. The token is saved in a protected file in your data directory. Restart the worker after changing Discord settings:
 
-```fish
+```sh
 poppet worker run
 ```
 
@@ -69,7 +77,7 @@ Use `poppet gateway status` to check the connection and delivery queue.
 
 To send a task's results to the home channel, add `--channel discord` when you create it:
 
-```fish
+```sh
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --channel discord "Summarize my recent conversations"
 ```
 

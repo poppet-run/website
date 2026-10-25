@@ -1,8 +1,10 @@
-<div class="code-block">
+{{- /* sh blocks work in every shell. bash blocks also work in zsh, and sit beside a fish block in the shell shortcode. */ -}}
+{{ $label := index (dict "sh" "bash / zsh / fish" "bash" "bash / zsh") .Type | default .Type | default "code" }}
+<div class="code-block" data-lang="{{ .Type }}">
   <div class="code-header">
-    <span>{{ .Type | default "code" }}</span>
+    <span>{{ $label }}</span>
     {{- /* site.js shows the button when the clipboard is available. */ -}}
     <button class="copy-button" type="button" aria-live="polite" hidden>Copy</button>
   </div>
-  <div class="code-scroll" tabindex="0" role="region" aria-label="{{ with .Type }}{{ . }} code example{{ else }}Code example{{ end }}">{{ transform.Highlight .Inner .Type .Options }}</div>
+  <div class="code-scroll" tabindex="0" role="region" aria-label="{{ $label }} code example">{{ transform.Highlight .Inner .Type .Options }}</div>
 </div>

@@ -70,7 +70,7 @@ Set `mcpServers` to `[]` to turn all servers off. Restart the worker after any c
 
 ## Check and use tools
 
-```fish
+```sh
 poppet mcp servers
 poppet mcp status
 poppet mcp tools reference
