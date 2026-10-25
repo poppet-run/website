@@ -131,7 +131,11 @@ pre { margin: 0; padding: 22px; font-size: 12px; line-height: 1.85; tab-size: 2;
 .prose li { margin: 7px 0; }
 .prose code { padding: 2px 5px; border-radius: 3px; background: var(--panel); font-size: 0.85em; overflow-wrap: anywhere; }
 .prose pre code { padding: 0; background: none; font-size: inherit; overflow-wrap: normal; }
-.code-block { overflow-x: auto; margin: 24px 0; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+.code-block { margin: 24px 0; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+.code-header { display: flex; justify-content: space-between; align-items: center; min-height: 38px; padding: 4px 10px 4px 22px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 1.5; }
+.code-scroll { overflow-x: auto; }
+.copy-button { padding: 4px 10px; border: 1px solid transparent; border-radius: 4px; background: none; color: var(--muted); font: inherit; cursor: pointer; }
+.copy-button:hover { border-color: var(--line); color: var(--cream); }
 .table-scroll { max-width: 100%; overflow-x: auto; margin: 28px 0; border: 1px solid var(--line); border-radius: 4px; }
 .prose table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.7; }
 .prose th, .prose td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; min-width: 140px; }

@@ -1,1 +1,8 @@
-<div class="code-block" tabindex="0" role="region" aria-label="{{ with .Type }}{{ . }} code example{{ else }}Code example{{ end }}">{{ transform.Highlight .Inner .Type .Options }}</div>
+<div class="code-block">
+  <div class="code-header">
+    <span>{{ .Type | default "code" }}</span>
+    {{- /* site.js shows the button when the clipboard is available. */ -}}
+    <button class="copy-button" type="button" aria-live="polite" hidden>Copy</button>
+  </div>
+  <div class="code-scroll" tabindex="0" role="region" aria-label="{{ with .Type }}{{ . }} code example{{ else }}Code example{{ end }}">{{ transform.Highlight .Inner .Type .Options }}</div>
+</div>
