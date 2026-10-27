@@ -22,7 +22,7 @@ Poppet runs on your computer and uses a model provider you choose. Start with [g
 ## Schedule work
 
 - [Scheduled tasks](tasks.md): schedule a prompt, then edit, pause, skip, or snooze it.
-- [Worker](worker.md): keep scheduling and messaging running, in a terminal or at macOS login.
+- [Worker](worker.md): keep scheduling and messaging running, in a terminal or at login on macOS and Linux with systemd.
 
 ## Connect services
 

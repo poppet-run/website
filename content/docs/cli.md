@@ -9,6 +9,35 @@ After [installing the command](getting-started.md#1-install-poppet), run `poppet
 
 Angle-bracket values are placeholders. Replace them before you run a command, and quote prompts and values that contain spaces. The remaining words of a message, memory value, or task prompt are joined with spaces. Use `--` before text that begins with `--help` or `-h`.
 
+## Shell completions
+
+`poppet --completions <shell>` prints a completion script for Bash, zsh, or fish. It covers commands and flags, without needing configuration or credentials. Saved values such as session IDs and skill names are not completed. Regenerate the script after updating Poppet.
+
+Create the destination directory, then save the script for your shell.
+
+For Bash with bash-completion enabled:
+
+```text
+mkdir -p ~/.local/share/bash-completion/completions
+poppet --completions bash > ~/.local/share/bash-completion/completions/poppet
+```
+
+For zsh, with `~/.zsh/completions` on `fpath` before `compinit` runs:
+
+```zsh
+mkdir -p ~/.zsh/completions
+poppet --completions zsh > ~/.zsh/completions/_poppet
+```
+
+For fish:
+
+```fish
+mkdir -p ~/.config/fish/completions
+poppet --completions fish > ~/.config/fish/completions/poppet.fish
+```
+
+Open a new shell to load the script.
+
 ## Configuration and storage
 
 | Command        | Action                                                                              |
@@ -25,12 +54,12 @@ Provider commands take a provider ID, or `--provider <id>`. Without one, they us
 
 | Command                                   | Action                                  |
 | ----------------------------------------- | --------------------------------------- |
-| `provider login [provider] [--key-stdin]` | Sign in, or save an API key.            |
+| `provider login [provider] [options]` | Sign in, or save an API key.            |
 | `provider status [provider]`              | Show connection status without secrets. |
 | `provider models [provider]`              | List available models.                  |
 | `provider logout [provider]`              | Remove that provider's saved connection. |
 
-`--key-stdin` reads an API key from standard input. See [ChatGPT](providers/openai-chatgpt.md), [OpenRouter](providers/openrouter.md), and [OpenCode Go](providers/opencode-go.md).
+`--key-stdin` reads an API key from standard input. ChatGPT sign-in also accepts `--no-browser` and `--callback-port <port>`; see [remote sign-in](providers/openai-chatgpt.md#headless-and-remote-machines). For API-key setup, see [OpenRouter](providers/openrouter.md) and [OpenCode Go](providers/opencode-go.md).
 
 ## Chat
 
@@ -51,8 +80,7 @@ See [chat](chat.md).
 | Command                          | Action                                              |
 | -------------------------------- | --------------------------------------------------- |
 | `memory list`                    | List saved facts.                                   |
-| `memory remember <key> <value>`  | Save a new fact.                                    |
-| `memory replace <key> <value>`   | Change an existing fact.                            |
+| `memory set <key> <value>`       | Create a fact or replace its current value.          |
 | `memory forget <key>`            | Delete a fact.                                      |
 | `memory history <key>`           | Show a fact's revisions, their origin, and source run. |
 | `memory revert <key> <revision>` | Restore an earlier revision as a new revision.      |
@@ -84,6 +112,8 @@ Use `--skill <name>` before a new chat message or task prompt. See [skills](skil
 | `tasks resume <task>`                                                                                          | Resume future runs.                                     |
 | `tasks cancel <occurrence>`                                                                                    | Cancel a pending or running occurrence.                 |
 | `tasks retry <occurrence>`                                                                                     | Retry an unsuccessful occurrence.                       |
+| `tasks providers`                  | Show provider pauses and temporary backoff.           |
+| `tasks resume-provider <provider>` | Allow scheduled runs for a paused provider again.     |
 | `tasks clear`                                                                                                  | Stop active runs and remove all tasks and their history. |
 
 Options for `tasks add`: `--coding`, `--skill <name>`, and `--channel <id>`, which can be followed by `--conversation <id>` to choose a channel or thread. See [scheduled tasks](tasks.md). Tasks run while a worker with scheduling is running.
@@ -93,13 +123,11 @@ Options for `tasks add`: `--coding`, `--skill <name>`, and `--channel <id>`, whi
 | Command                             | Action                                                |
 | ----------------------------------- | ----------------------------------------------------- |
 | `worker run [--tasks-only]`         | Run scheduling and messaging, or scheduling only, in the foreground. |
-| `worker install`                    | Install and start the macOS login worker.             |
+| `worker install`                    | Install and start the macOS or Linux systemd login worker.             |
 | `worker start`                      | Start an installed worker.                            |
 | `worker stop`                       | Stop it until you start it again or log in.           |
-| `worker status`                     | Show the login agent, scheduling, and connection status. |
+| `worker status`                     | Show the login service, scheduling, and connection status. |
 | `worker logs`                       | Print the last 64 KiB of worker logs.                 |
-| `worker providers`                  | Show provider pauses and temporary backoff.           |
-| `worker resume-provider <provider>` | Allow scheduled runs for a paused provider again.     |
 | `worker uninstall`                  | Stop and remove login startup. Keeps saved data.      |
 
 See [worker](worker.md).
@@ -109,10 +137,8 @@ See [worker](worker.md).
 | Command                                                                     | Action                                                   |
 | --------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `gateway discord setup <owner-id> <guild-id> <home-channel-id> --key-stdin` | Save Discord settings, and read the bot token from stdin. |
-| `gateway work`                                                              | Run messaging only, in the foreground.                   |
-| `gateway status`                                                            | Show connection, queue, and delivery status.             |
 
-The bot token is never accepted as a command-line argument. See [Discord](gateways/discord.md).
+Run `poppet worker run` for messaging and scheduling, and `poppet worker status` for connection and delivery status under `worker.messaging`. The bot token is never accepted as a command-line argument. See [Discord](gateways/discord.md).
 
 ## Web search
 
@@ -129,7 +155,6 @@ See [web search](web.md).
 | Command              | Action                                                                              |
 | -------------------- | ----------------------------------------------------------------------------------- |
 | `mcp servers`        | Show configured servers, permissions, and connection state, without starting them. |
-| `mcp status`         | Show diagnostics and available tools, without starting servers.                     |
 | `mcp tools <server>` | Start a server to discover its allowed tools.                                       |
 
 See [MCP tools](mcp.md).

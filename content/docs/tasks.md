@@ -141,11 +141,11 @@ To cancel a run that is pending or running, or to retry a failed one:
 ```sh
 poppet tasks cancel <occurrence-id>
 poppet tasks retry <occurrence-id>
-poppet worker providers
-poppet worker resume-provider openai-chatgpt
+poppet tasks providers
+poppet tasks resume-provider openai-chatgpt
 ```
 
-A quota failure pauses scheduled runs for that provider until you run `worker resume-provider`. Temporary and rate-limit failures delay later runs by 30 seconds, doubling after each failure up to five minutes. Poppet never retries a failed run on its own. `retry` starts a fresh session for it. Resume a paused task before retrying it.
+A quota failure pauses scheduled runs for that provider until you run `tasks resume-provider`. Temporary and rate-limit failures delay later runs by 30 seconds, doubling after each failure up to five minutes. Poppet never retries a failed run on its own. `retry` starts a fresh session for it. Resume a paused task before retrying it.
 
 ## Clear tasks
 
