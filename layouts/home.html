@@ -13,41 +13,96 @@
   </div>
   <div class="hero-art">
     <img src="{{ "images/poppet.svg" | relURL }}" width="704" height="620" alt="Poppet, an apricot cushion with a cross-stitch and a smiling digital face, waving from a cream pocket.">
-    <span class="art-caption" aria-hidden="true">Say hello to Poppet.</span>
+    {{- /* An illustration of the interactive prompt, so it is hidden from screen readers. */}}
+    <div class="hero-terminal" aria-hidden="true">
+      <div class="window-bar"><span class="window-dots"><i></i><i></i><i></i></span>poppet chat interactive</div>
+      <div class="transcript">
+        <p><b>You&gt;</b> Remember that I prefer concise answers, under answer.style</p>
+        <p class="reply">Saved. I'll keep my answers short from your next message on.</p>
+        <p><b>You&gt;</b> What should I build first?</p>
+        <p class="reply">Start with the CLI entry point and one command. Add the rest once it runs end to end.</p>
+        <p><b>You&gt;</b> <span class="cursor"></span></p>
+      </div>
+    </div>
   </div>
 </section>
-<section class="home-section" aria-labelledby="capabilities-heading">
+
+<section class="home-section" aria-labelledby="features-heading">
   <div class="section-intro">
     <p class="eyebrow">A little help, on your terms</p>
-    <h2 id="capabilities-heading">Pick up a conversation.<br>Leave a task for later.</h2>
+    <h2 id="features-heading">Pick up a conversation. Leave a task for later.</h2>
     <p>Start with a conversation. Add memory, scheduled work, or optional tools when you need them.</p>
   </div>
-  <ol class="capabilities">
-    {{ range .Params.capabilities }}
-    <li><h3><a href="{{ .guide | relURL }}">{{ .title }}</a></h3><p>{{ .description }}</p></li>
+  <ul class="features">
+    {{ range .Params.features }}
+    <li class="feature">
+      <div class="feature-sample" aria-hidden="true">
+        <div class="feature-label">{{ .label }}</div>
+        {{ with .code }}{{ highlight . "sh" "" }}{{ end }}
+        {{ with .thread }}
+        <div class="thread">
+          {{ range . }}<p class="{{ if eq .who "Poppet" }}from-poppet{{ end }}"><b>{{ .who }}</b>{{ .text }}</p>{{ end }}
+        </div>
+        {{ end }}
+      </div>
+      <h3><a href="{{ .guide | relURL }}">{{ .title }}</a></h3>
+      <p>{{ .description }}</p>
+    </li>
     {{ end }}
-  </ol>
-</section>
-<section class="provider-section" aria-labelledby="providers-heading">
-  <div><p class="eyebrow">Bring your own provider</p><h2 id="providers-heading">Choose what powers Poppet.</h2></div>
-  <ul class="provider-links">
-    <li><a href="{{ "docs/providers/openai-chatgpt/" | relURL }}">ChatGPT <span aria-hidden="true">↗</span></a><span>Use the ChatGPT plan you already have</span></li>
-    <li><a href="{{ "docs/providers/openrouter/" | relURL }}">OpenRouter <span aria-hidden="true">↗</span></a><span>Many models, one account</span></li>
-    <li><a href="{{ "docs/providers/opencode-go/" | relURL }}">OpenCode Go <span aria-hidden="true">↗</span></a><span>For building and debugging</span></li>
   </ul>
+  <div class="tools">
+    <h3>Optional tools</h3>
+    <p>Each one has its own settings and permissions.</p>
+    <ul class="tool-list">
+      {{ range .Params.tools }}<li><a href="{{ .guide | relURL }}">{{ .title }}</a></li>{{ end }}
+    </ul>
+  </div>
 </section>
-<section class="home-section setup-section" aria-labelledby="setup-heading">
+
+<section class="local-section" aria-labelledby="local-heading">
+  <div class="local-copy">
+    <p class="eyebrow">Runs on your computer</p>
+    <h2 id="local-heading">Your conversations stay with you.</h2>
+    <p>Poppet keeps conversations, facts, tasks, and settings in a data directory on your computer, <code>~/.config/poppet</code> by default. Model requests go to the provider account you connect.</p>
+    <a class="text-link" href="{{ "docs/storage/" | relURL }}">What Poppet saves <span aria-hidden="true">↗</span></a>
+  </div>
+  <div class="providers">
+    <h3>Choose what powers Poppet</h3>
+    <ul class="provider-list">
+      {{ range .Params.providers }}
+      <li><a href="{{ .guide | relURL }}">{{ .title }} <span aria-hidden="true">↗</span></a><p>{{ .description }}</p></li>
+      {{ end }}
+    </ul>
+  </div>
+</section>
+
+<section class="setup-section" aria-labelledby="setup-heading">
   <div class="section-intro">
     <p class="eyebrow">Your first conversation</p>
-    <h2 id="setup-heading">Get Poppet running.<br>Send your first message.</h2>
-    <p>You will need Git, Bun 1.4.4, and access to a supported provider. The guide takes you from a source checkout to your first message.</p>
-    <a class="text-link" href="{{ "docs/getting-started/" | relURL }}">Read the setup guide <span aria-hidden="true">↗</span></a>
+    <h2 id="setup-heading">Get Poppet running. Send your first message.</h2>
+    <p>You will need Git, Bun 1.4.4, and access to a supported provider.</p>
   </div>
-  <div class="terminal-example">
-    <div class="terminal-label">Start from source <span>bash / zsh / fish</span></div>
-    {{ highlight "git clone https://github.com/poppet-run/poppet.git\ncd poppet\nbun install --frozen-lockfile\nbun link\npoppet --help" "fish" "" }}
-    <p>Model requests use your provider account. Sessions and facts are stored locally.</p>
-  </div>
+  <ol class="setup-steps">
+    {{ $steps := slice
+      (dict "title" "Install from source" "text" "Clone the app, install its dependencies, and link the poppet command." "code" "git clone https://github.com/poppet-run/poppet.git\ncd poppet\nbun install --frozen-lockfile\nbun link")
+      (dict "title" "Run setup" "text" "Choose a provider, sign in, and pick a model. You can add Discord here too." "code" "poppet setup")
+      (dict "title" "Say hello" "text" "Open the interactive prompt and send your first message." "code" "poppet chat interactive")
+    }}
+    {{ range $steps }}
+    <li>
+      <h3>{{ .title }}</h3>
+      <p>{{ .text }}</p>
+      <div class="code-block" data-lang="sh">
+        <div class="code-header">
+          <span>bash / zsh / fish</span>
+          <button class="copy-button" type="button" aria-live="polite" hidden>Copy</button>
+        </div>
+        <div class="code-scroll" tabindex="0" role="region" aria-label="{{ .title }} commands">{{ highlight .code "sh" "" }}</div>
+      </div>
+    </li>
+    {{ end }}
+  </ol>
+  <a class="text-link" href="{{ "docs/getting-started/" | relURL }}">Read the full setup guide <span aria-hidden="true">↗</span></a>
 </section>
 </main>
 {{ end }}
