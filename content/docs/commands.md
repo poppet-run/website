@@ -25,14 +25,14 @@ The reviewer is a model, so it can be wrong. It reads the command, not the scrip
 
 ## Approve commands in Discord
 
-When a command needs approval, Poppet posts its exact command, working directory, timeout, and reason in the thread. Reply with the ID from that message:
+When a command needs approval, Poppet posts its exact command, working directory, timeout, and reason in the thread. Click **Approve once** or **Deny**, or reply with the ID from that message:
 
 ```text
 /approve <id>
 /deny <id>
 ```
 
-Only the owner can answer, in the same conversation. An approval covers that one command, with the same directory and timeout, and nothing else. Requests expire after two minutes, or when the run is cancelled or the worker restarts. Ask again to get a new review.
+Only the owner can answer, in the same conversation. An approval covers that one command, with the same directory and timeout, and nothing else. Requests expire after two minutes, or when the run is cancelled or the worker restarts. Repeated clicks or replies cannot execute the command again. Poppet confirms button clicks privately and disables the buttons when the request ends. Updating the message is best effort; after a restart, an old button may still appear but cannot revive the request. Ask again to get a new review.
 
 ## Scheduled tasks
 
@@ -46,6 +46,8 @@ Successful results still go to the task's destination.
 - A standard input that is closed, so a command cannot wait for typed input.
 - The output from stdout and stderr, the exit code, and whether the output was cut short.
 - A Bash shell that skips your shell profile.
+
+A completed receipt includes `status: "completed"` and `approvedBy`, identifying the owner or reviewer. The command has already finished, even if it produced no output. Its exit code shows whether it succeeded.
 
 A timeout or cancellation stops the command and its child processes. Poppet does not replay a command that was interrupted. To keep a service running, use your system's service manager, not `command &`.
 

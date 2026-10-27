@@ -1,6 +1,6 @@
 +++
 title = "Worker"
-description = "Run scheduling and messaging in the foreground or at macOS login, and inspect status and logs."
+description = "Run scheduling and messaging in the foreground or at login on macOS or Linux with systemd, and inspect status and logs."
 +++
 
 # Worker
@@ -14,7 +14,6 @@ Choose one mode for each data directory:
 ```sh
 poppet worker run                 # Scheduling and messaging
 poppet worker run --tasks-only    # Scheduling only
-poppet gateway work               # Messaging only
 ```
 
 The worker starts your enabled [MCP tool servers](mcp.md) when they are needed, and stops them when it shuts down. Restart the worker after you change their configuration.
@@ -23,9 +22,9 @@ Commands such as `chat`, `memory`, `tasks`, and `store status` go through a runn
 
 Only one worker can run for a data directory at a time. Stopping the worker cancels active requests. After a crash, the next worker takes over and marks unfinished work as interrupted. Queued work survives a restart, but Poppet does not repeat an interrupted request on its own. Run it again yourself if you still need it.
 
-## macOS login startup
+## Login startup
 
-On macOS, stop any foreground worker, then install a user LaunchAgent. It starts `worker run` at login and keeps it running while you are logged in:
+On macOS or Linux with systemd, stop any foreground worker, then install a user service. It starts `worker run` at login and keeps it running while you are logged in. macOS uses a LaunchAgent; Linux uses a systemd user unit:
 
 ```sh
 poppet worker install
@@ -35,9 +34,9 @@ poppet worker logs
 
 Save your provider, model, and other settings in `config.json` before you install. The worker reads that file when it starts. After you change settings, run `poppet worker stop` and then `poppet worker start`.
 
-Keep the checkout and the Bun executable where they are. If you move either, run `poppet worker uninstall` and then `poppet worker install` again. Each data directory has its own LaunchAgent, so use the same `POPPET_DATA_DIR` for every command.
+Keep the checkout and the Bun executable where they are. If you move either, run `poppet worker uninstall` and then `poppet worker install` again. Each data directory has its own service, so use the same `POPPET_DATA_DIR` for every command.
 
-The LaunchAgent does not hold API keys. Save them first with `poppet provider login openrouter` or `poppet provider login opencode-go`. ChatGPT uses its own protected sign-in. Installing does not check live inference.
+The service does not hold API keys. Save them first with `poppet provider login openrouter` or `poppet provider login opencode-go`. ChatGPT uses its own protected sign-in. Installing does not check live inference.
 
 Older installations may have settings saved in the LaunchAgent. Move the ones you want to keep into `config.json`, then run `poppet worker uninstall` and `poppet worker install` once. Older installations that run `tasks work` need the same reinstall to run `worker run`. Saved data and credentials are kept.
 
@@ -50,7 +49,7 @@ poppet worker status
 poppet worker logs
 ```
 
-`worker status` shows whether the LaunchAgent is installed and loaded, whether the worker responds, its process ID, the active run, task counts, the next scheduled time, provider pauses, and recent outcomes. It works for a foreground worker too. On other systems, it shows `launchAgent` as `null`.
+`worker status` shows whether the login service is installed and active, whether the worker responds, its process ID, the active run, task counts, the next scheduled time, provider pauses, and recent outcomes. Messaging connection and queue details are under `worker.messaging`. It works for a foreground worker too. The `service` field is `null` on platforms without login startup.
 
 Connection details shown by `worker status` are not a live check of your provider.
 
@@ -66,12 +65,18 @@ poppet worker uninstall
 
 `stop` stops the worker until you start it again or log in, and keeps login startup. `uninstall` removes login startup. Neither command deletes tasks, results, facts, credentials, or logs. Starting a worker that is already running does not interrupt its active request.
 
+## Concurrent requests
+
+CLI chats, Discord conversations, and scheduled runs share `chat.maxConcurrentRequests` slots, with a default of 3. Different sessions can run at the same time, while requests in one session stay in order. A CLI request to a session already in use waits for its turn. Cancelling one conversation does not cancel another.
+
+A run waiting for command approval keeps its slot for up to two minutes. Set the limit to 1 to process one request at a time. See [configuration](configuration.md#settings).
+
 ## Chat while the worker runs
 
 Chat, memory, saved sessions, and `store status` all work while the worker is running:
 
 ```sh
-poppet memory remember project.name Acorn
+poppet memory set project.name Acorn
 poppet chat new "What is the project called?"
 poppet chat interactive
 poppet chat search "project"
@@ -88,8 +93,22 @@ After you update Poppet, run `poppet worker stop` and then `poppet worker start`
 
 ## Sleep and missed runs
 
-The worker does not keep your Mac awake. After sleep, an overdue one-off task runs once. A recurring task runs its most recent missed time once, if that time is within `tasks.catchUpMinutes`, which defaults to 60 minutes. Earlier missed times are skipped. Poppet never replays failed or interrupted requests on its own.
+The worker does not keep your computer awake. After sleep, an overdue one-off task runs once. A recurring task runs its most recent missed time once, if that time is within `tasks.catchUpMinutes`, which defaults to 60 minutes. Earlier missed times are skipped. Poppet never replays failed or interrupted requests on its own.
 
-## Other systems
+## Linux and systemd
 
-Background installation is macOS only. On other systems, run `poppet worker run` in a terminal.
+The user unit lives in `$XDG_CONFIG_HOME/systemd/user`, or `~/.config/systemd/user` when that variable is unset or relative. Installation enables and starts it immediately. `worker stop` stops the unit but leaves it enabled for the next login. `worker uninstall` disables it and removes its file.
+
+The systemd user manager normally stops after your last login session ends. To keep the worker running after logout, enable lingering once:
+
+```sh
+loginctl enable-linger
+```
+
+Worker commands need access to your systemd user manager. Run them from a login session. If `systemctl --user` cannot connect, `worker status` reports it. Launcher startup errors are in the journal; worker output stays in `worker.log`:
+
+```sh
+journalctl --user -u 'run.poppet.worker.*'
+```
+
+On platforms without login startup, run `poppet worker run` in a terminal.

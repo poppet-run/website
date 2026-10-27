@@ -45,7 +45,7 @@ The settings go into the `discord` section of `config.json`. The token is saved 
 poppet worker run
 ```
 
-On macOS, if the login worker is installed, run `poppet worker stop` and then `poppet worker start`.
+On macOS or Linux with systemd, if the login worker is installed, run `poppet worker stop` and then `poppet worker start`.
 
 ## Start a conversation
 
@@ -69,24 +69,26 @@ While it works, the bot shows the typing indicator. It also adds 👀 to your me
 
 Poppet names the threads it creates, using a title from the conversation once the first answer is sent. Renaming a session with `poppet chat rename` also renames its thread, while the worker is running. Poppet only renames threads it created. If you rename a thread yourself, Poppet stops changing its name.
 
+Different threads can run at the same time, up to `chat.maxConcurrentRequests`, which defaults to 3. Messages in one thread are answered in order. Cancelling one thread does not affect another.
+
 ## Replies and failures
 
 Poppet saves each answer before it sends it. Poppet retries temporary send failures without asking the model again. If a send's result is unclear, Poppet does not send it again, because Discord may have already posted it. Check the saved answer with `poppet chat show <session-id>` and post it yourself if needed.
 
 Poppet never moves a reply to another channel. If it can no longer post in a thread, the reply stays unsent, and the saved answer is still in `chat show`.
 
-Use `poppet gateway status` to check the connection and delivery queue.
+Use `poppet worker status` to check the connection and delivery queue.
 
 ## Approve commands
 
-If a command needs your approval before Poppet runs it, the bot posts the command in the thread. Reply with the ID shown:
+If a command needs your approval before Poppet runs it, the bot posts the command in the thread. Click **Approve once** or **Deny**, or reply with the ID shown:
 
 ```text
 /approve <id>
 /deny <id>
 ```
 
-Only the owner can answer, and each approval covers one command. Requests expire after two minutes. See [run commands](../commands.md).
+Only the owner can answer, and each approval covers one command. Requests expire after two minutes, cancellation, or worker restart. Repeated clicks or replies cannot execute the command again. Buttons become disabled when the request ends; stale buttons after a restart cannot revive it. See [run commands](../commands.md).
 
 ## Scheduled results
 

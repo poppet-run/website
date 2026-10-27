@@ -6,13 +6,13 @@ next = "/docs/chat"
 
 # Getting started
 
-Poppet runs from source. You need Git, Bun 1.4.3, and an account with one of the providers below.
+Poppet runs from source. You need Git, Bun 1.4.4, and an account with one of the providers below.
 
 Each model request comes out of your provider account's quota. If you already pay for ChatGPT, start there. It needs no API key. OpenRouter works for general chat too. OpenCode Go only handles coding chats.
 
 ## 1. Install Poppet
 
-Install Git and Bun 1.4.3, then clone the app:
+Install Git and Bun 1.4.4, then clone the app:
 
 ```sh
 git clone https://github.com/poppet-run/poppet.git
@@ -53,7 +53,7 @@ poppet --help
 poppet setup
 ```
 
-Setup asks you to choose a provider, sign in if needed, and pick a model from its list. You can also configure Discord and, on macOS, install the background worker. It saves your choices in `config.json` and your credentials in protected files. Run it again later and it offers your current settings as the defaults.
+Setup asks you to choose a provider, sign in if needed, and pick a model from its list. You can also configure Discord and install the background worker on macOS or Linux with systemd. It saves your choices in `config.json` and your credentials in protected files. Run it again later and it offers your current settings as the defaults.
 
 Setup needs an interactive terminal. If you prefer to configure things yourself, continue with step 3.
 

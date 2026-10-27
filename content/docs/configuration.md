@@ -50,7 +50,7 @@ poppet config
 ```
 {{< /shell >}}
 
-Use the same value for every command, including the worker's LaunchAgent. Each data directory has its own configuration, credentials, and database.
+Use the same value for every command, including the worker's login service. Each data directory has its own configuration, credentials, and database.
 
 ## Settings
 
@@ -70,6 +70,9 @@ Use the same value for every command, including the worker's LaunchAgent. Each d
 | `chat.runDeadlineSeconds` | `300`                  | Overall time limit for one run, from 30 to 3600 seconds                           |
 | `chat.logReasoning`       | `false`                | Log readable model reasoning to CLI stderr and the worker log                     |
 | `chat.logTimings`         | `false`                | Log the duration of each request stage                                            |
+| `chat.maxConcurrentRequests` | `3` | Requests that can run at once across CLI, messaging, and scheduled runs, from 1 to 8 |
+
+Different sessions and Discord conversations can run at the same time, while requests in one session stay in order. Set `chat.maxConcurrentRequests` to 1 to process one request at a time. A request waiting for command approval keeps its slot for up to two minutes. Restart the worker after changing the limit.
 
 Context size, conversation history, model turns, tool calls, and tool output use fixed limits. They are not settings. See [chat limits](chat.md#context-and-limits).
 

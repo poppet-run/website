@@ -15,7 +15,7 @@ poppet --help
 poppet config
 ```
 
-Use Bun 1.4.3 and install dependencies with `bun install --frozen-lockfile`. A configuration error usually means malformed JSON, an unknown key, a wrong type, or an empty value. Fix the field named in the error, then try again. See [configuration](configuration.md).
+Use Bun 1.4.4 and install dependencies with `bun install --frozen-lockfile`. A configuration error usually means malformed JSON, an unknown key, a wrong type, or an empty value. Fix the field named in the error, then try again. See [configuration](configuration.md).
 
 ## Settings are not what you expect
 
@@ -55,10 +55,10 @@ poppet tasks show <task-id>
 `tasks show` lists the next time, past runs, pauses, failures, and results. Check the timezone you saved, and check whether the provider is paused:
 
 ```sh
-poppet worker providers
+poppet tasks providers
 ```
 
-On macOS, check the login worker and its log:
+Check the worker and its log. Login startup is available on macOS and Linux with systemd:
 
 ```sh
 poppet worker status
@@ -70,7 +70,7 @@ Only one worker can run for a data directory. A computer that is asleep or shut 
 ## Discord does not reply
 
 ```sh
-poppet gateway status
+poppet worker status
 ```
 
 Check the connection state, your owner ID, and the server ID in `config.json`. Poppet replies only to the owner, and only in the configured server. Make sure the bot has the permissions and the Message Content intent listed in the [Discord guide](gateways/discord.md). Restart the worker after you change Discord settings.
@@ -81,7 +81,7 @@ If a reply's delivery is uncertain, check the saved answer with `poppet chat sho
 
 - [Web search](web.md): run `poppet web status`. Search needs both `webSearch` set to `true` and a saved key.
 - [Browser](browser.md): check `browser.enabled`, the allowed domains, and the pinned executables. Scheduled tasks never get browser tools.
-- [MCP tools](mcp.md): run `poppet mcp status`. A server must be enabled, and each tool must be listed. `poppet mcp tools <server-id>` starts a server to discover its tools. `status` does not.
+- [MCP tools](mcp.md): run `poppet mcp servers`. A server must be enabled, and each tool must be listed. `poppet mcp tools <server-id>` starts a server to discover its tools. `servers` does not.
 
 Restart the worker after you change configuration, or to reconnect a failed MCP server.
 

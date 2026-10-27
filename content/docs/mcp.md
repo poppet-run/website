@@ -32,7 +32,7 @@ Add `mcpServers` to `config.json`:
 }
 ```
 
-Replace the command, arguments, and tool names with your server's values. `args` and `tools` are required. `cwd`, `environment`, and `scheduledTools` are optional.
+Replace the command, arguments, and tool names with your server's values. `args` and `tools` are required. `cwd`, `environment`, `scheduledTools`, and `availableAfterUntrusted` are optional.
 
 - `id` is lowercase, starts with a letter, uses letters, digits, and hyphens, and is at most 64 characters.
 - The command runs directly, with no shell. Use an absolute path, especially for the background worker.
@@ -72,12 +72,11 @@ Set `mcpServers` to `[]` to turn all servers off. Restart the worker after you c
 
 ```sh
 poppet mcp servers
-poppet mcp status
 poppet mcp tools reference
 poppet chat new "Use reference to look up record 123"
 ```
 
-`servers` and `status` show each server's permissions, transport, connection state, and diagnostics without starting anything. For HTTP servers they show the endpoint's origin, not its full URL. `tools <server>` starts the server to list its allowed tools. These commands use the running worker when there is one.
+`servers` shows each server's permissions, transport, connection state, and diagnostics without starting anything. For HTTP servers it shows the endpoint's origin, not its full URL. `tools <server>` starts the server to list its allowed tools. These commands use the running worker when there is one.
 
 A server connects the first time a chat needs it. If it fails, the built-in tools keep working. Poppet tries to reconnect after 30 seconds, doubling the wait up to 10 minutes. `mcp servers` shows when the next try is due.
 
@@ -90,6 +89,10 @@ Only tools in `tools` are offered to the model. In chat, a tool call still needs
 `scheduledTools` is empty by default. Add a tool there only after you have checked that it is read-only. Scheduled runs can use only tools listed in both `tools` and `scheduledTools`. Server annotations do not grant access.
 
 Poppet treats results from MCP servers as data. They cannot authorize memory changes, task changes, or page reads.
+
+By default, MCP tools are withdrawn for the rest of a run once a fetched page, search result, or MCP result enters it. This limits the run to one round of MCP calls.
+
+Set `"availableAfterUntrusted": true` on a server only if you trust it to keep receiving calls after that content. This can support workflows that read the server's documentation before making another call. Text from a page, email, or earlier result can then influence later calls to that server, within its tool allowlist. The setting works for both stdio and HTTP servers. It does not restore memory or task mutation tools, grant access to returned URLs, or change scheduled-tool restrictions.
 
 ## Limits
 

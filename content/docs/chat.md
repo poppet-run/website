@@ -32,7 +32,7 @@ poppet chat show $session_id
 
 `chat new` and `chat send` each submit one message. `chat show` prints the messages, tool calls, run outcomes, and usage as JSON. Poppet stores provider continuation data separately and leaves it out of this output. Listing and inspecting sessions need no model or login.
 
-If a worker is running, these commands go through it. See [chat while the worker runs](worker.md#chat-while-the-worker-runs).
+Different sessions can run at the same time, up to `chat.maxConcurrentRequests`, which defaults to 3. Requests in the same session run in order. If a worker is running, these commands go through it. See [chat while the worker runs](worker.md#chat-while-the-worker-runs).
 
 ## Interactive prompt
 
