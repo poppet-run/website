@@ -37,6 +37,7 @@
       "/docs/configuration",
       "/docs/cli",
       "/docs/storage",
+      "/docs/doctor",
       "/docs/troubleshooting"
     ]
   }

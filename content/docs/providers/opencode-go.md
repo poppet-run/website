@@ -1,12 +1,12 @@
 +++
 title = "OpenCode Go"
-description = "Connect Poppet to OpenCode Go with an API key, choose a model for coding chats, and manage credentials."
+description = "Connect Poppet to OpenCode Go with an API key, choose a supported model, and manage credentials."
 weight = 30
 +++
 
 # OpenCode Go
 
-OpenCode Go is meant for coding agents. Poppet supports it for coding chats only. For general chat and scheduled summaries, use ChatGPT or OpenRouter.
+Poppet uses your selected OpenCode Go model without a separate workload setting. Check the [provider usage requirements](https://opencode.ai/v2/docs/console/go/) for your account.
 
 ## Connect
 
@@ -34,15 +34,15 @@ Save a supported model in `config.json`:
 }
 ```
 
-## Coding chats
+## Start a chat
 
-Every chat with OpenCode Go must be a coding chat:
+Start a chat with the configured model:
 
 ```sh
-poppet chat new --coding "Explain how to structure a TypeScript CLI"
+poppet chat new "Explain how to structure a TypeScript CLI"
 ```
 
-Use `--coding` with `chat interactive` for a new session, and with `tasks add` for a scheduled task. Poppet refuses a general chat with this provider before it reads your key or sends a request.
+The same model selection works with `chat interactive` and `tasks add`. Image attachments are not supported by the Go adapter; text-file attachments work.
 
 ## Credentials
 

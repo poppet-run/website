@@ -9,26 +9,28 @@ Poppet can use a browser to open websites, read the rendered text, and fill in f
 
 Poppet uses [agent-browser](https://agent-browser.dev/) to control the browser. It is off until you set it up.
 
-## Install the pinned versions
+## Install supported versions
 
-Poppet is tested with agent-browser **0.39.1** and Chrome for Testing **155.0.8059.84**, on macOS and Linux. Install agent-browser with Node 24 or later:
+Poppet supports agent-browser **0.39.4 through 0.41.x** and Chrome for Testing **156.x** on macOS and Linux. Tests use agent-browser 0.41.0 and Chrome 156.0.8078.80. Patch releases within the supported lines do not need a Poppet update. Install agent-browser with Node 24 or later:
 
 ```sh
-npm install -g agent-browser@0.39.1
+npm install -g agent-browser@0.41.0
 agent-browser --version
 ```
 
-Download the matching Chrome for Testing build and unzip it into `~/.agent-browser/browsers/chrome-155.0.8059.84/`:
+Download the matching Chrome for Testing build and unzip it into `~/.agent-browser/browsers/chrome-156.0.8078.80/`:
 
 | Platform            | Download                                                                                                           |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Apple silicon macOS | [mac-arm64](https://storage.googleapis.com/chrome-for-testing-public/155.0.8059.84/mac-arm64/chrome-mac-arm64.zip) |
-| Intel macOS         | [mac-x64](https://storage.googleapis.com/chrome-for-testing-public/155.0.8059.84/mac-x64/chrome-mac-x64.zip)       |
-| Linux x64           | [linux64](https://storage.googleapis.com/chrome-for-testing-public/155.0.8059.84/linux64/chrome-linux64.zip)       |
+| Apple silicon macOS | [mac-arm64](https://storage.googleapis.com/chrome-for-testing-public/156.0.8078.80/mac-arm64/chrome-mac-arm64.zip) |
+| Intel macOS         | [mac-x64](https://storage.googleapis.com/chrome-for-testing-public/156.0.8078.80/mac-x64/chrome-mac-x64.zip)       |
+| Linux x64           | [linux64](https://storage.googleapis.com/chrome-for-testing-public/156.0.8078.80/linux64/chrome-linux64.zip)       |
 
-Do not use `agent-browser install`, because it installs a different Chrome version. Poppet never installs software or changes versions. It checks the versions the first time a browser action runs. If something is missing, that action fails with a message, and other tools keep working.
+`agent-browser install` selects current stable Chrome, which may differ from the supported release line. Poppet never installs software or changes versions. It checks the versions the first time a browser action runs. If something is missing, that action fails with a message, and other tools keep working.
 
-If `agent-browser` is not on the worker's `PATH`, set its full path in `config.json` with `command`. You can also set `chromiumExecutable` to an absolute path to the Chrome binary.
+Poppet finds npm and Homebrew installations on `PATH`, follows symlinks, and selects the native binary beside their JavaScript launcher. If needed, set `command` to the native executable. Set `chromiumExecutable` to an absolute Chrome path to override automatic discovery. Otherwise, Poppet selects the newest usable Chrome 156 installation in your agent-browser cache.
+
+Run `poppet doctor` to check installed programs and saved version details without launching them. Missing metadata is reported as unknown. Before a browser action, Poppet checks the actual binaries; unsupported or untested versions stop the action before starting a browser.
 
 ## Turn it on
 

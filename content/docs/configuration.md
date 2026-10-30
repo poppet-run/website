@@ -78,7 +78,7 @@ Context size, conversation history, model turns, tool calls, and tool output use
 
 ## API keys
 
-Login saves each API key in `<data directory>/auth/<provider>.json`. The file is `0600`, inside a `0700` directory. Login uses the key from the environment if one is set. Otherwise it prompts without echoing. Scripts can pipe a key with `--key-stdin`. Keys are never accepted as command-line arguments.
+Login saves each API key in `<data directory>/auth/<provider>.json`. The file is `0600`, inside a `0700` directory. Provider login uses the key from the environment if one is set. Otherwise it prompts without echoing. Provider login can read a key from stdin with `--key-stdin`. Web login and MCP setup accept `--api-key <key>` or a hidden prompt. Use the prompt to keep those keys out of command arguments and shell history.
 
 These variables override the saved key for the matching service. An empty or invalid value is an error, and Poppet does not fall back to the saved key:
 
@@ -86,8 +86,6 @@ These variables override the saved key for the matching service. An empty or inv
 | ------------------------------- | ------------------ |
 | `POPPET_OPENROUTER_API_KEY`     | OpenRouter         |
 | `POPPET_OPENCODE_GO_API_KEY`    | OpenCode Go        |
-| `POPPET_BRAVE_SEARCH_API_KEY`   | Brave web search   |
-| `POPPET_KAGI_SEARCH_API_KEY`    | Kagi web search    |
 
 `provider logout` removes the saved key. It does not revoke the key with the provider, and it does not unset an environment variable. See [OpenRouter](providers/openrouter.md) and [OpenCode Go](providers/opencode-go.md) for login examples.
 
@@ -122,6 +120,8 @@ Choose a search provider, turn search on, then save that provider's key:
 poppet web login
 poppet web status
 ```
+
+Search uses only saved credentials in `auth/brave-search.json` or `auth/kagi-search.json`. Environment variables cannot supply or override search keys.
 
 Brave is the default. Kagi uses its v1 API with a bearer key. Each provider's key is stored separately, so switching providers keeps both keys. `web status` shows whether search is enabled and configured, without making a remote request. Restart the worker after you change search settings or keys. See [web search](web.md).
 

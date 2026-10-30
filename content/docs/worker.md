@@ -9,11 +9,10 @@ The worker runs scheduled tasks and handles messaging. Start it in a terminal an
 
 ## Foreground modes
 
-Choose one mode for each data directory:
+Start scheduling and configured messaging adapters:
 
 ```sh
-poppet worker run                 # Scheduling and messaging
-poppet worker run --tasks-only    # Scheduling only
+poppet worker run
 ```
 
 The worker starts your enabled [MCP tool servers](mcp.md) when they are needed, and stops them when it shuts down. Restart the worker after you change their configuration.
@@ -32,7 +31,7 @@ poppet worker status
 poppet worker logs
 ```
 
-Save your provider, model, and other settings in `config.json` before you install. The worker reads that file when it starts. After you change settings, run `poppet worker stop` and then `poppet worker start`.
+Save your provider, model, and other settings in `config.json` before you install. The worker reads that file when it starts. After you change settings, run `poppet worker restart`.
 
 Keep the checkout and the Bun executable where they are. If you move either, run `poppet worker uninstall` and then `poppet worker install` again. Each data directory has its own service, so use the same `POPPET_DATA_DIR` for every command.
 
@@ -60,10 +59,11 @@ The worker writes lifecycle logs to `<data directory>/logs/worker.log`. The dire
 ```sh
 poppet worker stop
 poppet worker start
+poppet worker restart
 poppet worker uninstall
 ```
 
-`stop` stops the worker until you start it again or log in, and keeps login startup. `uninstall` removes login startup. Neither command deletes tasks, results, facts, credentials, or logs. Starting a worker that is already running does not interrupt its active request.
+`stop` stops the worker until you start it again or log in, and keeps login startup. `uninstall` removes login startup. Neither command deletes tasks, results, facts, credentials, or logs. Starting a worker that is already running does not interrupt its active request. `restart` interrupts active work and reloads the installed worker with current code and settings.
 
 ## Concurrent requests
 
@@ -85,7 +85,7 @@ poppet store status
 
 Chats started from your terminal use your current `config.json` settings. Ctrl-C cancels the request you are waiting on, and the worker keeps running. Memory changes apply from the next run. Chat output stays in your terminal and is not written to the worker log.
 
-After you update Poppet, run `poppet worker stop` and then `poppet worker start`, so the worker runs the new code.
+After you update Poppet, run `poppet worker restart`, so the worker runs the new code.
 
 ## Browser resources
 

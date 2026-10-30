@@ -12,7 +12,7 @@ config.json       settings
 profile.md        your profile (you write it)
 soul.md           Poppet's personality (you write it)
 skills/           your skill files
-auth/             provider and search credentials
+auth/             provider, search, and MCP credentials
 channels/         Discord settings and bot token
 store/            conversations, facts, tasks, and search index
 logs/             worker log
@@ -28,7 +28,7 @@ This opens the database, applies any pending upgrades, and prints its path, sche
 
 ## What is saved
 
-- **Conversations.** Each session keeps its provider, model, and workload. Messages are kept in order, with their tool calls and results. Poppet saves each run as it starts, then marks it completed, failed, or interrupted.
+- **Conversations.** Each session keeps its provider and model. Messages are kept in order, with their attachments, tool calls, and results. Poppet saves each run as it starts, then marks it completed, failed, or interrupted.
 - **Facts.** Every change is kept as a revision with where it came from. `poppet memory history` shows them.
 - **Tasks.** Each run keeps the task settings it used. Changing a task later does not change earlier runs. Clearing tasks removes their run history, but keeps chats and queued replies.
 - **Skills.** A session or task keeps a copy of the skill it was given.

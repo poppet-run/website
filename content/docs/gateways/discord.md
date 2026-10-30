@@ -23,21 +23,13 @@ Run setup and choose Discord when prompted:
 poppet setup
 ```
 
-Or save the settings yourself. Poppet reads the token from standard input, so it never appears in your shell history:
-
-{{< shell >}}
-```bash
-printf 'Discord bot token: '; read -rs discord_token; echo
-printf '%s\n' "$discord_token" | poppet gateway discord setup <your-user-id> <server-id> <home-channel-id> --key-stdin
-unset discord_token
-```
+Or save the settings yourself. Pass all four named flags for separate gateway setup:
 
 ```fish
-read --silent --prompt-str 'Discord bot token: ' discord_token
-printf '%s\n' $discord_token | poppet gateway discord setup <your-user-id> <server-id> <home-channel-id> --key-stdin
-set -e discord_token
+poppet gateway discord setup --owner-id <your-user-id> --guild-id <server-id> --home-channel-id <home-channel-id> --bot-token <bot-token>
 ```
-{{< /shell >}}
+
+Use `poppet setup` for masked token entry without putting the token in command arguments or shell history.
 
 The settings go into the `discord` section of `config.json`. The token is saved in a protected file in your data directory. Restart the worker after you change Discord settings:
 
@@ -45,7 +37,7 @@ The settings go into the `discord` section of `config.json`. The token is saved 
 poppet worker run
 ```
 
-On macOS or Linux with systemd, if the login worker is installed, run `poppet worker stop` and then `poppet worker start`.
+On macOS or Linux with systemd, if the login worker is installed, run `poppet worker restart`.
 
 ## Start a conversation
 
@@ -61,7 +53,7 @@ To start a fresh session, use `/new`. Add `--skill <name>` to use a [skill](../s
 
 In a thread, `/status` shows the session, its skill, and its latest run. `/cancel` stops the active request and any that are queued.
 
-These are plain messages, not Discord slash commands. The bot ignores other bots, webhooks, and anyone who is not the owner. Direct messages, forum channels, attachments, and voice are not supported.
+These are plain messages, not Discord slash commands. The bot ignores other bots, webhooks, and anyone who is not the owner. Direct messages, forum channels and voice are not supported.
 
 While it works, the bot shows the typing indicator. It also adds 👀 to your message, then replaces it with ✅ when the run succeeds. If the bot lacks reaction permission, chat still works.
 
@@ -70,6 +62,10 @@ While it works, the bot shows the typing indicator. It also adds 👀 to your me
 Poppet names the threads it creates, using a title from the conversation once the first answer is sent. Renaming a session with `poppet chat rename` also renames its thread, while the worker is running. Poppet only renames threads it created. If you rename a thread yourself, Poppet stops changing its name.
 
 Different threads can run at the same time, up to `chat.maxConcurrentRequests`, which defaults to 3. Messages in one thread are answered in order. Cancelling one thread does not affect another.
+
+## Attachments
+
+Attach images or text files to a mention or thread message. Messages with files need no text. See [chat](../chat.md#attach-files) for supported types and limits. Files download when the request runs. If a queued file link expires, send the files again. A rejected file stops the message before inference.
 
 ## Replies and failures
 
@@ -92,13 +88,13 @@ Only the owner can answer, and each approval covers one command. Requests expire
 
 ## Scheduled results
 
-To send a task's results to the home channel, add `--channel discord` when you create it:
+To send a task's results to the home channel, add `--to discord` when you create it:
 
 ```sh
-poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --channel discord "Summarize my recent conversations"
+poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --to discord "Summarize my recent conversations"
 ```
 
-Add `--conversation <channel-or-thread-id>` to send results somewhere else in the same server. Poppet posts results as standalone messages, so they do not change any conversation. Scheduled results need the combined worker, `poppet worker run`. See [scheduled tasks](../tasks.md#deliver-results-to-discord).
+Use `--to discord:<channel-or-thread-id>` instead to send results somewhere else in the same server. Poppet posts results as standalone messages, so they do not change any conversation. Scheduled results need the combined worker, `poppet worker run`. See [scheduled tasks](../tasks.md#deliver-results-to-discord).
 
 ## Schedule through chat
 

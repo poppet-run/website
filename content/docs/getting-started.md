@@ -8,7 +8,7 @@ next = "/docs/chat"
 
 Poppet runs from source. You need Git, Bun 1.4.4, and an account with one of the providers below.
 
-Each model request comes out of your provider account's quota. If you already pay for ChatGPT, start there. It needs no API key. OpenRouter works for general chat too. OpenCode Go only handles coding chats.
+Each model request comes out of your provider account's quota. If you already pay for ChatGPT, start there. It needs no API key. OpenRouter works for general chat too. OpenCode Go is another supported provider.
 
 ## 1. Install Poppet
 
@@ -53,7 +53,7 @@ poppet --help
 poppet setup
 ```
 
-Setup asks you to choose a provider, sign in if needed, and pick a model from its list. You can also configure Discord and install the background worker on macOS or Linux with systemd. It saves your choices in `config.json` and your credentials in protected files. Run it again later and it offers your current settings as the defaults.
+Setup asks you to choose a provider, sign in if needed, and pick a model from its list. You can also configure Discord and install the background worker on macOS. On other platforms, setup prints the foreground worker command; Linux with systemd also supports `poppet worker install`. It saves your choices in `config.json` and your credentials in protected files. Run it again later and it offers your current settings as the defaults.
 
 Setup needs an interactive terminal. If you prefer to configure things yourself, continue with step 3.
 
@@ -93,7 +93,7 @@ poppet chat new "Help me plan a small TypeScript project"
 poppet chat sessions
 ```
 
-Poppet streams the answer to your terminal and saves the conversation. Session and run IDs print to stderr. For OpenCode Go, add `--coding` to `chat new`.
+Poppet streams the answer to your terminal and saves the conversation. Session and run IDs print to stderr.
 
 To continue a conversation, copy its session ID:
 
@@ -109,7 +109,7 @@ poppet chat send $session_id "What should I build first?"
 ```
 {{< /shell >}}
 
-To chat interactively in a terminal, run `poppet chat interactive`, or add a session ID to resume one. Enter one message per line and use `/exit` to leave.
+To chat interactively in a terminal, run `poppet chat interactive`, or add a session ID to resume one. Press Enter to send, Shift+Enter for a newline in supported terminals, and `/exit` to leave. You can queue messages while an answer streams. See [chat](chat.md#interactive-prompt).
 
 If a request fails, see [troubleshooting](troubleshooting.md).
 

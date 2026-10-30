@@ -7,6 +7,8 @@ description = "Check setup, provider access, background workers, Discord, and op
 
 Run these commands from any directory. Keep the full error message when you report a problem.
 
+Start with `poppet doctor` for read-only setup and worker checks, or `poppet doctor --json` for scripts. See [doctor](doctor.md) for what it checks and its limits.
+
 ## Poppet will not start
 
 ```sh
@@ -24,8 +26,7 @@ Check `poppet config`. It shows the config file location and whether it exists.
 A running worker keeps the settings it read when it started. After you change `config.json`, restart it. For a worker that runs at login:
 
 ```sh
-poppet worker stop
-poppet worker start
+poppet worker restart
 ```
 
 For a foreground worker, press Ctrl-C in its terminal and start it again.
@@ -41,7 +42,7 @@ poppet provider status openai-chatgpt
 poppet provider models openai-chatgpt
 ```
 
-Check that the model in `config.json` appears in the list. ChatGPT also needs plan-usage consent. OpenCode Go accepts only coding chats, so start one with `--coding`. For credential and quota errors, see the [provider guides](providers/_index.md).
+Check that the model in `config.json` appears in the list. ChatGPT also needs plan-usage consent. For credential and quota errors, see the [provider guides](providers/_index.md).
 
 ## A task did not run
 

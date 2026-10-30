@@ -30,7 +30,7 @@ guide = "docs/tasks/"
 label = "Terminal"
 code = """poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London "Summarize my recent conversations"
 poppet tasks list
-poppet tasks skip-next $task_id"""
+poppet tasks skip $task_id"""
 
 [[features]]
 title = "Chat from Discord."

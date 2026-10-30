@@ -33,6 +33,7 @@ Poppet runs on your computer and uses a model provider you choose. Start with [g
 
 ## Reference
 
+- [Doctor](doctor.md): inspect setup and worker state without changing them.
 - [Configuration](configuration.md): save settings in `config.json`, and manage API keys and optional tools.
 - [Command line](cli.md): look up commands and options.
 - [Storage](storage.md): find your data, check the database, and understand interrupted work.
