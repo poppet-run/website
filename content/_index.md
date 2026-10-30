@@ -3,7 +3,7 @@ title = "Your own little AI assistant."
 heading = "Your own little"
 headingAccent = "AI assistant."
 status = "In early development"
-note = "Run from source with Bun. Connect your own model provider."
+note = "Run from source with Bun. Connect your own model provider. Poppet is still unstable, and features may change."
 
 [[features]]
 title = "Saved conversations."
