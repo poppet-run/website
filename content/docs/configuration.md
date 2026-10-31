@@ -24,6 +24,8 @@ Save settings in `<data directory>/config.json`, which defaults to `~/.config/po
 
 A missing file means Poppet uses its defaults, and it creates nothing. The file must be valid JSON, at most 64 KiB, owned by your user, and not writable by other users. Poppet rejects symlinks and hard links. Unknown keys, wrong types, and empty text values are errors. Poppet does not expand `~` in paths, so write paths in full.
 
+The retired `browser` key is ignored and can be removed from existing configuration. Built-in browser automation is no longer available.
+
 Restart the worker after you edit the file. New chats and tasks use the new defaults. Existing sessions and tasks keep the provider and model they were saved with.
 
 Check the result with:
@@ -62,7 +64,6 @@ Use the same value for every command, including the worker's login service. Each
 | `discord`                 | Unset                  | Owner ID, server ID, and home channel ID; see [Discord](gateways/discord.md)      |
 | `webSearch`               | `false`                | Enable web search when the selected search provider has a key                     |
 | `webSearchProvider`       | `brave`                | `brave` or `kagi`                                                                 |
-| `browser`                 | `{ "enabled": false }` | [Browser access and allowed hosts](browser.md)                                    |
 | `mcpServers`              | `[]`                   | [Local tool servers and their permissions](mcp.md)                                |
 | `gatewayPackages`         | `[]`                   | External messaging adapters to load                                               |
 | `tasks.catchUpMinutes`    | `60`                   | How late a recurring task can start after a missed time, from 0 to 1440          |

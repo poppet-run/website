@@ -52,21 +52,18 @@ poppet tasks edit <task-id> --name "Morning review"
 poppet tasks edit <task-id> --prompt "Summarize open decisions from recent conversations."
 poppet tasks edit <task-id> --cron "30 8 * * 1-5" --tz Europe/London
 poppet tasks edit <task-id> --at 2099-10-22T09:00:00+01:00
-poppet tasks skip <task-id>
-poppet tasks snooze <task-id> --until 2099-10-22T10:00:00+01:00
-poppet tasks snooze <task-id> --for 1h
 poppet tasks run <task-id>
 ```
 
-Snooze accepts exactly one of `--until` or `--for`. A relative snooze starts from now and must be later than the next run's current ready time.
+Ask in chat to skip or snooze the next run. These actions have no CLI command. A snooze must end later than the next run's current ready time.
 
 An edit changes only the fields you give. A new schedule needs both a cron expression and a timezone, and a new one-off time must be in the future with a UTC offset. Provider, model, skill, and destination stay the same. You can edit a paused task without resuming it.
 
-| Command     | What it does                                                                                                                               |
+| Control     | What it does                                                                                                                               |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `skip` | Skips the next run only. A recurring task keeps its schedule. A one-off task has no later run.                                            |
-| `snooze`    | Delays the next run until a later time. Cron times missed during the snooze do not run later.                                             |
-| `run`       | Queues a normal run now, without changing the schedule. It confirms that the run is queued, not that it finished.                          |
+| Skip via chat | Skips the next run only. A recurring task keeps its schedule. A one-off task has no later run.                                            |
+| Snooze via chat | Delays the next run until a later time. Cron times missed during the snooze do not run later.                                             |
+| `tasks run` | Queues a normal run now, without changing the schedule. It confirms that the run is queued, not that it finished.                          |
 
 A name or prompt change replaces a run that has not started yet, and the original run stays in `tasks show` as cancelled. A schedule change cancels pending work and works out the next future time. Editing a finished one-off's name or prompt does not run it again. Give it a new future time to run it again.
 
@@ -80,7 +77,7 @@ List my scheduled tasks.
 Pause task <task-id>.
 ```
 
-Poppet asks when a time, timezone, or task is unclear. Pausing and resuming use task IDs, so Poppet asks you to choose when names match. Deletion removes the task and its history, and fails while a run is active. Retrying runs, cancelling active runs, and clearing provider pauses stay in the CLI.
+Poppet asks when a time, timezone, or task is unclear. Pausing and resuming use task IDs, so Poppet asks you to choose when names match. Deletion removes the task and its history, and fails while a run is active. Retrying runs and cancelling active runs stay in the CLI.
 
 A task change is saved even if the chat reply fails afterwards. Check `tasks list` or `tasks show` before asking again.
 
@@ -122,7 +119,7 @@ With [web search](web.md) set up, a prompt can ask for research without a URL:
 poppet tasks add weekly-research --cron "0 9 * * 5" --tz Europe/London "Search for recent Bun releases, read relevant sources, and cite them"
 ```
 
-Search errors return a failed tool result for the model to explain or handle within the run limits. They do not automatically retry or pause the provider. Browser automation is not available to scheduled runs.
+Search errors return a failed tool result for the model to explain or handle within the run limits. They do not automatically retry or pause the provider.
 
 ## Missed runs, pauses, and retries
 
@@ -135,13 +132,11 @@ To cancel a run that is pending or running, or to retry a failed one:
 ```sh
 poppet tasks cancel <task-id>
 poppet tasks retry <task-id>
-poppet tasks providers
-poppet tasks resume-provider openai-chatgpt
 ```
 
-Cancel selects the task's pending or active run. Retry selects its latest occurrence and fails if that occurrence succeeded or is active. Add `--occurrence <occurrence-id>` to either command to select a specific occurrence belonging to the task. Restart an older worker after upgrading to these task-based commands.
+Cancel selects the task's pending or active run. If neither exists, it fails without changing the schedule. Retry selects its latest occurrence and fails if that occurrence succeeded or is active. Add `--occurrence <occurrence-id>` to either command to select a specific occurrence belonging to the task. Restart an older worker after upgrading to these task-based commands.
 
-A quota failure pauses scheduled runs for that provider until you run `tasks resume-provider`. Temporary and rate-limit failures delay later runs by 30 seconds, doubling after each failure up to five minutes. Poppet never retries a failed run on its own. `retry` starts a fresh session for it. Resume a paused task before retrying it.
+A quota failure pauses scheduled runs for that provider indefinitely. The CLI has no command to clear a quota pause. Inspect provider pauses with `poppet worker status`. Temporary and rate-limit failures delay later runs by 30 seconds, doubling after each failure up to five minutes. Poppet never retries a failed run on its own. `retry` starts a fresh session for it. Resume a paused task before retrying it.
 
 ## Remove a task
 

@@ -27,7 +27,6 @@
     "pages": [
       "/docs/gateways",
       "/docs/web",
-      "/docs/browser",
       "/docs/mcp"
     ]
   },

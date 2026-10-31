@@ -15,7 +15,7 @@ Include a public `http` or `https` address in your message:
 poppet chat new "Summarize https://example.com/ and cite the source"
 ```
 
-Poppet reads plain text and static HTML. It removes scripts, styles, and hidden content, and it does not run JavaScript. It cannot read PDFs, pages behind a login, or downloads. Use [browser automation](browser.md) for pages that need JavaScript.
+Poppet reads plain text and static HTML. It removes scripts, styles, and hidden content, and it does not run JavaScript. It cannot read PDFs, pages behind a login, or downloads.
 
 Each read has a 15-second limit, follows at most three redirects, and is capped at 1 MiB. The address must resolve only to public IP addresses, and it must use a standard port. Poppet rejects addresses that contain a username or password. The result includes the final address, the page title, the text, and whether it was shortened.
 

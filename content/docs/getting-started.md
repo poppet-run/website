@@ -121,4 +121,4 @@ You can keep chatting without setting up anything else.
 - [Skills](skills.md) let you choose a reusable procedure for a chat or task.
 - [Scheduled tasks](tasks.md) run prompts later. They need the [worker](worker.md) running.
 - [Discord](gateways/_index.md) lets you chat from a Discord thread.
-- [Web search](web.md), [browser automation](browser.md), and [MCP tools](mcp.md) add optional tools.
+- [Web search](web.md) and [MCP tools](mcp.md) add optional tools.

@@ -30,7 +30,7 @@ poppet chat show $session_id
 ```
 {{< /shell >}}
 
-`chat new` and `chat send` each submit one message. `chat show` prints the messages, tool calls, run outcomes, and usage as JSON. Poppet stores provider continuation data separately and leaves it out of this output. Listing and inspecting sessions need no model or login.
+`chat new` and `chat send` each submit one message. `chat show` prints the conversation and a table of runs with their states, token usage, tool calls, and failures. Add `--json` for every saved message, tool call, run output, and usage record. Poppet stores provider continuation data separately and leaves it out of both forms. Listing and inspecting sessions need no model or login.
 
 Different sessions can run at the same time, up to `chat.maxConcurrentRequests`, which defaults to 3. Requests in the same session run in order. If a worker is running, these commands go through it. See [chat while the worker runs](worker.md#chat-while-the-worker-runs).
 
@@ -74,7 +74,7 @@ poppet chat search "project TypeScript"
 poppet chat show <session-id-from-search>
 ```
 
-Search returns up to ten matches, ranked by relevance. Each match includes its session and message IDs, the session title, and a short excerpt. Search queries are plain text, at most 256 characters. Every word must match. Search treats operators such as `OR` as ordinary words.
+Search prints a table of up to ten matches, ranked by relevance. Use `poppet chat search --json "project TypeScript"` for the full result, including `matches` and `truncated`. Each match includes its session and message IDs, the session title, and a short excerpt. Search queries are plain text, at most 256 characters. Every word must match. Search treats operators such as `OR` as ordinary words.
 
 Search covers your messages and Poppet's final answers from completed runs. It leaves out failed input, tool results, and intermediate text. It needs no model or login.
 
@@ -173,10 +173,6 @@ poppet chat new "Search for recent Bun releases, read a source, and cite it"
 ```
 
 Answers should say which claims come from search snippets and which come from pages Poppet read.
-
-## Use the browser
-
-With [browser automation](browser.md) turned on, interactive and messaging chats can open websites, read them, and fill in forms when you ask. Each run gets its own browser, and logins do not carry over between messages. Scheduled runs have no browser tools.
 
 ## Failures and cancellation
 

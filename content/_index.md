@@ -25,12 +25,12 @@ poppet chat new --skill weekly-review "Review my Acorn project\""""
 
 [[features]]
 title = "Scheduled tasks."
-description = "Run a prompt later or on a schedule. Edit, pause, skip, or snooze tasks, and read the results whenever you like."
+description = "Run a prompt later or on a schedule. Edit, pause, or run tasks, and read the results whenever you like."
 guide = "docs/tasks/"
 label = "Terminal"
 code = """poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London "Summarize my recent conversations"
 poppet tasks list
-poppet tasks skip $task_id"""
+poppet tasks pause $task_id"""
 
 [[features]]
 title = "Chat from Discord."
@@ -49,10 +49,6 @@ guide = "docs/chat/#read-a-web-page"
 [[tools]]
 title = "Web search"
 guide = "docs/web/"
-
-[[tools]]
-title = "Browser automation"
-guide = "docs/browser/"
 
 [[tools]]
 title = "Shell commands, reviewed first"

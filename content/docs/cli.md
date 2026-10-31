@@ -23,6 +23,30 @@ Run `poppet doctor` for read-only setup and worker inspection, or
 `poppet doctor --json` for scripts. See [doctor](doctor.md) for checks, exit codes,
 and limits.
 
+## Output
+
+Commands print human-readable text: lists as aligned tables, single records as
+labelled fields, and changes as a short confirmation. Times are shown in the
+local timezone to the minute. On a terminal, the last table column is shortened
+to fit the window; redirected output keeps full values. `NO_COLOR=1` disables
+styling.
+
+Commands that report data accept `--json` to print the full result as JSON
+instead, with Unix-millisecond timestamps and every field. Use it in scripts:
+
+```fish
+poppet tasks list --json
+poppet memory set --json project "Poppet"
+```
+
+For commands that take free text, put `--json` before the text; after it,
+`--json` is part of the text. `--json` is available on `config`, `doctor`,
+`provider status` and `models`, `web status`, `chat rename`, `search`,
+`sessions` and `show`, `skills list` and `show`, all `memory` and `tasks`
+commands, `mcp servers` and `tools`, `store status`, and `worker status`.
+Commands that stream answers, prompt for input, or only confirm a setup step
+print text only.
+
 ## Shell completions
 
 `poppet --completions <shell>` prints a completion script for `bash`, `zsh`, or
@@ -171,7 +195,7 @@ Enable `webSearch` separately and restart any running worker. See
 | `chat rename <session> <title>`                            | Rename a saved session without inference.                   |
 | `chat search <query>`                                      | Search completed conversation text without inference.       |
 | `chat sessions`                                            | List saved sessions.                                        |
-| `chat show <session>`                                      | Print saved messages, tool calls, and run outcomes as JSON. |
+| `chat show <session>`                                      | Show the conversation and runs; add `--json` for full records. |
 
 See [chat](chat.md) for session selection, streaming, cancellation, limits,
 attachments, and the tools available during a run.
@@ -206,8 +230,6 @@ See [memory](memory.md) for keys, limits, profiles, and deletion behavior.
 | `tasks add <name> (--at <timestamp> \| --in <duration>) [--skill <name>] [--to <gateway>[:<conversation-id>]] <prompt>` | Schedule a one-off request.                                        |
 | `tasks add <name> --cron <expression> --tz <timezone> [--skill <name>] [--to <gateway>[:<conversation-id>]] <prompt>`   | Schedule recurring work.                                           |
 | `tasks edit <task> [--name <name>] [--prompt <prompt>] [--at <timestamp> \| --cron <expression> --tz <timezone>]`       | Edit definition fields while retaining task identity and history.  |
-| `tasks skip <task>`                                                                                                     | Consume exactly the next execution.                                |
-| `tasks snooze <task> (--until <timestamp> \| --for <duration>)`                                                         | Delay the next execution.                                          |
 | `tasks run <task>`                                                                                                      | Queue normal scheduled work without shifting recurring cadence.    |
 | `tasks` / `tasks list`                                                                                                  | List saved tasks.                                                  |
 | `tasks show <task>`                                                                                                     | Show occurrences, results, delivery states, and skipped intervals. |
@@ -215,8 +237,6 @@ See [memory](memory.md) for keys, limits, profiles, and deletion behavior.
 | `tasks resume <task>`                                                                                                   | Resume future occurrences.                                         |
 | `tasks cancel <task> [--occurrence <id>]`                                                                               | Cancel pending or active work.                                     |
 | `tasks retry <task> [--occurrence <id>]`                                                                                | Explicitly retry an unsuccessful occurrence.                       |
-| `tasks providers`                                                                                                       | Show provider quota pauses and temporary backoff.                  |
-| `tasks resume-provider <provider>`                                                                                      | Allow scheduled requests for a provider again.                     |
 | `tasks remove <task>`                                                                                                   | Remove one task and its history; rejects running tasks.            |
 | `tasks clear`                                                                                                           | Interrupt active work and remove all tasks and task history.       |
 
@@ -249,6 +269,6 @@ controls, and uncertain deliveries. Use `poppet setup` for masked token entry.
 
 See [worker](worker.md) for foreground modes, login lifecycle commands, logs,
 interactive requests, and recovery. `worker status` includes messaging connection,
-queue, and delivery status under `worker.messaging`. Only one worker can own a data directory
+queue, and delivery status. In `worker status --json`, these appear under `worker.messaging`. Only one worker can own a data directory
 at a time. Commands use the worker while it is running and run locally when it
 is stopped; a lost response does not cause command replay.

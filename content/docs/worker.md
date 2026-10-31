@@ -87,10 +87,6 @@ Chats started from your terminal use your current `config.json` settings. Ctrl-C
 
 After you update Poppet, run `poppet worker restart`, so the worker runs the new code.
 
-## Browser resources
-
-[Browser automation](browser.md) runs inside the process that owns the chat. Each worker-backed chat gets its own browser. Restart the worker after you change browser settings. Scheduled tasks get no browser.
-
 ## Sleep and missed runs
 
 The worker does not keep your computer awake. After sleep, an overdue one-off task runs once. A recurring task runs its most recent missed time once, if that time is within `tasks.catchUpMinutes`, which defaults to 60 minutes. Earlier missed times are skipped. Poppet never replays failed or interrupted requests on its own.

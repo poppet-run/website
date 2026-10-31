@@ -53,13 +53,7 @@ poppet tasks list
 poppet tasks show <task-id>
 ```
 
-`tasks show` lists the next time, past runs, pauses, failures, and results. Check the timezone you saved, and check whether the provider is paused:
-
-```sh
-poppet tasks providers
-```
-
-Check the worker and its log. Login startup is available on macOS and Linux with systemd:
+`tasks show` lists the next time, past runs, pauses, failures, and results. Check the timezone you saved. Use `worker status` to inspect provider pauses, and check the worker log. Login startup is available on macOS and Linux with systemd:
 
 ```sh
 poppet worker status
@@ -78,10 +72,9 @@ Check the connection state, your owner ID, and the server ID in `config.json`. P
 
 If a reply's delivery is uncertain, check the saved answer with `poppet chat show <session-id>` before you post it again. Discord may already have received it.
 
-## Search, browser, or MCP tools are missing
+## Search or MCP tools are missing
 
 - [Web search](web.md): run `poppet web status`. Search needs both `webSearch` set to `true` and a saved key.
-- [Browser](browser.md): check `browser.enabled`, the allowed domains, and the pinned executables. Scheduled tasks never get browser tools.
 - [MCP tools](mcp.md): run `poppet mcp servers`. A server must be enabled, and each tool must be listed. `poppet mcp tools <server-id>` starts a server to discover its tools. `servers` does not.
 
 Restart the worker after you change configuration, or to reconnect a failed MCP server.
