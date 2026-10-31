@@ -74,7 +74,7 @@ If a reply's delivery is uncertain, check the saved answer with `poppet chat sho
 
 ## Search or MCP tools are missing
 
-- [Web search](web.md): run `poppet web status`. Search needs both `webSearch` set to `true` and a saved key.
+- [Web search](web.md): run `poppet web status`. Search needs `webSearchProvider` set to `brave` or `kagi` and a saved key for that provider. Remove the obsolete `webSearch` field if present; it causes a configuration error.
 - [MCP tools](mcp.md): run `poppet mcp servers`. A server must be enabled, and each tool must be listed. `poppet mcp tools <server-id>` starts a server to discover its tools. `servers` does not.
 
 Restart the worker after you change configuration, or to reconnect a failed MCP server.

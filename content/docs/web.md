@@ -23,16 +23,15 @@ Poppet reads a page only when its address is in your current message. Addresses 
 
 ## Turn on web search
 
-Choose a search provider, turn search on, then save that provider's key:
+Set `webSearchProvider` in `config.json` to enable search, then save that provider's key:
 
 ```json
 {
-  "webSearch": true,
   "webSearchProvider": "brave"
 }
 ```
 
-Use `"kagi"` for Kagi. Brave is the default.
+Use `"kagi"` for Kagi. No provider is selected by default. Remove `webSearchProvider` to disable search while keeping saved keys. Set a provider before running `web login` or `web logout`.
 
 ```sh
 poppet web login
@@ -42,6 +41,10 @@ poppet web status
 `web login` prompts for the key without showing it. Use `--api-key <key>` in a script. Get a key from [Brave's LLM Context API](https://api-dashboard.search.brave.com/documentation/services/llm-context) or from [Kagi's API keys page](https://kagi.com/api/keys). `web status` reports whether search is enabled and has a key, and it does not contact the provider.
 
 Search uses saved credentials only; environment variables cannot supply or override its keys. Each provider's key is saved separately, so you can switch between Brave and Kagi without losing either key. `web logout` removes the saved key for the selected provider. Restart the worker after you change search settings or keys.
+
+`web status` reports search as disabled when no provider is selected. With a provider selected, it reports search as enabled and separately shows whether a key is saved.
+
+If your configuration still contains `webSearch`, remove it. Poppet rejects that field. See [configuration](configuration.md#web-search) for migration steps.
 
 If search is off or has no key, the search tool is not offered to the model. Reading pages still works.
 
