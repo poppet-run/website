@@ -172,7 +172,7 @@ With [web search](web.md) set up, the model can search and then read the sources
 poppet chat new "Search for recent Bun releases, read a source, and cite it"
 ```
 
-Answers should say which claims come from search snippets and which come from pages Poppet read.
+Search snippets may contain extracted page passages. Poppet can answer from those passages when they are sufficient, or read a source for more detail. Answers should cite source URLs and distinguish search excerpts from pages Poppet fetched directly.
 
 ## Failures and cancellation
 
