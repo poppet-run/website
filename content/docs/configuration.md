@@ -62,8 +62,7 @@ Use the same value for every command, including the worker's login service. Each
 | `model`                   | Unset                  | Model ID for new chats and tasks                                                  |
 | `applicationName`         | `Poppet`               | Name used during ChatGPT's initial registration                                   |
 | `discord`                 | Unset                  | Owner ID, server ID, and home channel ID; see [Discord](gateways/discord.md)      |
-| `webSearch`               | `false`                | Enable web search when the selected search provider has a key                     |
-| `webSearchProvider`       | `brave`                | `brave` or `kagi`                                                                 |
+| `webSearchProvider`       | Unset                  | Enable search with `brave` or `kagi` when that provider has a saved key             |
 | `mcpServers`              | `[]`                   | [Local tool servers and their permissions](mcp.md)                                |
 | `gatewayPackages`         | `[]`                   | External messaging adapters to load                                               |
 | `tasks.catchUpMinutes`    | `60`                   | How late a recurring task can start after a missed time, from 0 to 1440          |
@@ -110,11 +109,10 @@ Use your own IDs. Removing the `discord` section turns Discord off and keeps the
 
 ## Web search
 
-Choose a search provider, turn search on, then save that provider's key:
+Set `webSearchProvider` in `config.json` to enable search, then save that provider's key:
 
 ```json
 {
-  "webSearch": true,
   "webSearchProvider": "kagi"
 }
 ```
@@ -126,7 +124,9 @@ poppet web status
 
 Search uses only saved credentials in `auth/brave-search.json` or `auth/kagi-search.json`. Environment variables cannot supply or override search keys.
 
-Brave is the default. Kagi uses its v1 API with a bearer key. Each provider's key is stored separately, so switching providers keeps both keys. `web status` shows whether search is enabled and configured, without making a remote request. Restart the worker after you change search settings or keys. See [web search](web.md).
+Choose `brave` or `kagi`; there is no default provider. Remove `webSearchProvider` to disable search while keeping saved keys. Kagi uses its v1 API with a bearer key. Each provider's key is stored separately, so switching providers keeps both keys. `web status` shows whether search is enabled and configured, without making a remote request. Restart the worker after you change search settings or keys. See [web search](web.md).
+
+The removed `webSearch` field is rejected as an unknown setting, even when it is `false`. Remove it from existing configuration. To enable search, set `webSearchProvider` and save its key. To keep search disabled, remove both fields.
 
 ## Reasoning and timing logs
 
