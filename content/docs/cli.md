@@ -92,8 +92,8 @@ for an existing provider, and lists models from that provider. Discord is option
 skipping it leaves its policy and token unchanged. Discord token input displays
 asterisks. Other settings in `config.json` are preserved.
 
-If the selected provider uses an API key from the shell environment, setup saves
-it through the existing login command so the background worker can use it too.
+If the selected provider uses an API key from the shell environment, setup still
+asks you to enter a key with masked input and saves it for the background worker.
 
 Authentication saves immediately. Provider and model choices save after the
 prompts, followed by Discord if selected. Cancellation or a later failure keeps
@@ -102,8 +102,9 @@ overwritten. Setup does not run inference or test Discord access.
 
 On macOS, setup offers to install and start the worker, start an installed
 worker, or explicitly restart a loaded worker. Restarting can interrupt active runs.
-Other platforms get the foreground command. Use the individual provider, gateway,
-and worker commands for scripts; setup has no noninteractive mode.
+Other platforms get the foreground command. Use gateway and worker commands and
+`config.json` for scripted configuration. API-key login requires a terminal;
+setup has no noninteractive mode.
 
 ## Providers and models
 
@@ -136,7 +137,9 @@ through `provider login openai-chatgpt`.
 | `provider models [provider]`          | List available models.                  |
 | `provider logout [provider]`          | Clear that provider's saved connection. |
 
-`--key-stdin` applies to API-key providers. `--no-browser` and
+API-key login requires an interactive terminal and masks typed or pasted characters
+with `*`, even when an environment key is set. It does not accept piped input or
+`--key-stdin`. `--no-browser` and
 `--callback-port <port>` apply to browser sign-in; see
 [headless and remote machines](providers/openai-chatgpt.md#headless-and-remote-machines).
 See [ChatGPT](providers/openai-chatgpt.md), [OpenCode Go](providers/opencode-go.md),

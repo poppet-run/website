@@ -15,7 +15,9 @@ poppet provider login opencode-go
 poppet provider status opencode-go
 ```
 
-`login` asks for your key without showing it. In a script, pipe the key with `--key-stdin`. Keys are never accepted as command-line arguments.
+`login` requires an interactive terminal and masks typed or pasted characters with `*`, even when an environment key is set. Piped input and `--key-stdin` are not supported. Keys are never accepted as command-line arguments.
+
+For unattended inference, set `POPPET_OPENCODE_GO_API_KEY` in the process environment or use a key saved by an earlier interactive login. Login does not save the environment value.
 
 ## Models
 

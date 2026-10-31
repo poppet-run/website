@@ -79,9 +79,11 @@ Context size, conversation history, model turns, tool calls, and tool output use
 
 ## API keys
 
-Login saves each API key in `<data directory>/auth/<provider>.json`. The file is `0600`, inside a `0700` directory. Provider login uses the key from the environment if one is set. Otherwise it prompts without echoing. Provider login can read a key from stdin with `--key-stdin`. Web login and MCP setup accept `--api-key <key>` or a hidden prompt. Use the prompt to keep those keys out of command arguments and shell history.
+Login saves each API key in `<data directory>/auth/<provider>.json`. The file is `0600`, inside a `0700` directory. Provider login requires an interactive terminal and masks typed or pasted characters with `*`, even when an environment key is set. It does not read keys from environment variables, command-line arguments, or piped input; `--key-stdin` is no longer supported.
 
-These variables override the saved key for the matching service. An empty or invalid value is an error, and Poppet does not fall back to the saved key:
+Web login and MCP setup accept `--api-key <key>` or a masked prompt. Use the prompt to keep those keys out of command arguments and shell history.
+
+These variables override the saved key for inference and status, but provider login does not save their values. An empty or invalid value is an error, and Poppet does not fall back to the saved key:
 
 | Variable                        | Used for           |
 | ------------------------------- | ------------------ |
