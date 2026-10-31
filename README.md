@@ -6,8 +6,7 @@ assistant that runs on your computer.
 Visit the [documentation](https://poppet.run/docs/) to get started, or see the
 [Poppet repository](https://github.com/poppet-run/poppet) for the app source.
 
-Headings and the wordmark use a self-hosted Nunito variable font, with Latin
-characters and weights 400–900. The WOFF2 file comes from
-[Google Fonts](https://fonts.google.com/specimen/Nunito) and is distributed under
-the [SIL Open Font License](static/fonts/OFL-Nunito.txt). Body text uses system
-fonts.
+The Open Graph image is `static/images/poppet-social.png`. Its editable vector
+source is `assets/images/poppet-social.svg`, based on the brand feedback card,
+with Avenir Next Heavy wordmark and Avenir Next Bold domain lettering converted
+to outlines. Export the SVG at 1254 × 1254 pixels when updating the PNG.
