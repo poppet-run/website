@@ -21,6 +21,7 @@
     <meta property="og:image:height" content="1254">
     <meta property="og:image:alt" content="Poppet's apricot Soft stitch mascot waving from a cream pocket, with the Poppet wordmark on navy.">
     <meta name="twitter:card" content="summary_large_image">
+    <link rel="preload" href="{{ "fonts/nunito-latin-variable.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
     {{ $style := resources.Get "css/site.css" | minify | fingerprint }}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
     {{ $script := resources.Get "js/site.js" | minify | fingerprint }}

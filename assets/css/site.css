@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("../fonts/nunito-latin-variable.woff2") format("woff2");
+}
+
 :root {
   color-scheme: dark;
   --navy: #19243a;
@@ -16,6 +24,7 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; }
+h1, h2, h3, h4, h5, h6, .wordmark { font-family: "Nunito", ui-rounded, system-ui, sans-serif; }
 a { color: inherit; text-underline-offset: 0.2em; }
 :focus-visible { outline: 2px solid var(--apricot); outline-offset: 5px; }
 ::selection { color: var(--navy); background: var(--apricot); }
