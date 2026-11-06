@@ -15,6 +15,7 @@ Poppet runs on your computer and uses a model provider you choose. Start with [g
 ## Use Poppet
 
 - [Chat](chat.md): hold a conversation, resume a session, and find earlier answers.
+- [Web chat](web-chat.md): chat from a browser and reconnect to running replies.
 - [Memory](memory.md): keep your profile, Poppet's personality, and facts you ask it to save.
 - [Skills](skills.md): write a reusable procedure and choose it for a chat or task.
 - [Run commands](commands.md): let Poppet run shell commands, with a review before each one.

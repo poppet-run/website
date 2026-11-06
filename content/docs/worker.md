@@ -5,7 +5,7 @@ description = "Run scheduling and messaging in the foreground or at login on mac
 
 # Worker
 
-The worker runs scheduled tasks and handles messaging. Start it in a terminal and leave that terminal open. Use a second terminal to check task results or the connection. Terminal chat also works without a worker.
+The worker runs scheduled tasks, handles messaging, and serves [web chat](web-chat.md) when `web.json` is configured. Start it in a terminal and leave that terminal open. Use a second terminal to check task results or the connection. Terminal chat also works without a worker.
 
 ## Foreground modes
 
@@ -14,6 +14,8 @@ Start scheduling and configured messaging adapters:
 ```sh
 poppet worker run
 ```
+
+Web replies continue when you close the browser. Use Stop in web chat to cancel a reply. Stopping the worker interrupts unfinished replies.
 
 The worker starts your enabled [MCP tool servers](mcp.md) when they are needed, and stops them when it shuts down. Restart the worker after you change their configuration.
 

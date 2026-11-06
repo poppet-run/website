@@ -80,7 +80,7 @@ Context size, conversation history, model turns, tool calls, and tool output use
 
 Login saves each API key in `<data directory>/auth/<provider>.json`. The file is `0600`, inside a `0700` directory. Provider login requires an interactive terminal and masks typed or pasted characters with `*`, even when an environment key is set. It does not read keys from environment variables, command-line arguments, or piped input; `--key-stdin` is no longer supported.
 
-Web login and MCP setup accept `--api-key <key>` or a masked prompt. Use the prompt to keep those keys out of command arguments and shell history.
+Web search login and MCP setup accept `--api-key <key>` or a masked prompt. Use the prompt to keep those keys out of command arguments and shell history.
 
 These variables override the saved key for inference and status, but provider login does not save their values. An empty or invalid value is an error, and Poppet does not fall back to the saved key:
 
@@ -106,6 +106,10 @@ These variables override the saved key for inference and status, but provider lo
 ```
 
 Use your own IDs. Removing the `discord` section turns Discord off and keeps the saved token. See [Discord](gateways/discord.md) for setup and permissions.
+
+## Web chat
+
+Configure browser chat separately in `<data directory>/web.json`, with `origin`, `hostname`, `port`, and `accessKeyHash`. It stays disabled when that file is absent. Build the web app and restart the worker after setup. See [web chat](web-chat.md) for access-key and HTTPS instructions.
 
 ## Web search
 
