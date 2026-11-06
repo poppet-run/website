@@ -5,7 +5,7 @@ description = "Start a conversation, resume saved sessions, and search earlier a
 
 # Chat
 
-Chat with Poppet from your terminal or a Discord thread. Poppet saves sessions locally, so you can resume them or search earlier answers later. If you have not connected a provider yet, start with [getting started](getting-started.md).
+Chat with Poppet from your terminal, a [web browser](web-chat.md), or a Discord thread. Poppet saves sessions locally, so you can resume them or search earlier answers later. If you have not connected a provider yet, start with [getting started](getting-started.md).
 
 ## Start and continue a session
 
@@ -57,7 +57,7 @@ With `chat.logReasoning` enabled, readable provider reasoning appears under a Th
 
 ## Session titles
 
-A new session takes a title from its first message. After the first answer, Poppet makes one optional request to improve the title. That request uses a short excerpt of your message, has a ten-second limit, and uses a little extra provider quota. If it fails, the fallback title stays. Titles are at most 80 characters.
+A new session takes a title from its first message. For terminal and Discord chats, after the first answer, Poppet makes one optional request to improve the title. That request uses a short excerpt of your message, has a ten-second limit, and uses a little extra provider quota. If it fails, the fallback title stays. Titles are at most 80 characters.
 
 Rename a session at any time:
 

@@ -9,6 +9,7 @@ Poppet keeps everything in your data directory, which defaults to `~/.config/pop
 
 ```text
 config.json       settings
+web.json          optional web chat listener and access-key hash
 profile.md        your profile (you write it)
 soul.md           Poppet's personality (you write it)
 skills/           your skill files

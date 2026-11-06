@@ -74,4 +74,4 @@ description = "For building and debugging."
 guide = "docs/providers/opencode-go/"
 +++
 
-Chat in your terminal or Discord, keep useful facts and procedures, and schedule tasks. Poppet runs on your computer, saves your sessions locally, and connects to a model provider you choose.
+Chat in your terminal, a web browser, or Discord, keep useful facts and procedures, and schedule tasks. Poppet runs on your computer, saves your sessions locally, and connects to a model provider you choose.
