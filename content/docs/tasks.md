@@ -91,11 +91,25 @@ poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --to discor
 
 Use `--to discord:<channel-or-thread-id>` instead to send results to another channel or thread in your server. The worker checks access before saving the task, and it checks again before each send. A result never goes to a different conversation from the one you chose.
 
-Only completed results are sent. `tasks show` lists each message's delivery state. Poppet retries temporary failures a limited number of times. Failed or uncertain sends stay visible, and Poppet does not resend an uncertain one. Check the saved output before posting it again by hand.
+Completed results and failure notices are sent to the saved destination. `tasks show` lists each message's delivery state. Poppet retries temporary failures a limited number of times. Failed or uncertain sends stay visible, and Poppet does not resend an uncertain one. Check the saved output before posting it again by hand.
 
-Results are standalone posts. They do not change the conversation they were posted to.
+Results and failure notices are standalone posts. They do not change the conversation they were posted to.
 
 Tasks without a destination keep their results local.
+
+### Failure notices
+
+When a task with a destination fails, Poppet queues a short notice there:
+
+```text
+Scheduled task "<name>" failed (<reason code>). Inspect it with: poppet tasks show <task-id>
+```
+
+The notice includes the task name and reason code, never model output or error text. The reason is `before-start` if the task failed before a run existed, or `unknown` if the run has no saved reason. Read the details with `poppet tasks show <task-id>` before retrying.
+
+If the task's previous finished occurrence also failed, the new failure posts nothing. A failure after a success posts again. Failures that finished more than 24 hours ago are not queued. Interrupted, cancelled, and expired occurrences post nothing.
+
+Notices use the same destination checks and delivery retries as results. In the `delivery` array from `tasks show`, a notice has a run ID of `notice:<occurrence-id>:<finished-at>`. A failure notice does not change the recurring schedule.
 
 ## Choose a skill
 
