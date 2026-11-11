@@ -38,7 +38,7 @@ Only the owner can answer, in the same conversation. An approval covers that one
 
 A scheduled task never waits for approval. If a command needs it, that run fails right away, and the worker logs a reason code. `poppet tasks show <task-id>` has the details. Tasks with a destination queue a short [failure notice](tasks.md#failure-notices), without model output or error text. The recurring schedule keeps running. Poppet does not undo commands that finished before the failure, so check the machine before you retry.
 
-Successful results still go to the task's destination.
+Successful results still go to the task's destination, unless the whole answer is [`NO_REPLY`](tasks.md#stay-quiet-when-there-is-nothing-to-report).
 
 ## What a command gets
 
