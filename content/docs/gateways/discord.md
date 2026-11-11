@@ -96,6 +96,8 @@ poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --to discor
 
 Use `--to discord:<channel-or-thread-id>` instead to send results somewhere else in the same server. Poppet posts results as standalone messages, so they do not change any conversation. Scheduled results need the combined worker, `poppet worker run`. See [scheduled tasks](../tasks.md#deliver-results-to-discord).
 
+Failed tasks can also post a short [failure notice](../tasks.md#failure-notices) to their saved destination. Notices include the task name and reason code, without model output or error text. Consecutive failed occurrences post only once.
+
 ## Schedule through chat
 
 Ask Poppet in the thread to create or manage a task. A task created this way posts to the home channel by default. Ask for the current thread, or for a specific channel by mention, to change where it posts. See [scheduled tasks](../tasks.md#manage-tasks-from-chat).
