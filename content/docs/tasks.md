@@ -97,6 +97,12 @@ Results and failure notices are standalone posts. They do not change the convers
 
 Tasks without a destination keep their results local.
 
+### Stay quiet when there is nothing to report
+
+Make the prompt conditional, for example "Tell me only if the page changed." Scheduled runs are instructed to answer with exactly `NO_REPLY` when the condition is not met. When the whole answer is `NO_REPLY`, ignoring surrounding whitespace, Poppet posts nothing. An answer that mentions `NO_REPLY` alongside other text is delivered as usual.
+
+The occurrence still completes. The worker logs `completed no-action`, and `poppet tasks show <task-id>` shows `no action` in the delivery column. JSON output includes `noAction: true`, and the saved output remains available. This also applies to tasks without a messaging destination.
+
 ### Failure notices
 
 When a task with a destination fails, Poppet queues a short notice there:
