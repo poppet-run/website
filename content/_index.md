@@ -33,8 +33,8 @@ poppet tasks list
 poppet tasks pause $task_id"""
 
 [[features]]
-title = "Chat from Discord."
-description = "Talk to Poppet in Discord threads that only its owner can use. Send scheduled results to a channel you choose."
+title = "Chat from Discord or Slack."
+description = "Talk to Poppet in Discord or Slack threads that only its owner can use. Send scheduled results to a channel you choose."
 guide = "docs/gateways/"
 label = "Discord thread"
 thread = [
@@ -74,4 +74,4 @@ description = "For building and debugging."
 guide = "docs/providers/opencode-go/"
 +++
 
-Chat in your terminal, a web browser, or Discord, keep useful facts and procedures, and schedule tasks. Poppet runs on your computer, saves your sessions locally, and connects to a model provider you choose.
+Chat in your terminal, a web browser, Discord, or Slack, keep useful facts and procedures, and schedule tasks. Poppet runs on your computer, saves your sessions locally, and connects to a model provider you choose.

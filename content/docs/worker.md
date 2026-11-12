@@ -69,7 +69,7 @@ poppet worker uninstall
 
 ## Concurrent requests
 
-CLI chats, Discord conversations, and scheduled runs share `chat.maxConcurrentRequests` slots, with a default of 3. Different sessions can run at the same time, while requests in one session stay in order. A CLI request to a session already in use waits for its turn. Cancelling one conversation does not cancel another.
+CLI chats, Discord and Slack conversations, and scheduled runs share `chat.maxConcurrentRequests` slots, with a default of 3. Different sessions can run at the same time, while requests in one session stay in order. A CLI request to a session already in use waits for its turn. Cancelling one conversation does not cancel another.
 
 A run waiting for command approval keeps its slot for up to two minutes. Set the limit to 1 to process one request at a time. See [configuration](configuration.md#settings).
 

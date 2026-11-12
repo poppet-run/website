@@ -37,15 +37,15 @@ When Poppet starts a chat or task with a skill, it saves the skill's name and te
 
 Skills are plain files. Poppet does not run scripts, download skills, or follow references.
 
-## Choose a skill in Discord
+## Choose a skill in messaging
 
-In Discord, start a thread with a skill using the `/new` command:
+In Discord or Slack, start a thread with a skill using the `/new` command:
 
 ```text
 /new --skill weekly-review Review my Acorn project
 ```
 
-Use `/new` without `--skill` to start a session with no skill. Either command starts a new session in the thread. Earlier sessions stay saved. A skill that is missing or invalid gets an error reply, and the thread keeps its current session. See [Discord](gateways/discord.md#start-a-conversation).
+Use `/new` without `--skill` to start a session with no skill. Either command starts a new session in the thread. Earlier sessions stay saved. A skill that is missing or invalid gets an error reply, and the thread keeps its current session. See [Discord](gateways/discord.md#start-a-conversation) or [Slack](gateways/slack.md#start-a-conversation).
 
 ## Skills the model can choose
 

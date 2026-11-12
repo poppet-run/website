@@ -86,3 +86,9 @@ Inspect the session with `poppet chat show <session-id>`. It shows the error and
 ## Where your data is
 
 Keep your data directory while you investigate. Deleting it removes your saved conversations, facts, tasks, and credentials. See [storage](storage.md).
+
+## Slack does not reply
+
+Check `poppet worker status --json`, your owner and workspace IDs, and the bot's channel membership. Enable Socket Mode and the scopes and event subscriptions in the [Slack guide](gateways/slack.md). Shared channels and DMs are unsupported. Mention the bot to start a conversation, and restart the worker after changing settings.
+
+If delivery is uncertain, inspect `poppet chat show <session-id>` before posting again. Slack may already have received the reply.

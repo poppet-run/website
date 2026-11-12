@@ -79,7 +79,7 @@ poppet --completions fish > ~/.config/fish/completions/poppet.fish
 
 | Command        | Action                                                                                  |
 | -------------- | --------------------------------------------------------------------------------------- |
-| `setup`        | Interactively choose a provider and model, configure Discord, and offer worker startup. |
+| `setup`        | Interactively choose a provider and model, configure Discord and Slack, and offer worker startup. |
 | `config`       | Print validated configuration without opening storage or contacting a provider.         |
 | `store status` | Open or migrate the local database and print its path, schema version, and counts.      |
 | `doctor [--json]` | Inspect setup and worker state without changing them. |
@@ -88,17 +88,17 @@ poppet --completions fish > ~/.config/fish/completions/poppet.fish
 See [configuration](configuration.md) and [storage](storage.md).
 
 `setup` requires an interactive terminal. It reuses saved choices, offers reconnect
-for an existing provider, and lists models from that provider. Discord is optional;
-skipping it leaves its policy and token unchanged. Discord token input displays
+for an existing provider, and lists models from that provider. Discord and Slack are optional;
+skipping either leaves its policy and tokens unchanged. Token input displays
 asterisks. Other settings in `config.json` are preserved.
 
 If the selected provider uses an API key from the shell environment, setup still
 asks you to enter a key with masked input and saves it for the background worker.
 
 Authentication saves immediately. Provider and model choices save after the
-prompts, followed by Discord if selected. Cancellation or a later failure keeps
+prompts, followed by each selected messaging channel. Cancellation or a later failure keeps
 completed saves and reports that they remain. Invalid configuration is never
-overwritten. Setup does not run inference or test Discord access.
+overwritten. Setup does not run inference or test messaging access.
 
 On macOS, setup offers to install and start the worker, start an installed
 worker, or explicitly restart a loaded worker. Restarting can interrupt active runs.
@@ -255,8 +255,9 @@ is running. Use `--to <gateway>` to deliver to that gateway's home channel, or
 | Command                                                                                            | Action                                   |
 | -------------------------------------------------------------------------------------------------- | ---------------------------------------- |
 | `gateway discord setup --owner-id <id> --guild-id <id> --home-channel-id <id> --bot-token <token>` | Save Discord settings and the bot token. |
+| `gateway slack setup --owner-id <id> --team-id <id> --home-channel-id <id> --bot-token <token> --app-token <token>` | Save Slack settings and both tokens. |
 
-See [Discord](gateways/discord.md) for setup, conversation behavior,
+See [Discord](gateways/discord.md) and [Slack](gateways/slack.md) for setup, conversation behavior,
 controls, and uncertain deliveries. Use `poppet setup` for masked token entry.
 
 ## Worker
