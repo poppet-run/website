@@ -14,7 +14,7 @@ profile.md        your profile (you write it)
 soul.md           Poppet's personality (you write it)
 skills/           your skill files
 auth/             provider, search, and MCP credentials
-channels/         Discord settings and bot token
+channels/         Discord and Slack credentials
 store/            conversations, facts, tasks, and search index
 logs/             worker log
 ```

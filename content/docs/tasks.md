@@ -69,7 +69,7 @@ A name or prompt change replaces a run that has not started yet, and the origina
 
 ## Manage tasks from chat
 
-Ask Poppet in chat or in a Discord thread to create, list, inspect, edit, delete, pause, resume, skip, snooze, or run a task:
+Ask Poppet in chat or in a Discord or Slack thread to create, list, inspect, edit, delete, pause, resume, skip, snooze, or run a task:
 
 ```text
 Every Friday at 09:00 Europe/London, summarize my recent conversations and deliver the result here.
@@ -116,6 +116,10 @@ The notice includes the task name and reason code, never model output or error t
 If the task's previous finished occurrence also failed, the new failure posts nothing. A failure after a success posts again. Failures that finished more than 24 hours ago are not queued. Interrupted, cancelled, and expired occurrences post nothing.
 
 Notices use the same destination checks and delivery retries as results. In the `delivery` array from `tasks show`, a notice has a run ID of `notice:<occurrence-id>:<finished-at>`. A failure notice does not change the recurring schedule.
+
+## Deliver results to Slack
+
+Set up [Slack](gateways/slack.md) and run the combined worker. Use `--to slack` for its home channel, `--to slack:C123` for another channel, or `--to slack:C123:1730000000.000001` for a thread. Replace the IDs and timestamp with your destination. The same access checks, quiet completion, failure notices, and delivery retries described above apply to Slack.
 
 ## Choose a skill
 
