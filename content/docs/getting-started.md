@@ -53,7 +53,7 @@ poppet --help
 poppet setup
 ```
 
-Setup asks you to choose a provider, sign in if needed, and pick a model from its list. You can also configure Discord or Slack, and install the background worker on macOS. On other platforms, setup prints the foreground worker command; Linux with systemd also supports `poppet worker install`. It saves your choices in `config.json` and your credentials in protected files. Run it again later and it offers your current settings as the defaults.
+Setup asks you to choose a provider, sign in if needed, and pick a model from its list. You can also configure Discord or Slack and install the background worker on macOS or Linux with systemd. On other platforms, setup prints the foreground worker command. It saves your choices in `config.json` and your credentials in protected files. Run it again later and it offers your current settings as the defaults.
 
 Setup needs an interactive terminal. If you prefer to configure things yourself, continue with step 3.
 
@@ -120,5 +120,5 @@ You can keep chatting without setting up anything else.
 - [Memory](memory.md) keeps your profile and facts you ask Poppet to save.
 - [Skills](skills.md) let you choose a reusable procedure for a chat or task.
 - [Scheduled tasks](tasks.md) run prompts later. They need the [worker](worker.md) running.
-- [Messaging](gateways/_index.md) lets you chat from a Discord or Slack thread.
+- [Messaging](gateways/_index.md) lets you chat from Discord or Slack threads.
 - [Web search](web.md) and [MCP tools](mcp.md) add optional tools.

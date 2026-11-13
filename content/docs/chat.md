@@ -57,7 +57,7 @@ With `chat.logReasoning` enabled, readable provider reasoning appears under a Th
 
 ## Session titles
 
-A new session takes a title from its first message. For terminal and Discord chats, after the first answer, Poppet makes one optional request to improve the title. That request uses a short excerpt of your message, has a ten-second limit, and uses a little extra provider quota. If it fails, the fallback title stays. Titles are at most 80 characters.
+A new session takes a title from its first message. For terminal and messaging chats, after the first answer, Poppet makes one optional request to improve the title. That request uses a short excerpt of your message, has a ten-second limit, and uses a little extra provider quota. If it fails, the fallback title stays. Titles are at most 80 characters.
 
 Rename a session at any time:
 
@@ -126,9 +126,9 @@ poppet chat send <session> --attach ./build.log --attach ./config.json "Why did 
 ```
 
 `--attach <path>` goes before the message and can repeat. In the interactive
-prompt, `/attach <path>` adds a file to the next message. In Discord, attach files
+prompt, `/attach <path>` adds a file to the next message. In Discord or Slack, attach files
 to the message itself; a message with files needs no text. See
-[Discord](gateways/discord.md#attachments).
+[Discord](gateways/discord.md#attachments) or [Slack](gateways/slack.md#start-a-conversation).
 
 Images are PNG, JPEG, WebP, or GIF, identified by their bytes rather than their
 name, and need a model that accepts images. Text files are UTF-8 without NUL

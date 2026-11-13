@@ -14,7 +14,7 @@ profile.md        your profile (you write it)
 soul.md           Poppet's personality (you write it)
 skills/           your skill files
 auth/             provider, search, and MCP credentials
-channels/         Discord and Slack credentials
+channels/         Discord bot token and Slack bot and app tokens
 store/            conversations, facts, tasks, and search index
 logs/             worker log
 ```
@@ -35,7 +35,7 @@ This opens the database, applies any pending upgrades, and prints its path, sche
 - **Skills.** A session or task keeps a copy of the skill it was given. A skill named with `$name` is saved with that user message, including its name and full text. Later turns replay that saved copy.
 - **Search index.** Your messages and Poppet's final answers are indexed for `chat search`. Failed input and tool results stay out of the index.
 
-Credentials are kept in `auth/` and never in the database.
+Provider, search, and MCP credentials are kept in `auth/`. Discord and Slack tokens are kept in `channels/`. These credentials are not stored in the database.
 
 ## Upgrades
 
@@ -43,7 +43,7 @@ Each part of the database upgrades itself when Poppet starts. Poppet refuses a d
 
 ## Permissions
 
-The store directory is `0700`, and the database files are `0600`. Credentials are kept in `auth/`, which has the same protection.
+The store directory is `0700`, and the database files are `0600`. The `auth/` and `channels/` directories use `0700`, and their credential files use `0600`.
 
 ## Interrupted work
 
@@ -53,14 +53,16 @@ Only one Poppet process can use a data directory at a time. If a process crashes
 
 ## Back up
 
-Stop any running worker first. Press Ctrl-C in its terminal, or run `poppet worker stop` if it runs at login. Then copy the whole data directory:
+Stop any running worker first. Press Ctrl-C in its terminal, or run `poppet worker stop` if it runs at login. Wait for any foreground chats or other commands to finish, then copy the whole data directory. These commands use the default location; replace it with your `POPPET_DATA_DIR` if set:
 
 {{< shell >}}
 ```bash
+mkdir -p ~/Backups
 cp -R ~/.config/poppet ~/Backups/poppet-$(date +%F)
 ```
 
 ```fish
+mkdir -p ~/Backups
 cp -R ~/.config/poppet ~/Backups/poppet-(date +%F)
 ```
 {{< /shell >}}

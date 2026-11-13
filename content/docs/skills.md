@@ -51,7 +51,7 @@ This works in terminal chat, web chat, Discord, and Slack, including with models
 poppet chat new 'Run $weekly-review for the Acorn project'
 ```
 
-Poppet saves the skill's name and full text with that message. Later turns replay the saved text even if you edit or delete the file. Naming it again in a later message reads the current file. It does not change the session's selected skill.
+Poppet saves the skill's name and full text with that message. Later turns replay the saved text even if you edit or delete the file. Naming it again in a later message reads the current file, unless it is the session's selected skill; that skill keeps its saved session snapshot. Naming a skill does not change the session's selected skill.
 
 The name must stand alone outside inline code and triple-backtick code blocks, and match a skill directory exactly, including case. Sentence punctuation after it is fine. `${name}`, `\$name`, `$name/path`, and `$name=1` stay ordinary text. Unknown names stay ordinary text too. Put shell variables in code when you do not want them treated as skill names.
 
@@ -83,7 +83,7 @@ In Discord or Slack, start a thread with a skill using the `/new` command:
 /new --skill weekly-review Review my Acorn project
 ```
 
-Use `/new` without `--skill` to start a session with no skill. Either command starts a new session in the thread. Earlier sessions stay saved. A skill that is missing or invalid gets an error reply, and the thread keeps its current session. See [Discord](gateways/discord.md#start-a-conversation) or [Slack](gateways/slack.md#start-a-conversation).
+Use `/new` without `--skill` to start a session with no skill. Either command starts a new session in the thread. Earlier sessions stay saved. A skill that is missing or invalid gets an error reply, and the thread keeps its current session. Mention the bot when starting from a parent channel. See [Discord](gateways/discord.md#start-a-conversation) or [Slack](gateways/slack.md#start-a-conversation).
 
 ## Skills the model can choose
 
