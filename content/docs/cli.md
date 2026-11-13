@@ -100,7 +100,7 @@ prompts, followed by each selected messaging channel. Cancellation or a later fa
 completed saves and reports that they remain. Invalid configuration is never
 overwritten. Setup does not run inference or test messaging access.
 
-On macOS, setup offers to install and start the worker, start an installed
+On macOS or Linux with systemd, setup offers to install and start the worker, start an installed
 worker, or explicitly restart a loaded worker. Restarting can interrupt active runs.
 Other platforms get the foreground command. Use gateway and worker commands and
 `config.json` for scripted configuration. API-key login requires a terminal;

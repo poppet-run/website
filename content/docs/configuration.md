@@ -62,9 +62,9 @@ Use the same value for every command, including the worker's login service. Each
 | `model`                   | Unset                  | Model ID for new chats and tasks                                                  |
 | `applicationName`         | `Poppet`               | Name used during ChatGPT's initial registration                                   |
 | `discord`                 | Unset                  | Owner ID, server ID, and home channel ID; see [Discord](gateways/discord.md)      |
+| `slack`                   | Unset                  | Owner ID, workspace ID, and home channel ID; see [Slack](gateways/slack.md)       |
 | `webSearchProvider`       | Unset                  | Enable search with `brave` or `kagi` when that provider has a saved key             |
 | `mcpServers`              | `[]`                   | [Local tool servers and their permissions](mcp.md)                                |
-| `slack` | Unset | Owner ID, workspace ID, and home channel ID; see [Slack](gateways/slack.md) |
 | `gatewayPackages`         | `[]`                   | External messaging adapters to load                                               |
 | `tasks.catchUpMinutes`    | `60`                   | How late a recurring task can start after a missed time, from 0 to 1440          |
 | `chat.outputTokens`       | `2048`                 | Requested output limit, from 1 to 32768, capped by the model's own limit          |
@@ -108,6 +108,22 @@ These variables override the saved key for inference and status, but provider lo
 
 Use your own IDs. Removing the `discord` section turns Discord off and keeps the saved token. See [Discord](gateways/discord.md) for setup and permissions.
 
+## Slack
+
+`poppet gateway slack setup` saves ordinary Slack settings in `config.json` and both tokens in `<data directory>/channels/slack.json`:
+
+```json
+{
+  "slack": {
+    "ownerId": "U123",
+    "teamId": "T123",
+    "homeChannelId": "C123"
+  }
+}
+```
+
+Use your own IDs. Removing the `slack` section turns Slack off and keeps the saved tokens. Use `poppet setup` for masked token entry. Restart the worker after changing settings. See [Slack](gateways/slack.md).
+
 ## Web chat
 
 Configure browser chat separately in `<data directory>/web.json`, with `origin`, `hostname`, `port`, and `accessKeyHash`. It stays disabled when that file is absent. Build the web app and restart the worker after setup. See [web chat](web-chat.md) for access-key and HTTPS instructions.
@@ -142,19 +158,3 @@ Set either one in `config.json` and restart the worker so it reads the change.
 ## Skill files
 
 Skills live in `<data directory>/skills/<name>/SKILL.md`. There is no path setting. See [skills](skills.md).
-
-## Slack
-
-`poppet gateway slack setup` saves IDs in `config.json` and both tokens in the protected `channels/slack.json` file:
-
-```json
-{
-  "slack": {
-    "ownerId": "U123",
-    "teamId": "T123",
-    "homeChannelId": "C123"
-  }
-}
-```
-
-Use your own IDs. Removing the `slack` section disables Slack and keeps the saved tokens. Restart the worker after changes. See [Slack](gateways/slack.md) for setup and permissions.
