@@ -123,7 +123,7 @@ Set up [Slack](gateways/slack.md) and run the combined worker. Use `--to slack` 
 
 ## Choose a skill
 
-Add `--skill <name>` before the prompt to save a [skill](skills.md) with a new task. Each run uses the copy saved with the task. To use an edited skill, create a new task.
+Add `--skill <name>` before the prompt to save a [skill](skills.md) with a new task. Each run uses the copy saved with the task. To use an edited skill, create a new task. Scheduled prompts do not expand `$name` mentions. You can select a manual-only skill with `tasks add --skill`; the model cannot select one when creating a task in chat.
 
 ## Read a web page
 

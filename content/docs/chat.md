@@ -100,7 +100,7 @@ Ask Poppet to remember, change, or forget a fact in the current message. For exa
 poppet chat new --skill weekly-review "Review my Acorn project"
 ```
 
-The session saves a copy of the skill when it starts. Later turns use that copy, even if the file changes or is deleted. See [skills](skills.md).
+The session saves a copy of the skill when it starts. Later turns use that copy, even if the file changes or is deleted. To use a skill for one message, send text such as `Run $weekly-review for Acorn`. In shell commands, single-quote the message to preserve `$`. See [skills](skills.md#name-a-skill-in-a-message).
 
 ## Run commands
 

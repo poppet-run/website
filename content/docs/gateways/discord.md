@@ -57,6 +57,8 @@ These are plain messages, not Discord slash commands. The bot ignores other bots
 
 While it works, the bot shows the typing indicator. It also adds 👀 to your message, then replaces it with ✅ when the run succeeds. If the bot lacks reaction permission, chat still works.
 
+You can also [name a skill](../skills.md#name-a-skill-in-a-message) with `$name` in an ordinary message to use it for that turn without starting a new session.
+
 ## Thread names
 
 Poppet names the threads it creates, using a title from the conversation once the first answer is sent. Renaming a session with `poppet chat rename` also renames its thread, while the worker is running. Poppet only renames threads it created. If you rename a thread yourself, Poppet stops changing its name.
