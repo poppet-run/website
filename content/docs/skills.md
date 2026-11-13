@@ -5,7 +5,7 @@ description = "Save a reusable Markdown procedure and choose it for a chat or ta
 
 # Skills
 
-A skill is a Markdown procedure you write and keep locally. Choose one for a chat or a scheduled task, and Poppet follows it using its existing tools and permissions. A skill cannot grant new permissions.
+A skill is a Markdown procedure you write and keep locally. Choose one for a chat or a scheduled task, or name one in a message, and Poppet follows it using its existing tools and permissions. A skill cannot grant new permissions.
 
 ## Write a skill
 
@@ -37,6 +37,44 @@ When Poppet starts a chat or task with a skill, it saves the skill's name and te
 
 Skills are plain files. Poppet does not run scripts, download skills, or follow references.
 
+## Name a skill in a message
+
+Write `$` followed by a skill's name to use it for one message:
+
+```text
+Run $weekly-review for the Acorn project
+```
+
+This works in terminal chat, web chat, Discord, and Slack, including with models that cannot use tools. In a shell, use single quotes so the shell does not expand the name:
+
+```sh
+poppet chat new 'Run $weekly-review for the Acorn project'
+```
+
+Poppet saves the skill's name and full text with that message. Later turns replay the saved text even if you edit or delete the file. Naming it again in a later message reads the current file. It does not change the session's selected skill.
+
+The name must stand alone outside inline code and triple-backtick code blocks, and match a skill directory exactly, including case. Sentence punctuation after it is fine. `${name}`, `\$name`, `$name/path`, and `$name=1` stay ordinary text. Unknown names stay ordinary text too. Put shell variables in code when you do not want them treated as skill names.
+
+A message can load up to four distinct skills. Repeated names load once. The session's selected skill is not loaded again and does not count toward that limit. A named skill with an invalid file rejects the message before a run is saved. Check it with `poppet skills show <name>`, or write the name without `$`.
+
+Manual-only skills can be named. Text inside attachments is not scanned. Scheduled task prompts do not expand `$name`; use `tasks add --skill` instead. Named skills count toward the context budget and grant no permissions, including permission to read URLs found only in their text.
+
+## Manual-only skills
+
+To keep the model from choosing a skill itself, put this exact comment on the first line, without indentation:
+
+```markdown
+<!-- manual-only -->
+
+# Release review
+
+Review the release checklist and report anything still unfinished.
+```
+
+Poppet leaves the skill out of the model's index, refuses model requests to view it, and prevents the model from selecting it when creating a task. You can still choose it with `--skill`, `/new --skill`, or a `$name` mention. Existing permissions still apply.
+
+A misplaced or misspelled marker does not hide the skill. Check with `poppet skills list`, which marks these skills as `manual-only`. `skills list --json` still returns names only; `skills show <name> --json` includes the `manualOnly` boolean.
+
 ## Choose a skill in messaging
 
 In Discord or Slack, start a thread with a skill using the `/new` command:
@@ -49,7 +87,7 @@ Use `/new` without `--skill` to start a session with no skill. Either command st
 
 ## Skills the model can choose
 
-Chats that can use tools also see a list of your valid skills, with the description from each one. Before a multi-step task, the model can read a matching skill. The list is read once per run. It covers up to 64 skills, within an 8 KiB limit. If the list is too long, Poppet shortens it and says so.
+Chats that can use tools also see a list of your valid skills without the manual-only marker, with the description from each one. Before a multi-step task, the model can read a matching skill. The list is read once per run. It covers up to 64 skills, within an 8 KiB limit. If the list is too long, Poppet shortens it and says so.
 
 A skill you choose with `--skill` is always included. A skill the model reads grants no permissions, and it cannot change memory or tasks.
 

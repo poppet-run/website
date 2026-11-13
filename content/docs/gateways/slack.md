@@ -55,6 +55,8 @@ Images and text files use the [normal attachment limits](../chat.md#attach-files
 
 Poppet saves each answer before sending it. An uncertain send is not automatically repeated. Check the saved answer with `poppet chat show <session-id>` before posting it yourself.
 
+You can also [name a skill](../skills.md#name-a-skill-in-a-message) with `$name` in an ordinary message to use it for that turn without starting a new session.
+
 ## Deliver scheduled results
 
 With the combined worker running, send results to the home channel:
