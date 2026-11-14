@@ -104,7 +104,7 @@ The session saves a copy of the skill when it starts. Later turns use that copy,
 
 ## Run commands
 
-With the [command tool](commands.md) available, the model can run shell commands on your computer. A separate review checks each command before it runs. Commands that need your approval wait for it in Discord or Slack, and CLI commands that need approval stop with instructions.
+With the [command tool](commands.md) available, the model can run shell commands on your computer. A separate review checks each command before it runs. Commands that need your approval wait for it in Discord or Slack, while CLI and web chat commands that need approval stop without executing. Request the operation in Discord or Slack to approve it there.
 
 ## Schedule tasks from chat
 

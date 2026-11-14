@@ -16,7 +16,7 @@ Before each command, a separate request to your current model reviews it against
 The reviewer returns one of three decisions:
 
 - **Allow.** The command runs once, exactly as reviewed.
-- **Needs approval.** A person must approve it first. In Discord or Slack, Poppet asks you there. A CLI command stops with instructions, and a scheduled task fails.
+- **Needs approval.** A person must approve it first. In Discord or Slack, Poppet asks you there. CLI and web chat commands stop without executing. Request the operation in Discord or Slack to approve it there. A scheduled task fails.
 - **Deny.** The command does not run, and the run ends.
 
 If the reviewer fails, times out, or returns an unreadable answer, nothing runs. A denied command cannot be retried within the same run.
