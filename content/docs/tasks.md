@@ -43,6 +43,33 @@ One-off times need `Z` or a UTC offset, such as `2099-10-22T09:00:00+01:00`. Rec
 
 Each run starts a fresh session. It has the current profile, saved facts, conversation search, page reading, and web search if it is set up. Scheduled runs cannot change memory, and they cannot manage tasks.
 
+## End a recurring task
+
+Add `--until` to give a recurring task an end time. Without it, the task has no end time.
+
+```fish
+poppet tasks add release-watch --cron "0 9 * * *" --tz Europe/London --until 2099-10-29T09:00:00+00:00 "Tell me only if the release page changed"
+```
+
+Use a future timestamp with `Z` or a UTC offset. `--until` applies only to cron tasks, and a new task needs at least one scheduled time at or before it.
+
+The end time limits scheduled times, not when work finishes. In this example, the 09:00 run on 29 October is included. No later time is scheduled. A run scheduled within the limit can still start or finish after it, including after a snooze, subject to the usual [missed-run and expiry rules](#missed-runs-pauses-and-retries).
+
+When no later scheduled time remains, `tasks list` and `tasks show` display `ended` for an unpaused task. `tasks show` also displays `Until`. This can happen while the final run is still pending or running. The worker logs the ending once, and the task and its history stay saved. CLI JSON includes `endAt` in Unix milliseconds, or `null` for no end time.
+
+Set a later end time or clear it to schedule future runs again:
+
+```fish
+poppet tasks edit <task-id> --until 2099-11-30T18:00:00+00:00
+poppet tasks edit <task-id> --until none
+```
+
+An ended task restarts from the current time without replaying missed runs. Editing a paused task keeps it paused. A new cron schedule keeps the end time; changing to a one-off clears it.
+
+An earlier end time cancels a pending run if its scheduled time falls after the new limit, even if it was snoozed. A running task must finish or be cancelled before you edit it.
+
+Skipping the last scheduled time ends the task. With no pending or future run, an ended task rejects run, skip, and snooze requests. Resume does not bypass the end time. You can still retry an unsuccessful run scheduled within the limit, subject to the usual retry rules.
+
 ## Edit and control the next run
 
 Edit a task without changing its ID or losing its history:
@@ -57,7 +84,7 @@ poppet tasks run <task-id>
 
 Ask in chat to skip or snooze the next run. These actions have no CLI command. A snooze must end later than the next run's current ready time.
 
-An edit changes only the fields you give. A new schedule needs both a cron expression and a timezone, and a new one-off time must be in the future with a UTC offset. Provider, model, skill, and destination stay the same. You can edit a paused task without resuming it.
+An edit changes only the fields you give, including an optional [end time](#end-a-recurring-task). A new schedule needs both a cron expression and a timezone, and a new one-off time must be in the future with a UTC offset. Provider, model, skill, and destination stay the same. You can edit a paused task without resuming it.
 
 | Control     | What it does                                                                                                                               |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -73,11 +100,13 @@ Ask Poppet in chat or in a Discord or Slack thread to create, list, inspect, edi
 
 ```text
 Every Friday at 09:00 Europe/London, summarize my recent conversations and deliver the result here.
+End task <task-id> at 2099-10-29T09:00:00+00:00.
+Clear the end time for task <task-id>.
 List my scheduled tasks.
 Pause task <task-id>.
 ```
 
-Poppet asks when a time, timezone, or task is unclear. Pausing and resuming use task IDs, so Poppet asks you to choose when names match. Deletion removes the task and its history, and fails while a run is active. Retrying runs and cancelling active runs stay in the CLI.
+You can request an end time when creating or editing a recurring task in chat. Poppet asks when a time, timezone, or task is unclear. Pausing and resuming use task IDs, so Poppet asks you to choose when names match. Deletion removes the task and its history, and fails while a run is active. Retrying runs and cancelling active runs stay in the CLI.
 
 A task change is saved even if the chat reply fails afterwards. Check `tasks list` or `tasks show` before asking again.
 

@@ -233,8 +233,8 @@ See [memory](memory.md) for keys, limits, profiles, and deletion behavior.
 | Command                                                                                                                 | Action                                                             |
 | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | `tasks add <name> (--at <timestamp> \| --in <duration>) [--skill <name>] [--to <gateway>[:<conversation-id>]] <prompt>` | Schedule a one-off request.                                        |
-| `tasks add <name> --cron <expression> --tz <timezone> [--skill <name>] [--to <gateway>[:<conversation-id>]] <prompt>`   | Schedule recurring work.                                           |
-| `tasks edit <task> [--name <name>] [--prompt <prompt>] [--at <timestamp> \| --cron <expression> --tz <timezone>]`       | Edit definition fields while retaining task identity and history.  |
+| `tasks add <name> --cron <expression> --tz <timezone> [--until <timestamp>] [--skill <name>] [--to <gateway>[:<conversation-id>]] <prompt>`   | Schedule recurring work with an optional end time.                                           |
+| `tasks edit <task> [--name <name>] [--prompt <prompt>] [--at <timestamp> \| --cron <expression> --tz <timezone>] [--until <timestamp> \| --until none]`       | Edit definition fields or the end time while retaining task identity and history.  |
 | `tasks run <task>`                                                                                                      | Queue normal scheduled work without shifting recurring cadence.    |
 | `tasks` / `tasks list`                                                                                                  | List saved tasks.                                                  |
 | `tasks show <task>`                                                                                                     | Show occurrences, results, delivery states, and skipped intervals. |
