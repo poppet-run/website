@@ -54,7 +54,7 @@ poppet worker logs
 
 Connection details shown by `worker status` are not a live check of your provider.
 
-The worker writes lifecycle logs to `<data directory>/logs/worker.log`. The directory is `0700` and the file is `0600`. Logs leave out prompts, model output, and tokens. Each log file is limited to 5 MiB, and three archives are kept. `worker logs` prints the last 64 KiB across them.
+The worker writes lifecycle logs to `<data directory>/logs/worker.log`. The directory is `0700` and the file is `0600`. Default lifecycle logs leave out prompts, model output, and tokens. Enabling [`chat.logReasoning`](configuration.md#reasoning-and-timing-logs) also records readable model reasoning, which can contain private prompt or tool content. Each log file is limited to 5 MiB, and three archives are kept. `worker logs` prints the last 64 KiB across them.
 
 ## Stop, start, and uninstall
 
@@ -69,7 +69,7 @@ poppet worker uninstall
 
 ## Concurrent requests
 
-CLI chats, Discord and Slack conversations, and scheduled runs share `chat.maxConcurrentRequests` slots, with a default of 3. Different sessions can run at the same time, while requests in one session stay in order. A CLI request to a session already in use waits for its turn. Cancelling one conversation does not cancel another.
+CLI and web chats, Discord and Slack conversations, and scheduled runs share `chat.maxConcurrentRequests` slots, with a default of 3. Different sessions can run at the same time, while requests in one session stay in order. A CLI request to a session already in use waits for its turn. Cancelling one conversation does not cancel another.
 
 A run waiting for command approval keeps its slot for up to two minutes. Set the limit to 1 to process one request at a time. See [configuration](configuration.md#settings).
 
