@@ -172,6 +172,8 @@ poppet chat new "Use reference to look up record 123"
 
 A server connects the first time a chat needs it. If it fails, the built-in tools keep working. Poppet tries to reconnect after 30 seconds, doubling the wait up to 10 minutes. `mcp servers` shows when the next try is due.
 
+If an allowed tool has an unsupported input or output schema, a description longer than 4096 characters, or requires task execution, Poppet skips that tool. The server stays connected and its other supported, allowed tools remain available. `poppet mcp servers` lists skipped tools and the reasons in its notes.
+
 Poppet does not retry tool calls. If a call fails after it was sent, Poppet records it as uncertain and does not repeat it. Check the server's state before asking for the action again.
 
 ## Permissions
@@ -189,7 +191,7 @@ Set `"availableAfterUntrusted": true` on a server only if you trust it to keep r
 ## Limits
 
 - Up to 8 servers. Each server can expose up to 128 tools.
-- Tool descriptions are up to 4096 characters. Input and output schemas are up to 16 KiB.
+- Tool descriptions are up to 4096 characters. Input and output schemas are up to 16 KiB, depth 32, and 1024 nodes.
 - Poppet ignores vendor schema keywords that start with `x-`, such as FastMCP's `x-fastmcp-wrap-result`, when it checks a schema. Property names that start with `x-` are still checked.
 - Each tool call can take up to 10 seconds. Starting a server and listing its tools has an 8-second limit.
 - HTTP JSON responses and individual server-sent events are capped at 256 KiB while streaming. Redirects stay on the endpoint's origin, or move to its HTTPS version, and must keep the request method.
