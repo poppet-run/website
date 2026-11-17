@@ -237,7 +237,8 @@ See [memory](memory.md) for keys, limits, profiles, and deletion behavior.
 | `tasks edit <task> [--name <name>] [--prompt <prompt>] [--at <timestamp> \| --cron <expression> --tz <timezone>] [--until <timestamp> \| --until none]`       | Edit definition fields or the end time while retaining task identity and history.  |
 | `tasks run <task>`                                                                                                      | Queue normal scheduled work without shifting recurring cadence.    |
 | `tasks` / `tasks list`                                                                                                  | List saved tasks.                                                  |
-| `tasks show <task>`                                                                                                     | Show occurrences, results, delivery states, and skipped intervals. |
+| `tasks show <task>`                                                                                                     | Show occurrences, results, delivery states, skipped intervals, and the current note. |
+| `tasks clear-note <task>` | Clear the note kept between runs; rejects a running occurrence. |
 | `tasks pause <task>`                                                                                                    | Pause scheduling and cancel pending work.                          |
 | `tasks resume <task>`                                                                                                   | Resume future occurrences.                                         |
 | `tasks cancel <task> [--occurrence <id>]`                                                                               | Cancel pending or active work.                                     |

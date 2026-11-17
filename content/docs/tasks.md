@@ -130,7 +130,7 @@ Tasks without a destination keep their results local.
 
 Make the prompt conditional, for example "Tell me only if the page changed." Scheduled runs are instructed to answer with exactly `NO_REPLY` when the condition is not met. When the whole answer is `NO_REPLY`, ignoring surrounding whitespace, Poppet posts nothing. An answer that mentions `NO_REPLY` alongside other text is delivered as usual.
 
-The occurrence still completes. The worker logs `completed no-action`, and `poppet tasks show <task-id>` shows `no action` in the delivery column. JSON output includes `noAction: true`, and the saved output remains available. This also applies to tasks without a messaging destination.
+The occurrence still completes. The worker logs `completed no-action`, and `poppet tasks show <task-id>` shows `no action` in the delivery column. JSON output includes `noAction: true`, and the saved output remains available. This also applies to tasks without a messaging destination. To compare against a previous run, [keep a task note](#keep-a-note-between-runs).
 
 ### Failure notices
 
@@ -149,6 +149,35 @@ Notices use the same destination checks and delivery retries as results. In the 
 ## Deliver results to Slack
 
 Set up [Slack](gateways/slack.md) and run the combined worker. Use `--to slack` for its home channel, `--to slack:C123` for another channel, or `--to slack:C123:1730000000.000001` for a thread. Replace the IDs and timestamp with your destination. The same access checks, quiet completion, failure notices, and delivery retries described above apply to Slack.
+
+## Keep a note between runs
+
+Each task can keep one note of up to 4096 UTF-8 bytes. A new task has no note. Use it to remember the last value a recurring task checked:
+
+```fish
+poppet tasks add release-watch --cron "0 9 * * *" --tz Europe/London "Read https://example.com/releases and find the newest release version. Compare it with the task note. If there is no note or the version differs, save the new version as the note and report it. Otherwise reply NO_REPLY."
+```
+
+Replace the example URL with the release page you want to watch. Add `--to discord` or `--to slack` before the prompt to deliver results to a configured home channel.
+
+Each run receives the task's current note. It can call `poppet_tasks.save_note` to replace the note with nonempty text or clear it with `null`. Only scheduled runs get this tool, and each can write only its own task's note. A note over the byte limit is rejected so the model can shorten it.
+
+The last value saved takes effect only when the occurrence completes, including a `NO_REPLY` completion. Failed, cancelled, or interrupted occurrences leave the note unchanged. If the run completed before the worker stopped, startup recovery can record that completion and save its note. A retry starts with the task's current note and discards values from the earlier attempt. The running occurrence keeps the note it started with.
+
+Notes belong to one task and do not change [saved facts](memory.md). They are data, not instructions or permission to run commands. A URL found only in a note does not authorize a page read. The note tool stays available after reading a page or search result, so a task can save the value it found.
+
+Editing a task keeps its note. Removing a task or clearing all tasks deletes its note history too. The worker adds `note-updated` to the completion log when a run changes its note.
+
+### Inspect or clear a note
+
+`poppet tasks show <task-id>` displays the current note, when it changed, and the occurrence that saved it, or `cli` for an owner clear. JSON output includes `note` and `noteHistory`, with changes newest first. `note` is `null` when no note has been saved; a cleared note has a null `text`.
+
+```fish
+poppet tasks show <task-id> --json
+poppet tasks clear-note <task-id>
+```
+
+Clearing works with the worker running or stopped, but fails while that task has a running occurrence. Wait for it to finish or cancel it first. Clearing an absent note changes nothing. The CLI can clear notes but cannot write their text, and interactive chat cannot clear them.
 
 ## Choose a skill
 
