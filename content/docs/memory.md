@@ -45,7 +45,7 @@ poppet memory history answer.style
 poppet memory revert answer.style 1
 ```
 
-`history` lists each revision with its origin and, for chat changes, the run that made it. `revert` does not erase history. It adds a new revision with the old value. Reverting to a forgotten revision forgets the fact again.
+`history` lists each revision with its origin and, for chat changes, the run that made it if that run still exists. [Deleting a session](chat.md#delete-old-sessions) keeps facts and their history but clears links to its runs. `revert` does not erase history. It adds a new revision with the old value. Reverting to a forgotten revision forgets the fact again.
 
 ## Profile
 
