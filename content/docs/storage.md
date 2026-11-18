@@ -37,6 +37,14 @@ This opens the database, applies any pending upgrades, and prints its path, sche
 
 Provider, search, and MCP credentials are kept in `auth/`. Discord and Slack tokens are kept in `channels/`. These credentials are not stored in the database.
 
+## Session deletion
+
+[Delete or prune sessions](chat.md#delete-old-sessions) to remove their messages, attachments, tool calls, runs, and search entries. Poppet removes these records together in one database transaction.
+
+Task occurrences and notes stay saved, but lose links to the removed sessions and runs. Saved facts and their revisions keep their values and origins without a source run ID. Discord and Slack thread bindings and web chat submission receipts for the deleted sessions are removed. The next message in an affected thread starts a new session.
+
+Deletion applies pending task, gateway, memory, and web chat database upgrades before removing records, even if those parts of Poppet have not started since an upgrade.
+
 ## Upgrades
 
 Each part of the database upgrades itself when Poppet starts. Poppet refuses a database made by a newer version, or by a different application, and it never resets anything on its own. If that happens, point `POPPET_DATA_DIR` at a fresh directory or restore a backup.

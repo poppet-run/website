@@ -87,6 +87,12 @@ Unsent drafts survive navigation within the page, but refreshing or signing out 
 
 You can [name a skill](skills.md#name-a-skill-in-a-message) in a message, such as `Run $weekly-review for Acorn`, to use it for that turn.
 
+## Delete a conversation
+
+Choose Delete in the conversation header and confirm to remove the open conversation. Deletion cannot be undone. The button is unavailable while a reply runs or the page is reconnecting. Stop the reply before deleting it.
+
+After deletion, the conversation leaves the sidebar and the browser returns to a new chat. Its unsent draft and submission receipts are removed too. See [delete old sessions](chat.md#delete-old-sessions) for the saved records removed and what happens to linked tasks, memory, and messaging threads.
+
 ## Current limits
 
 Web chat has no attachments, conversation search, renaming, model selection, session-wide skill selection, reasoning display, or run details. New conversations use the first message as their title. Use `poppet chat show <session-id>` to inspect saved runs.

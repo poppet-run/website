@@ -41,8 +41,8 @@ poppet memory set --json project "Poppet"
 
 For commands that take free text, put `--json` before the text; after it,
 `--json` is part of the text. `--json` is available on `config`, `doctor`,
-`provider status` and `models`, `web status`, `chat rename`, `search`,
-`sessions` and `show`, `skills list` and `show`, all `memory` and `tasks`
+`provider status` and `models`, `web status`, `chat rename`, `delete`, `prune`,
+`search`, `sessions` and `show`, `skills list` and `show`, all `memory` and `tasks`
 commands, `mcp servers` and `tools`, `store status`, and `worker status`.
 Commands that stream answers, prompt for input, or only confirm a setup step
 print text only.
@@ -198,12 +198,14 @@ settings or keys. See
 | `chat new [--skill <name>] [--attach <path>]... <message>` | Start a session with the configured provider and model.     |
 | `chat send <session> [--attach <path>]... <message>`       | Continue a saved session.                                   |
 | `chat rename <session> <title>`                            | Rename a saved session without inference.                   |
+| `chat delete <session>...` | Delete saved sessions and their messages, runs, and files. |
+| `chat prune --days <n> [--dry-run]` | Delete idle sessions older than n days, or preview the selection. |
 | `chat search <query>`                                      | Search completed conversation text without inference.       |
 | `chat sessions`                                            | List saved sessions.                                        |
 | `chat show <session>`                                      | Show the conversation and runs; add `--json` for full records. |
 
 See [chat](chat.md) for session selection, streaming, cancellation, limits,
-attachments, and the tools available during a run.
+attachments, and the tools available during a run. See [delete old sessions](chat.md#delete-old-sessions) for deletion limits and effects on linked records.
 
 ## Skills
 

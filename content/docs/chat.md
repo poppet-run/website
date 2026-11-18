@@ -67,6 +67,22 @@ poppet chat rename $session_id "Weekly project review"
 
 Names you set win over automatic titles. Renaming needs no model or login.
 
+## Delete old sessions
+
+```sh
+poppet chat delete $session_id
+poppet chat prune --days 90 --dry-run
+poppet chat prune --days 90
+```
+
+`chat delete` takes one or more session IDs. It removes their messages, runs, tool calls, attachments, and search entries. If any ID is unknown or any selected session has a pending or running reply, nothing is deleted. Stop the reply first.
+
+`chat prune` removes sessions whose last activity was more than the given number of days ago. `--days` is required and accepts whole numbers from 1 to 36500. Sessions with pending or running replies are skipped. Renaming does not count as activity.
+
+Use `--dry-run` to list what pruning would remove without deleting it. Both commands print the removed sessions, or the selected sessions for a dry run. Add `--json` for their saved session records. They need no model or login and go through the worker when it owns storage. Deletion cannot be undone.
+
+Deleting a session also removes its Discord or Slack thread binding, so the next message in that thread starts a new session. Task history and notes stay saved without links to the deleted session or runs. Saved facts keep their values and origins but lose their source run IDs. Web chat removes the conversation's submission receipts.
+
 ## Search past conversations
 
 ```sh
