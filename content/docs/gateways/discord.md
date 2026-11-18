@@ -90,6 +90,8 @@ Only the owner can answer, and each approval covers one command. Requests expire
 
 ## Scheduled results
 
+During [quiet hours](../configuration.md#quiet-hours), scheduled results and failure notices wait until the window ends. Replies to your messages are not held.
+
 To send a task's results to the home channel, add `--to discord` when you create it:
 
 ```sh

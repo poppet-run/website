@@ -122,6 +122,8 @@ Use `--to discord:<channel-or-thread-id>` instead to send results to another cha
 
 Completed results and failure notices are sent to the saved destination. `tasks show` lists each message's delivery state. Poppet retries temporary failures a limited number of times. Failed or uncertain sends stay visible, and Poppet does not resend an uncertain one. Check the saved output before posting it again by hand.
 
+With [quiet hours](configuration.md#quiet-hours) configured, scheduled results and failure notices stay pending until the window ends. Holding uses no delivery attempts and does not change the task's execution status. `tasks show` displays `held until` with the end time. Its JSON `delivery` records include `heldUntil` in Unix milliseconds, or `null` when no quiet-hours hold applies.
+
 Results and failure notices are standalone posts. They do not change the conversation they were posted to.
 
 Tasks without a destination keep their results local.
@@ -144,11 +146,11 @@ The notice includes the task name and reason code, never model output or error t
 
 If the task's previous finished occurrence also failed, the new failure posts nothing. A failure after a success posts again. Failures that finished more than 24 hours ago are not queued. Interrupted, cancelled, and expired occurrences post nothing.
 
-Notices use the same destination checks and delivery retries as results. In the `delivery` array from `tasks show`, a notice has a run ID of `notice:<occurrence-id>:<finished-at>`. A failure notice does not change the recurring schedule.
+Notices use the same destination checks, quiet hours, and delivery retries as results. In the `delivery` array from `tasks show`, a notice has a run ID of `notice:<occurrence-id>:<finished-at>`. A failure notice does not change the recurring schedule.
 
 ## Deliver results to Slack
 
-Set up [Slack](gateways/slack.md) and run the combined worker. Use `--to slack` for its home channel, `--to slack:C123` for another channel, or `--to slack:C123:1730000000.000001` for a thread. Replace the IDs and timestamp with your destination. The same access checks, quiet completion, failure notices, and delivery retries described above apply to Slack.
+Set up [Slack](gateways/slack.md) and run the combined worker. Use `--to slack` for its home channel, `--to slack:C123` for another channel, or `--to slack:C123:1730000000.000001` for a thread. Replace the IDs and timestamp with your destination. The same access checks, quiet completion, quiet hours, failure notices, and delivery retries described above apply to Slack.
 
 ## Keep a note between runs
 
