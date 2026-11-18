@@ -172,7 +172,9 @@ The removed `webSearch` field is rejected as an unknown setting, even when it is
 
 ## Reasoning and timing logs
 
-`chat.logReasoning` writes readable model reasoning to `<data directory>/logs/worker.log` and to CLI stderr. `chat.logTimings` writes the duration of each stage in milliseconds. Both are off by default and apply to chat, scheduled, and messaging runs. Logs can contain private prompt or tool content, so keep them local. These settings never change answers.
+Poppet requests readable reasoning when the provider supports it and saves the reasoning it returns with each assistant message in the [session database](storage.md#what-is-saved), even when `chat.logReasoning` is off.
+
+`chat.logReasoning` also writes readable model reasoning to `<data directory>/logs/worker.log` and to CLI stderr. `chat.logTimings` writes the duration of each stage in milliseconds. Both are off by default and apply to chat, scheduled, and messaging runs. Logs can contain private prompt or tool content, so keep them local. Answer output and messaging replies contain only the answer. Encrypted reasoning is never logged. Logged reasoning is limited to 128 KiB per run; exceeding that limit fails the run only when reasoning logging is enabled. These settings do not select reasoning effort or a reasoning-token budget.
 
 Set either one in `config.json` and restart the worker so it reads the change.
 
