@@ -61,6 +61,8 @@ When a command needs approval, reply with `/approve <id>` or `/deny <id>` using 
 
 ## Scheduled results
 
+During [quiet hours](../configuration.md#quiet-hours), scheduled results and failure notices wait until the window ends. Replies to your messages are not held.
+
 Use `--to slack` to deliver to the home channel:
 
 ```fish

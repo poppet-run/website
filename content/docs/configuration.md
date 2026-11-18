@@ -67,6 +67,7 @@ Use the same value for every command, including the worker's login service. Each
 | `mcpServers`              | `[]`                   | [Local tool servers and their permissions](mcp.md)                                |
 | `gatewayPackages`         | `[]`                   | External messaging adapters to load                                               |
 | `tasks.catchUpMinutes`    | `60`                   | How late a recurring task can start after a missed time, from 0 to 1440          |
+| `tasks.quietHours` | Unset | Daily window when scheduled messaging posts wait; see [quiet hours](#quiet-hours) |
 | `chat.outputTokens`       | `2048`                 | Requested output limit, from 1 to 32768, capped by the model's own limit          |
 | `chat.runDeadlineSeconds` | `300`                  | Overall time limit for one run, from 30 to 3600 seconds                           |
 | `chat.logReasoning`       | `false`                | Log readable model reasoning to CLI stderr and the worker log                     |
@@ -76,6 +77,26 @@ Use the same value for every command, including the worker's login service. Each
 Different sessions and messaging conversations can run at the same time, while requests in one session stay in order. Set `chat.maxConcurrentRequests` to 1 to process one request at a time. A request waiting for command approval keeps its slot for up to two minutes. Restart the worker after changing the limit.
 
 Context size, conversation history, model turns, tool calls, and tool output use fixed limits. They are not settings. See [chat limits](chat.md#context-and-limits).
+
+## Quiet hours
+
+Set `tasks.quietHours` in `config.json` to hold scheduled posts to Discord and Slack overnight:
+
+```json
+{
+  "tasks": {
+    "quietHours": { "start": "22:00", "end": "07:30", "timeZone": "Europe/London" }
+  }
+}
+```
+
+Use 24-hour `HH:MM` times and an IANA time zone name. The window can cross midnight. Start and end must differ; invalid times, unknown zones, and UTC offsets such as `+01:00` are rejected. Without this setting, nothing is held.
+
+Tasks still run at their scheduled times. Results and [failure notices](tasks.md#failure-notices) ready during the window wait until it ends. Replies to your messages, approval prompts, and tasks without a messaging destination are not held.
+
+On a daylight-saving change, a time skipped by the clock takes effect when the clock jumps past it. A time that occurs twice uses its first occurrence. A window ending at 01:30 when the clocks go back ends at the first 01:30 and does not resume during the repeated hour.
+
+Restart with `poppet worker restart` after changing or removing the setting. The worker checks the window before each post, so the change also applies to posts already waiting. Inspect held posts with `poppet tasks show <task-id>`; the worker log also records the hold.
 
 ## API keys
 
