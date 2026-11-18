@@ -35,6 +35,8 @@ This opens the database, applies any pending upgrades, and prints its path, sche
 - **Skills.** A session or task keeps a copy of the skill it was given. A skill named with `$name` is saved with that user message, including its name and full text. Later turns replay that saved copy.
 - **Search index.** Your messages and Poppet's final answers are indexed for `chat search`. Failed input and tool results stay out of the index.
 
+Assistant messages also keep provider continuation data, including any readable or encrypted reasoning the provider returned. Readable reasoning is saved even when [`chat.logReasoning`](configuration.md#reasoning-and-timing-logs) is off; that setting controls diagnostic logging.
+
 Provider, search, and MCP credentials are kept in `auth/`. Discord and Slack tokens are kept in `channels/`. These credentials are not stored in the database.
 
 ## Session deletion
