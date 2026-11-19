@@ -135,7 +135,10 @@ through `provider login openai-chatgpt`.
 | `provider login [provider] [options]` | Sign in or save an API key.             |
 | `provider status [provider]`          | Show connection status without secrets. |
 | `provider models [provider]`          | List available models.                  |
-| `provider logout [provider]`          | Clear that provider's saved connection. |
+| `provider logout [provider] [--forget]` | Sign out or remove a saved API key. |
+
+ChatGPT logout keeps the saved account identity, registration, and host identifier.
+Use `--forget` to remove them before switching accounts or resetting the registration.
 
 API-key login requires an interactive terminal and masks typed or pasted characters
 with `*`, even when an environment key is set. It does not accept piped input or
