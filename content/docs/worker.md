@@ -56,6 +56,24 @@ Connection details shown by `worker status` are not a live check of your provide
 
 The worker writes lifecycle logs to `<data directory>/logs/worker.log`. The directory is `0700` and the file is `0600`. Default lifecycle logs leave out prompts, model output, and tokens. Enabling [`chat.logReasoning`](configuration.md#reasoning-and-timing-logs) also records readable model reasoning, which can contain private prompt or tool content. Each log file is limited to 5 MiB, and three archives are kept. `worker logs` prints the last 64 KiB across them.
 
+Worker lifecycle diagnostics use one plain logfmt line per entry on standard error, including when `worker run` runs in a terminal. Each line starts with `time`, `level`, and `msg`, followed by fields for that event. Values containing spaces, quotes, backslashes, or `=` are JSON-quoted; newlines are escaped.
+
+```text
+time=2099-10-29T09:00:00.000Z level=info msg="task occurrence finished" task=<task-id> name=Summary occurrence=<occurrence-id> status=completed
+```
+
+Filter saved logs by level, message, or identifier:
+
+```sh
+poppet worker logs | grep 'level=error'
+poppet worker logs | grep 'msg="task occurrence'
+poppet worker logs | grep 'session=<session-id>'
+```
+
+Common fields include `task`, `occurrence`, `session`, `run`, `provider`, `adapter`, `server`, `reason`, and `error`. Reasoning entries use `msg=thinking` and put the chunk in `text`. Timing entries use `msg=timing` with `stage` and `duration_ms`.
+
+Scripts that read worker output should use these fields. Startup now reports `msg="worker started"` on stderr instead of the previous `Worker running.` message on stdout.
+
 ## Stop, start, and uninstall
 
 ```sh
