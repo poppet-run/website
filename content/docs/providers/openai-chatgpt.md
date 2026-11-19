@@ -19,7 +19,7 @@ poppet provider status openai-chatgpt
 
 If sign-in works but plan-usage access was not granted, `status` shows `planUsage: false`. Run `poppet provider login openai-chatgpt` again to approve it. Poppet asks for it again only when the saved sign-in lacks that access.
 
-Poppet stores one ChatGPT account. If you sign in with a different account, log out first.
+Poppet stores one ChatGPT account. To switch accounts, run `poppet provider logout openai-chatgpt --forget` before signing in again.
 
 ## Headless and remote machines
 
@@ -69,6 +69,14 @@ Sign-in details are saved in `<data directory>/auth/connection.json`, readable o
 poppet provider logout openai-chatgpt
 ```
 
-`logout` deletes the saved sign-in and tries to revoke it with OpenAI. If revocation cannot be confirmed, Poppet says so. To finish, disconnect Poppet in ChatGPT's settings. Logout does not touch your other providers.
+`logout` tries to revoke the session with OpenAI and clears local tokens and verification. It keeps your account identity, registration, and host identifier, so signing back in reuses the same registration. Status shows you as disconnected but still includes the saved account identity and client ID. Logout does not touch your other providers.
+
+To switch accounts or reset the registration, forget the saved connection before signing in again:
+
+```sh
+poppet provider logout openai-chatgpt --forget
+```
+
+`--forget` also removes the local connection file. The next login creates a new registration and host identifier. To remove an old entry from ChatGPT, disconnect Poppet in ChatGPT's settings. If remote revocation cannot be confirmed during logout, Poppet says so.
 
 See [configuration](../configuration.md) for your default provider and model.
