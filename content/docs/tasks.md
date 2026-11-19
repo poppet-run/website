@@ -132,7 +132,7 @@ Tasks without a destination keep their results local.
 
 Make the prompt conditional, for example "Tell me only if the page changed." Scheduled runs are instructed to answer with exactly `NO_REPLY` when the condition is not met. When the whole answer is `NO_REPLY`, ignoring surrounding whitespace, Poppet posts nothing. An answer that mentions `NO_REPLY` alongside other text is delivered as usual.
 
-The occurrence still completes. The worker logs `completed no-action`, and `poppet tasks show <task-id>` shows `no action` in the delivery column. JSON output includes `noAction: true`, and the saved output remains available. This also applies to tasks without a messaging destination. To compare against a previous run, [keep a task note](#keep-a-note-between-runs).
+The occurrence still completes. The worker logs `status=completed no_action=true`, and `poppet tasks show <task-id>` shows `no action` in the delivery column. JSON output includes `noAction: true`, and the saved output remains available. This also applies to tasks without a messaging destination. To compare against a previous run, [keep a task note](#keep-a-note-between-runs).
 
 ### Failure notices
 
@@ -168,7 +168,7 @@ The last value saved takes effect only when the occurrence completes, including 
 
 Notes belong to one task and do not change [saved facts](memory.md). They are data, not instructions or permission to run commands. A URL found only in a note does not authorize a page read. The note tool stays available after reading a page or search result, so a task can save the value it found.
 
-Editing a task keeps its note. Removing a task or clearing all tasks deletes its note history too. The worker adds `note-updated` to the completion log when a run changes its note.
+Editing a task keeps its note. Removing a task or clearing all tasks deletes its note history too. The worker adds `note_updated=true` to the completion log when a run changes its note.
 
 ### Inspect or clear a note
 
