@@ -181,6 +181,14 @@ poppet tasks clear-note <task-id>
 
 Clearing works with the worker running or stopped, but fails while that task has a running occurrence. Wait for it to finish or cancel it first. Clearing an absent note changes nothing. The CLI can clear notes but cannot write their text, and interactive chat cannot clear them.
 
+## Use MCP tools
+
+Scheduled MCP access is off by default. Configure owner-verified read-only tools in `scheduledTools`, or opt actions into per-call review with `scheduledReviewedTools`. See [MCP permissions](mcp.md#permissions) and [scheduled reviewed actions](mcp.md#schedule-a-reviewed-action). Restart the worker after changing these lists.
+
+Reviewed MCP calls use the saved task prompt as their authority, not task notes or retrieved content. Only an allow decision executes the call. A denial, unavailable review, or need for human approval fails the occurrence without waiting for a person. Future recurring occurrences stay scheduled, and earlier actions are not rolled back.
+
+`poppet tasks show <task-id>` includes the reviewed invocation, decision, reason, and outcome. Inspect the server after an uncertain outcome before retrying. Tasks with a destination use the same [failure notices](#failure-notices) as other failed runs.
+
 ## Choose a skill
 
 Add `--skill <name>` before the prompt to save a [skill](skills.md) with a new task. Each run uses the copy saved with the task. To use an edited skill, create a new task. Scheduled prompts do not expand `$name` mentions. You can select a manual-only skill with `tasks add --skill`; the model cannot select one when creating a task in chat.

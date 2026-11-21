@@ -88,6 +88,8 @@ If a command needs your approval before Poppet runs it, the bot posts the comman
 
 Only the owner can answer, and each approval covers one command. Requests expire after two minutes, cancellation, or worker restart. Repeated clicks or replies cannot execute the command again. Buttons become disabled when the request ends; stale buttons after a restart cannot revive it. See [run commands](../commands.md).
 
+[Reviewed MCP actions](../mcp.md#review-an-action) use these same controls in the originating conversation. The prompt shows the target, expected effects, and exact arguments, and approval covers one call.
+
 ## Scheduled results
 
 During [quiet hours](../configuration.md#quiet-hours), scheduled results and failure notices wait until the window ends. Replies to your messages are not held.

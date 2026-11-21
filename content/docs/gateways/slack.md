@@ -59,6 +59,8 @@ You can also [name a skill](../skills.md#name-a-skill-in-a-message) with `$name`
 
 When a command needs approval, reply with `/approve <id>` or `/deny <id>` using the ID shown in the thread. Only the owner can answer. Approval covers one command and expires after two minutes, cancellation, or worker restart. See [run commands](../commands.md).
 
+[Reviewed MCP actions](../mcp.md#review-an-action) use these same controls in the originating conversation. The prompt shows the target, expected effects, and exact arguments, and approval covers one call.
+
 ## Scheduled results
 
 During [quiet hours](../configuration.md#quiet-hours), scheduled results and failure notices wait until the window ends. Replies to your messages are not held.

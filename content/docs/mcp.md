@@ -32,7 +32,7 @@ Add `mcpServers` to `config.json`:
 }
 ```
 
-Replace the command, arguments, and tool names with your server's values. `args` and `tools` are required. `cwd`, `environment`, `scheduledTools`, and `availableAfterUntrusted` are optional.
+Replace the command, arguments, and tool names with your server's values. `args` and `tools` are required. `cwd`, `environment`, `scheduledTools`, `reviewedTools`, `scheduledReviewedTools`, and `availableAfterUntrusted` are optional.
 
 - `id` is lowercase, starts with a letter, uses letters, digits, and hyphens, and is at most 64 characters.
 - The command runs directly, with no shell. Use an absolute path, especially for the background worker.
@@ -58,15 +58,15 @@ from a hidden prompt or `--api-key <key>`, saves it as the protected credential
 OAuth for a separate `mcp login` step.
 
 `mcp tools <id>` discovers tools and shows their `allowed` and `scheduled`
-permissions. `mcp allow <id> <tools...>` adds discovered names to the interactive
+permissions, plus per-call review and scheduled review flags. `mcp allow <id> <tools...>` adds discovered names to the interactive
 allowlist. `mcp allow <id> --all` saves all names discovered now; tools the
 server adds later remain blocked. It cannot be combined with explicit names
 or `--scheduled`. Use `mcp allow <id> <tools...> --scheduled` for explicitly
-reviewed read-only tools; this grants both interactive and scheduled access.
+owner-verified read-only tools; this grants both interactive and scheduled access.
 Unknown tools and failed discovery leave permissions unchanged.
 
-`mcp deny <id> <tools...>` removes both permissions without connecting to the
-server. Add `--scheduled` to remove only scheduled access. These commands work
+`mcp deny <id> <tools...>` removes interactive, scheduled, and review permissions without connecting to the
+server. Add `--scheduled` to remove only scheduled access from either scheduled list. These commands work
 with both HTTP and configured stdio servers. Restart the worker after adding,
 removing, or changing permissions. Until then inspection through that worker
 reflects its existing configuration.
@@ -180,13 +180,48 @@ Poppet does not retry tool calls. If a call fails after it was sent, Poppet reco
 
 Only tools in `tools` are offered to the model. In chat, a tool call still needs your explicit request in the current message.
 
-`scheduledTools` is empty by default. Add a tool there only after you have checked that it is read-only. Scheduled runs can use only tools listed in both `tools` and `scheduledTools`. Server annotations do not grant access.
+`scheduledTools` is empty by default. Add a tool there only after you have checked that it is read-only. These tools must also appear in `tools`. A separate `scheduledReviewedTools` list enables [scheduled reviewed actions](#schedule-a-reviewed-action). Server annotations do not grant access or enable review.
 
 Poppet treats results from MCP servers as data. They cannot authorize memory changes, task changes, or page reads.
 
 By default, MCP tools are withdrawn for the rest of a run once a fetched page, search result, or MCP result enters it. This limits the run to one round of MCP calls.
 
-Set `"availableAfterUntrusted": true` on a server only if you trust it to keep receiving calls after that content. This can support workflows that read the server's documentation before making another call. Text from a page, email, or earlier result can then influence later calls to that server, within its tool allowlist. The setting works for both stdio and HTTP servers. It does not restore memory or task mutation tools, grant access to returned URLs, or change scheduled-tool restrictions.
+Set `"availableAfterUntrusted": true` on a server only if you trust it to keep receiving calls after that content. This can support workflows that read the server's documentation before making another call. Text from a page, email, or earlier result can then influence later calls to that server, within its tool allowlist. The setting works for both stdio and HTTP servers. It does not restore reviewed MCP tools, memory or task mutation tools, grant access to returned URLs, or change scheduled-tool restrictions.
+
+## Review an action
+
+Add exact names to a server's `reviewedTools` in `config.json`, keeping them in `tools`. Restart the worker after editing. For example, these permission fields allow reads and review each proposed write:
+
+```json
+{
+  "tools": ["lookup_record", "update_record"],
+  "scheduledTools": ["lookup_record"],
+  "reviewedTools": ["update_record"],
+  "scheduledReviewedTools": []
+}
+```
+
+Use your server's actual tool names. Review lists contain unique names. `reviewedTools` must be a subset of `tools` and cannot overlap the read-only `scheduledTools` list. Omitting `reviewedTools` keeps the existing allowlist behavior. Server annotations such as `readOnlyHint` never enable or bypass review.
+
+Before dispatch, Poppet uses the current model to review the exact server, tool, and validated arguments against your current message. A denial or unavailable review stops the run without executing the call. If a person is needed, Discord or Slack shows the target, expected effects, reason, and exact invocation. Only the configured owner in that conversation can reply `/approve <id>` or `/deny <id>`. Discord also offers buttons. Approval permits one execution and expires after two minutes, cancellation, or worker restart. Use a private conversation for private arguments.
+
+CLI and web chat stop when human approval is needed. Make a fresh request in Discord or Slack to approve it there.
+
+Attachments and results from pages, searches, Bash, or MCP withdraw reviewed tools for the rest of the run, including calls waiting behind those results in the same batch. `availableAfterUntrusted` does not override this. Name the action and target in a fresh message.
+
+`poppet chat show <session>` displays the review decision, reason, outcome, and any owner's approval decision. A completed receipt with `approvedBy: "reviewer"` or `approvedBy: "owner"` describes a call that already ran. Inspect the server after an uncertain result before requesting another attempt. Reviewed HTTP calls stop at redirects and authentication challenges instead of resending the call. Sign in again if needed before making a new request.
+
+Review accepts up to 8 KiB of escaped invocation data and 32 KiB for the JSON-encoded owner message. Larger requests fail before dispatch.
+
+## Schedule a reviewed action
+
+Add exact tool names to `scheduledReviewedTools`, keeping them in `reviewedTools` and `tools`. For the example above, set `"scheduledReviewedTools": ["update_record"]` to allow scheduled reviewed writes. An empty or omitted list grants none. Restart the worker after editing.
+
+`mcp allow --scheduled` grants read-only access through `scheduledTools`; it cannot enable scheduled reviewed actions. `mcp deny <server> <tools...> --scheduled` removes access from either scheduled list while keeping interactive access and review.
+
+Each call is reviewed against the saved task prompt. Only an allow decision executes it. Denial, unavailable review, or a need for human approval fails the occurrence without posting an approval request. Earlier actions may already have completed, and future recurring occurrences stay scheduled.
+
+`poppet tasks show <task-id>` shows reviewed invocations, decisions, reasons, and outcomes. Add `--json` to inspect stored tool results. Inspect the server after an uncertain result before retrying; Poppet does not replay the call.
 
 ## Limits
 
@@ -194,7 +229,7 @@ Set `"availableAfterUntrusted": true` on a server only if you trust it to keep r
 - Tool descriptions are up to 4096 characters. Input and output schemas are up to 16 KiB, depth 32, and 1024 nodes.
 - Poppet ignores vendor schema keywords that start with `x-`, such as FastMCP's `x-fastmcp-wrap-result`, when it checks a schema. Property names that start with `x-` are still checked.
 - Each tool call can take up to 10 seconds. Starting a server and listing its tools has an 8-second limit.
-- HTTP JSON responses and individual server-sent events are capped at 256 KiB while streaming. Redirects stay on the endpoint's origin, or move to its HTTPS version, and must keep the request method.
+- HTTP JSON responses and individual server-sent events are capped at 256 KiB while streaming. For calls without per-call review, redirects stay on the endpoint's origin, or move to its HTTPS version, and must keep the request method. Reviewed calls do not follow redirects.
 - A dropped HTTP stream fails that connection. Poppet then reconnects with a new session, on the same backoff schedule as stdio servers.
 - Closing an HTTP server ends its session within 5 seconds.
 - Tool results fit within the 16 KiB tool-output limit. Long text is shortened and marked as truncated.

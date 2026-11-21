@@ -39,6 +39,8 @@ Assistant messages also keep provider continuation data, including any readable 
 
 Provider, search, and MCP credentials are kept in `auth/`. Discord and Slack tokens are kept in `channels/`. These credentials are not stored in the database.
 
+Reviewed MCP calls save their review decision before dispatch, including any owner approval. Calls interrupted during review remain interrupted. Calls interrupted after dispatch may have had effects and are recorded as uncertain. Existing calls have no review metadata. Inspect them with `poppet chat show <session>` or `poppet tasks show <task-id>` before requesting a retry.
+
 ## Session deletion
 
 [Delete or prune sessions](chat.md#delete-old-sessions) to remove their messages, attachments, tool calls, runs, and search entries. Poppet removes these records together in one database transaction.

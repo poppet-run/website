@@ -38,6 +38,8 @@ Only the owner can answer, in the same conversation. An approval covers that one
 
 Poppet posts the command and an approval ID in the thread. Reply with `/approve <id>` or `/deny <id>`. Only the configured owner can answer, in the same conversation. The approval covers one command with its saved directory and timeout. Requests expire after two minutes, cancellation, or a worker restart. Slack does not show approval buttons.
 
+[Reviewed MCP actions](mcp.md#review-an-action) use the same approval controls. Their prompts show the target, expected effects, and exact tool arguments.
+
 ## Scheduled tasks
 
 A scheduled task never waits for approval. If a command needs it, that run fails right away, and the worker logs a reason code. `poppet tasks show <task-id>` has the details. Tasks with a destination queue a short [failure notice](tasks.md#failure-notices), without model output or error text. The recurring schedule keeps running. Poppet does not undo commands that finished before the failure, so check the machine before you retry.
