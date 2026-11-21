@@ -154,13 +154,13 @@ for provider-specific setup and logout behavior.
 | Command                                                | Purpose                                                             |
 | ------------------------------------------------------ | ------------------------------------------------------------------- |
 | `mcp servers`                                          | Show permissions, connection diagnostics, sign-in state, and tools. |
-| `mcp tools <server>`                                   | Discover every tool with its interactive and scheduled permissions. |
+| `mcp tools <server>`                                   | Discover every tool with its interactive, scheduled, and review permissions. |
 | `mcp add <server> <url> --auth <none\|api-key\|oauth>` | Save a remote server without connecting or allowing tools.          |
 | `mcp login <server>`                                   | Sign in to an OAuth server.                                         |
 | `mcp logout <server>`                                  | Delete an OAuth server's saved tokens.                              |
 | `mcp allow <server> <tools...>`                        | Allow discovered tools for interactive runs.                        |
 | `mcp allow <server> --all`                             | Allow all currently discovered names for interactive runs.          |
-| `mcp deny <server> <tools...>`                         | Remove interactive and scheduled permissions.                       |
+| `mcp deny <server> <tools...>`                         | Remove interactive, scheduled, and review permissions.                       |
 | `mcp remove <server>`                                  | Remove the entry and the key or sign-in that Poppet saved for it.   |
 
 With `--auth api-key`, `add` reads a hidden prompt or accepts `--api-key <key>`.
@@ -168,8 +168,8 @@ Custom headers and prefixes, OAuth client IDs, and scopes are configured in
 `config.json`. `login` accepts `--no-browser` and `--callback-port <port>`;
 the latter overrides the configured port for that sign-in only.
 
-`allow --scheduled` grants both permissions for explicitly named, reviewed
-read-only tools. `deny --scheduled` removes only scheduled access. `--all`
+`allow --scheduled` grants interactive and scheduled read access for explicitly named, owner-verified
+read-only tools. Per-call review requires `reviewedTools` in `config.json`; scheduled reviewed actions also require `scheduledReviewedTools`. `deny --scheduled` removes access from either scheduled list, keeping interactive access and review. `--all`
 cannot be combined with names or `--scheduled`. Failed discovery or unknown
 names leave permissions unchanged; `deny` works without connecting.
 

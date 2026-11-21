@@ -63,6 +63,8 @@ normal filesystem and OS scheduling. Each platform command has an additional
 to 32 KiB. Errors are summarized without echoing config values, credentials,
 provider error bodies, messages, or tool arguments.
 
+For messaging connection or delivery problems, inspect `poppet worker status` and `poppet worker logs`. Check the destination before retrying an uncertain send to avoid duplicates.
+
 ## Worker and offline limits
 
 Start or restart the worker after updating Poppet to enable the `/v1/doctor`

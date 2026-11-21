@@ -74,7 +74,7 @@ Use the same value for every command, including the worker's login service. Each
 | `chat.logTimings`         | `false`                | Log the duration of each request stage                                            |
 | `chat.maxConcurrentRequests` | `3` | Requests that can run at once across CLI, web chat, messaging, and scheduled runs, from 1 to 8 |
 
-Different sessions and messaging conversations can run at the same time, while requests in one session stay in order. Set `chat.maxConcurrentRequests` to 1 to process one request at a time. A request waiting for command approval keeps its slot for up to two minutes. Restart the worker after changing the limit.
+Different sessions and messaging conversations can run at the same time, while requests in one session stay in order. Set `chat.maxConcurrentRequests` to 1 to process one request at a time. A request waiting for command or reviewed MCP approval keeps its slot for up to two minutes. Restart the worker after changing the limit.
 
 Context size, conversation history, model turns, tool calls, and tool output use fixed limits. They are not settings. See [chat limits](chat.md#context-and-limits).
 
