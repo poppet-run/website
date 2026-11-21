@@ -17,7 +17,7 @@ Create a Slack app for your workspace and enable Socket Mode. Generate an app-le
 - `reactions:write`
 - `files:read`
 
-Subscribe to the `message.channels` and `message.groups` bot events. Invite the bot to an unshared channel. Shared channels and direct messages are unsupported.
+Subscribe to the `message.channels` and `message.groups` bot events. Turn on **Interactivity & Shortcuts** for approval buttons. Socket Mode needs no request URL. Invite the bot to an unshared channel. Shared channels and direct messages are unsupported.
 
 ## Connect
 
@@ -57,7 +57,7 @@ You can also [name a skill](../skills.md#name-a-skill-in-a-message) with `$name`
 
 ## Approve commands
 
-When a command needs approval, reply with `/approve <id>` or `/deny <id>` using the ID shown in the thread. Only the owner can answer. Approval covers one command and expires after two minutes, cancellation, or worker restart. See [run commands](../commands.md).
+When a command needs approval, click **Approve once** or **Deny**, or reply with `/approve <id>` or `/deny <id>` using the ID shown in the thread. Only the owner can answer. Approval covers one command and expires after two minutes, cancellation, or worker restart. See [run commands](../commands.md#approve-commands-in-slack).
 
 [Reviewed MCP actions](../mcp.md#review-an-action) use these same controls in the originating conversation. The prompt shows the target, expected effects, and exact arguments, and approval covers one call.
 
@@ -81,6 +81,6 @@ Ask Poppet in chat to create or manage tasks. A task created in messaging posts 
 
 ## Troubleshooting
 
-Use `poppet worker status` to inspect the connection and delivery queue. Check the owner, workspace, and home-channel IDs, both tokens, Socket Mode, event subscriptions, scopes, and channel membership. Restart the worker after changing settings.
+Use `poppet worker status` to inspect the connection and delivery queue. Check the owner, workspace, and home-channel IDs, both tokens, Socket Mode, Interactivity & Shortcuts, event subscriptions, scopes, and channel membership. Restart the worker after changing settings.
 
 Live verification requires a real Slack app. Check mentions and thread replies, owner rejection, attachments, cancellation, command approval, scheduled results and failure notices, and worker reconnection after restart.
