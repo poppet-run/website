@@ -36,7 +36,9 @@ Only the owner can answer, in the same conversation. An approval covers that one
 
 ## Approve commands in Slack
 
-Poppet posts the command and an approval ID in the thread. Reply with `/approve <id>` or `/deny <id>`. Only the configured owner can answer, in the same conversation. The approval covers one command with its saved directory and timeout. Requests expire after two minutes, cancellation, or a worker restart. Slack does not show approval buttons.
+Poppet posts the exact command, working directory, timeout, reason, and approval ID in the thread. Click **Approve once** or **Deny**, or reply with `/approve <id>` or `/deny <id>`. Only the configured owner can answer, in the same conversation. The approval covers one command with its saved directory and timeout. Requests expire after two minutes, cancellation, or a worker restart. Enable **Interactivity & Shortcuts** in your [Slack app settings](gateways/slack.md#create-the-app) to use the buttons.
+
+Buttons appear after the full invocation, even when it spans several messages. Repeated clicks or text replies cannot execute it again. Poppet confirms button clicks privately and replaces the buttons with the outcome when the request ends. Text replies update the buttons too. Updating the message is best effort; an old button cannot reopen a settled request.
 
 [Reviewed MCP actions](mcp.md#review-an-action) use the same approval controls. Their prompts show the target, expected effects, and exact tool arguments.
 

@@ -203,7 +203,7 @@ Add exact names to a server's `reviewedTools` in `config.json`, keeping them in 
 
 Use your server's actual tool names. Review lists contain unique names. `reviewedTools` must be a subset of `tools` and cannot overlap the read-only `scheduledTools` list. Omitting `reviewedTools` keeps the existing allowlist behavior. Server annotations such as `readOnlyHint` never enable or bypass review.
 
-Before dispatch, Poppet uses the current model to review the exact server, tool, and validated arguments against your current message. A denial or unavailable review stops the run without executing the call. If a person is needed, Discord or Slack shows the target, expected effects, reason, and exact invocation. Only the configured owner in that conversation can reply `/approve <id>` or `/deny <id>`. Discord also offers buttons. Approval permits one execution and expires after two minutes, cancellation, or worker restart. Use a private conversation for private arguments.
+Before dispatch, Poppet uses the current model to review the exact server, tool, and validated arguments against your current message. A denial or unavailable review stops the run without executing the call. If a person is needed, Discord or Slack shows the target, expected effects, reason, and exact invocation. Only the configured owner in that conversation can reply `/approve <id>` or `/deny <id>`. Discord and Slack also offer **Approve once** and **Deny** buttons. Approval permits one execution and expires after two minutes, cancellation, or worker restart. Use a private conversation for private arguments.
 
 CLI and web chat stop when human approval is needed. Make a fresh request in Discord or Slack to approve it there.
 
