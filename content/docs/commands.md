@@ -5,7 +5,7 @@ description = "Let Poppet run shell commands on your computer, with a review bef
 
 # Run commands
 
-Poppet can run shell commands on your computer for chats, Discord and Slack threads, and scheduled tasks. Commands run as your user account, with its files, environment, and permissions. Poppet does not sandbox them, and it does not have root access or a sudo password.
+Poppet can run shell commands on your computer for chats, Discord and Slack threads, and scheduled tasks. Commands run as your user account, with its files and permissions. Poppet does not sandbox them, and it does not have root access or a sudo password.
 
 Because of that, every command is reviewed before it runs.
 
@@ -20,6 +20,8 @@ The reviewer returns one of three decisions:
 - **Deny.** The command does not run, and the run ends.
 
 If the reviewer fails, times out, or returns an unreadable answer, nothing runs. A denied command cannot be retried within the same run.
+
+Poppet records dispatch only after review and any required approval. Cancelling while either is pending records an interruption before dispatch. Approval messages escape control characters and markup so the command and reason can be read as data.
 
 The reviewer is a model, so it can be wrong. It reads the command, not the scripts that command runs, and a script can change after review. Treat review as a second opinion, not a sandbox.
 
@@ -57,8 +59,8 @@ Successful results still go to the task's destination, unless the whole answer i
 
 A completed receipt includes `status: "completed"` and `approvedBy`, identifying the owner or reviewer. The command has already finished, even if it produced no output. Its exit code shows whether it succeeded.
 
-A timeout or cancellation stops the command and its child processes. Poppet does not replay a command that was interrupted. To keep a service running, use your system's service manager, not `command &`.
+A timeout or cancellation stops the command and its child processes. Poppet closes output pipes on timeout or cancellation even if a detached process still holds them open. Processes that deliberately detach from the command’s process group are outside the cleanup guarantee. Poppet does not replay a command that was interrupted. To keep a service running, use your system's service manager, not `command &`.
 
 ## Limits
 
-Poppet passes its own environment to commands, so they can read the same files and credentials you can. Only allow commands you would run yourself, and avoid storing secrets where a command could read them.
+Commands inherit only `HOME`, `PATH`, `USER`, `LOGNAME`, `SHELL`, `TERM`, `TMPDIR`, `LANG`, `LC_ALL`, and `LC_CTYPE`. Other variables, including provider keys and Bash startup controls, are not passed through. Commands can still read files and credentials accessible to your account. Only allow commands you would run yourself, and avoid storing secrets where a command could read them.

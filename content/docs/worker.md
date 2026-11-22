@@ -83,7 +83,7 @@ poppet worker restart
 poppet worker uninstall
 ```
 
-`stop` stops the worker until you start it again or log in, and keeps login startup. `uninstall` removes login startup. Neither command deletes tasks, results, facts, credentials, or logs. Starting a worker that is already running does not interrupt its active request. `restart` interrupts active work and reloads the installed worker with current code and settings.
+`stop` stops the worker until you start it again or log in, and keeps login startup. `uninstall` removes login startup. Neither command deletes tasks, results, facts, credentials, or logs. Starting a worker that is already running does not interrupt its active request. `restart` interrupts active work and reloads the installed worker with current code and settings. Accepting the restart prompt in `poppet setup` restarts the active installed worker in one service-manager operation.
 
 ## Concurrent requests
 

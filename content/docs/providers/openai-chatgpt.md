@@ -61,7 +61,7 @@ Save a model from the list in `config.json`:
 
 ## Credentials
 
-Sign-in details are saved in `<data directory>/auth/connection.json`, readable only by your user. Poppet refreshes access tokens before they expire. Tokens never appear in command output.
+Sign-in details are saved in `<data directory>/auth/connection.json`, readable only by your user. Poppet refreshes access tokens before they expire. Tokens never appear in command output. If identity verification is temporarily unavailable after renewal, Poppet keeps the renewal in protected storage and verifies it on the next request before using the renewed access token.
 
 ## Log out
 

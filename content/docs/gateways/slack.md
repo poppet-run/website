@@ -17,7 +17,7 @@ Create a Slack app for your workspace and enable Socket Mode. Generate an app-le
 - `reactions:write`
 - `files:read`
 
-Subscribe to the `message.channels` and `message.groups` bot events. Turn on **Interactivity & Shortcuts** for approval buttons. Socket Mode needs no request URL. Invite the bot to an unshared channel. Shared channels and direct messages are unsupported.
+Subscribe to the `message.channels` and `message.groups` bot events. Turn on **Interactivity & Shortcuts** for approval buttons. Socket Mode needs no request URL. Invite the bot to an unshared channel. Direct and group messages, archived channels, and shared channels are refused. This includes organization-shared channels and channels with pending external sharing.
 
 ## Connect
 
@@ -80,6 +80,8 @@ Replies are saved before delivery. An uncertain send is not automatically repeat
 Ask Poppet in chat to create or manage tasks. A task created in messaging posts to the home channel by default. Ask for the current thread or supply another destination ID to change where it posts. See [scheduled tasks](../tasks.md#manage-tasks-from-chat).
 
 ## Troubleshooting
+
+When Socket Mode closes, Poppet marks Slack offline and retries the connection after 30 seconds. Gateway work blocked by temporary channel unavailability can retry for about a minute.
 
 Use `poppet worker status` to inspect the connection and delivery queue. A reconnect or successful event acknowledgement clears a stale error. Check the owner, workspace, and home-channel IDs, both tokens, Socket Mode, Interactivity & Shortcuts, event subscriptions, scopes, and channel membership. Restart the worker after changing settings.
 

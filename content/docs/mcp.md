@@ -139,13 +139,17 @@ documents and unattended grants are unsupported.
 
 Tokens live in `<data directory>/auth/mcp-oauth-<id>.json`, protected like API
 keys and bound to the configured URL: changing the URL requires a new sign-in.
-Discovery, registration, and token requests use HTTPS (plain HTTP only to
-loopback) and the same size cap as MCP messages. Access tokens are redacted
+Discovery, registration, and token requests use public HTTPS. Loopback OAuth
+endpoints, including plain HTTP, are allowed only for loopback MCP servers. A
+`WWW-Authenticate` resource metadata URL must share the server’s origin unless
+you explicitly set `oauth.resourceMetadataUrl`. Poppet also validates the browser
+authorization destination before opening it. Access tokens are redacted
 from results and rejected in tool definitions.
 
 A run never opens a browser. When the server rejects an access token, Poppet
-refreshes it under the record's lock; a worker and a CLI process never both
-spend one refresh token, and the second adopts the first's result. A rejected
+claims a short-lived refresh lease and releases the file lock before contacting
+the authorization server. A worker and CLI process adopt the same refreshed
+token, and a delayed rejection of an old token keeps the newer sign-in. A rejected
 or missing refresh token, a missing sign-in, or a changed URL puts the server in
 `needs-login`: its tools are unavailable, other servers keep working, and no
 backoff applies. The next request after `mcp login` reconnects, including in a
@@ -229,7 +233,7 @@ Each call is reviewed against the saved task prompt. Only an allow decision exec
 - Tool descriptions are up to 4096 characters. Input and output schemas are up to 16 KiB, depth 32, and 1024 nodes.
 - Poppet ignores vendor schema keywords that start with `x-`, such as FastMCP's `x-fastmcp-wrap-result`, when it checks a schema. Property names that start with `x-` are still checked.
 - Each tool call can take up to 10 seconds. Starting a server and listing its tools has an 8-second limit.
-- HTTP JSON responses and individual server-sent events are capped at 256 KiB while streaming. For calls without per-call review, redirects stay on the endpoint's origin, or move to its HTTPS version, and must keep the request method. Reviewed calls do not follow redirects.
+- HTTP JSON responses, OAuth responses, HTTP errors, and individual server-sent events are capped at 256 KiB. Each successful event-stream response also has a 16 MiB total limit. For calls without per-call review, redirects stay on the endpoint's origin, or move to its HTTPS version, and must keep the request method. Reviewed calls do not follow redirects.
 - A dropped HTTP stream fails that connection. Poppet then reconnects with a new session, on the same backoff schedule as stdio servers.
 - Closing an HTTP server ends its session within 5 seconds.
 - Tool results fit within the 16 KiB tool-output limit. Long text is shortened and marked as truncated.
