@@ -54,7 +54,7 @@ poppet worker logs
 
 Connection details shown by `worker status` are not a live check of your provider.
 
-The worker writes lifecycle logs to `<data directory>/logs/worker.log`. The directory is `0700` and the file is `0600`. Default lifecycle logs leave out prompts, model output, and tokens. Enabling [`chat.logReasoning`](configuration.md#reasoning-and-timing-logs) also records readable model reasoning, which can contain private prompt or tool content. Each log file is limited to 5 MiB, and three archives are kept. `worker logs` prints the last 64 KiB across them.
+The worker writes lifecycle logs to `<data directory>/logs/worker.log`. The directory is `0700` and the file is `0600`. Default lifecycle logs leave out prompts, model output, and tokens. Enabling [`chat.logReasoning`](configuration.md#reasoning-and-timing-logs) also records readable model reasoning for runs other than streaming terminal chat, which can contain private prompt or tool content. Each log file is limited to 5 MiB, and three archives are kept. `worker logs` prints the last 64 KiB across them.
 
 Worker lifecycle diagnostics use one plain logfmt line per entry on standard error, including when `worker run` runs in a terminal. Each line starts with `time`, `level`, and `msg`, followed by fields for that event. Values containing spaces, quotes, backslashes, or `=` are JSON-quoted; newlines are escaped.
 

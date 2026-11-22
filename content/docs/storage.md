@@ -55,7 +55,9 @@ Each part of the database upgrades itself when Poppet starts. Poppet refuses a d
 
 ## Permissions
 
-The store directory is `0700`, and the database files are `0600`. The `auth/` and `channels/` directories use `0700`, and their credential files use `0600`.
+The store directory is `0700`, and the database files are `0600`. The `auth/` and `channels/` directories use `0700`, and their credential files use `0600`. Credential reads reject files or directories accessible to other users instead of silently tightening their permissions. Credentials must be regular files owned by your user, without symbolic or hard links. Saved API-key files are limited to 64 KiB.
+
+Configuration writes reject a data directory that is a symbolic link, belongs to another user, or allows group or world writes. See [memory](memory.md#limits) for profile and personality file requirements.
 
 ## Interrupted work
 

@@ -29,7 +29,7 @@ Create `<data directory>/web.json`. The default directory is `~/.config/poppet`;
 }
 ```
 
-`origin` is the public address, without a trailing slash or path. `hostname` and `port` select the listener. All four fields are required. Keep the file owned by your user and prevent other users from writing to it.
+`origin` is the public address, without a trailing slash or path. `hostname` and `port` select the listener. `hostname` must be `127.0.0.1`, `::1`, or `localhost`; other bind addresses are rejected. All four fields are required. Keep the file owned by your user and prevent other users from writing to it.
 
 Generate a random access key and save it in your password manager:
 

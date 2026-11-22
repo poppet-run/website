@@ -27,13 +27,13 @@ Run setup for masked entry of the bot and app tokens:
 poppet setup
 ```
 
-Or pass all five named flags for separate gateway setup:
+Or pass the three IDs as named flags and pipe the tokens from environment variables, with the bot token on the first line and the app token on the second:
 
 ```fish
-poppet gateway slack setup --owner-id <your-user-id> --team-id <workspace-id> --home-channel-id <home-channel-id> --bot-token <bot-token> --app-token <app-token>
+printf '%s\n%s\n' "$SLACK_BOT_TOKEN" "$SLACK_APP_TOKEN" | poppet gateway slack setup --owner-id <your-user-id> --team-id <workspace-id> --home-channel-id <home-channel-id>
 ```
 
-Direct flags put tokens in command arguments and shell history. Use `poppet setup` to avoid that.
+You can also pass `--bot-token <token>` and `--app-token <token>`. If you pass only one, stdin supplies the missing token on its first line. Piping existing environment variables or using masked entry in `poppet setup` keeps tokens out of the setup command arguments and shell history.
 
 Ordinary settings go under `slack` in `config.json`. Both tokens are saved in `<data directory>/channels/slack.json` with private file permissions. Removing the `slack` section disables the adapter and keeps the tokens.
 
