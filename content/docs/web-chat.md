@@ -55,7 +55,7 @@ chmod 600 ~/.config/poppet/web.json
 ```
 {{< /shell >}}
 
-Adjust the file path if you use a different data directory. Replace the example hash before starting the worker. The original key must be 32 to 256 characters long and separate from provider credentials.
+Keep `web.json` owned by your user with mode `0600`. Adjust the file path if you use a different data directory. Replace the example hash before starting the worker. The original key must be 32 to 256 characters long and separate from provider credentials.
 
 Start the worker from this checkout:
 
@@ -67,7 +67,7 @@ Stop any worker that already owns this data directory first. For an installed se
 
 ## Connect from another device
 
-Put an HTTPS reverse proxy in front of `127.0.0.1:8080`. Set up DNS and certificates for your hostname, and make the public address match `origin` exactly. The proxy must preserve the public `Host` header and avoid buffering server-sent events so replies stream as they arrive. Keep the HTTP backend on loopback.
+Put an HTTPS reverse proxy in front of `127.0.0.1:8080`. Set up DNS and certificates for your hostname, and make the public address match `origin` exactly. The proxy must preserve the public `Host` header and avoid buffering server-sent events so replies stream as they arrive. Keep the HTTP backend on loopback. Set `"trustProxy": true` in `web.json` only when this loopback proxy manages `X-Forwarded-For`. Poppet then uses the last address in that header if it is a valid IP address. Without this setting, login limits use the connection’s peer address.
 
 For same-machine development, use `http://127.0.0.1:8080` as the origin. HTTP origins for LAN addresses and public hostnames are rejected. Remote access requires HTTPS.
 
@@ -94,6 +94,8 @@ Choose Delete in the conversation header and confirm to remove the open conversa
 After deletion, the conversation leaves the sidebar and the browser returns to a new chat. Its unsent draft and submission receipts are removed too. See [delete old sessions](chat.md#delete-old-sessions) for the saved records removed and what happens to linked tasks, memory, and messaging threads.
 
 ## Current limits
+
+Login allows ten attempts per minute per client address and 60 per minute across the listener. Ordinary connections have a 10-second idle timeout, and JSON bodies must arrive within 10 seconds. At most 32 authenticated event streams can stay open at once. Poppet keeps at most 32 logins; a new login then replaces the oldest one.
 
 Web chat has no attachments, conversation search, renaming, model selection, session-wide skill selection, reasoning display, or run details. New conversations use the first message as their title. Use `poppet chat show <session-id>` to inspect saved runs.
 

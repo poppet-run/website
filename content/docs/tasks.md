@@ -39,7 +39,7 @@ Use a five-field cron expression and a timezone:
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London "Summarize my recent conversations"
 ```
 
-One-off times need `Z` or a UTC offset, such as `2099-10-22T09:00:00+01:00`. Recurring schedules keep the same local time across daylight saving changes. A time that a change skips moves forward, and a time that happens twice runs once.
+One-off times need `Z` or a UTC offset, such as `2099-10-22T09:00:00+01:00`. Recurring schedules keep the same local time across daylight saving changes. Catch-up follows the same forward schedule. If a saved schedule cannot advance, Poppet pauses that task and logs the failure while continuing to process other tasks. A time that a change skips moves forward, and a time that happens twice runs once.
 
 Each run starts a fresh session. It has the current profile, saved facts, conversation search, page reading, and web search if it is set up. Scheduled runs cannot change memory, and they cannot manage tasks.
 
@@ -95,6 +95,8 @@ An edit changes only the fields you give, including an optional [end time](#end-
 A name or prompt change replaces a run that has not started yet, and the original run stays in `tasks show` as cancelled. A schedule change cancels pending work and works out the next future time. Editing a finished one-off's name or prompt does not run it again. Give it a new future time to run it again.
 
 ## Manage tasks from chat
+
+Editing, resuming, rescheduling, or running a saved task from chat requires access to its saved messaging destination. For tasks with a manual-only skill, use the owner CLI for these changes.
 
 Ask Poppet in chat or in a Discord or Slack thread to create, list, inspect, edit, delete, pause, resume, skip, snooze, or run a task:
 

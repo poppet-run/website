@@ -18,7 +18,7 @@ poppet memory set answer.style "Explain the reasoning"
 poppet memory forget answer.style
 ```
 
-`set` creates a key or replaces its current value. `forget` needs an existing key. Keys start with a letter or digit and may contain letters, digits, dots, underscores, and hyphens, up to 128 characters. Values are nonempty text of up to 4096 bytes. You can store up to 128 facts.
+`set` creates a key or replaces its current value. `forget` needs an existing key. Keys start with a letter or digit and may contain letters, digits, dots, underscores, and hyphens, up to 128 characters. Values are nonempty text of up to 4096 bytes. You can store up to 128 facts, with an 8 KiB limit on their serialized keys and values. Writes that exceed the byte limit are refused. If older facts exceed it, shorten or forget facts to bring them within the limit.
 
 Memory commands need no model or login. Listing shows each key, its value, when it changed, and where it came from.
 

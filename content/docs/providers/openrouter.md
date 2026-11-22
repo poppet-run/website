@@ -25,7 +25,7 @@ For unattended inference, set `POPPET_OPENROUTER_API_KEY` in the process environ
 poppet provider models openrouter
 ```
 
-A connection drop while downloading the model catalog is reported as a temporary failure.
+A connection drop while downloading the model catalog is reported as a temporary failure. Malformed catalog entries are skipped when usable entries remain.
 
 `models` lists the models that Poppet can use, without needing a key. The list leaves out models that generate images or audio, and dynamic routers such as `openrouter/auto` and `openrouter/free`. Poppet only sends requests that the chosen model supports, and it does not route them to other providers. Both coding and general chats work with OpenRouter.
 
