@@ -70,7 +70,7 @@ Use the same value for every command, including the worker's login service. Each
 | `tasks.quietHours` | Unset | Daily window when scheduled messaging posts wait; see [quiet hours](#quiet-hours) |
 | `chat.outputTokens`       | `2048`                 | Requested output limit, from 1 to 32768, capped by the model's own limit          |
 | `chat.runDeadlineSeconds` | `300`                  | Overall time limit for one run, from 30 to 3600 seconds                           |
-| `chat.logReasoning`       | `false`                | Log readable model reasoning to CLI stderr and the worker log                     |
+| `chat.logReasoning`       | `false`                | Show or log readable reasoning; streamed terminal reasoning is not duplicated in the worker log                     |
 | `chat.logTimings`         | `false`                | Log the duration of each request stage                                            |
 | `chat.maxConcurrentRequests` | `3` | Requests that can run at once across CLI, web chat, messaging, and scheduled runs, from 1 to 8 |
 
@@ -176,7 +176,7 @@ The removed `webSearch` field is rejected as an unknown setting, even when it is
 
 Poppet requests readable reasoning when the provider supports it and saves the reasoning it returns with each assistant message in the [session database](storage.md#what-is-saved), even when `chat.logReasoning` is off.
 
-`chat.logReasoning` also writes readable model reasoning to `<data directory>/logs/worker.log` and to CLI stderr. `chat.logTimings` writes the duration of each stage in milliseconds. Both are off by default and apply to chat, scheduled, and messaging runs. Logs can contain private prompt or tool content, so keep them local. Answer output and messaging replies contain only the answer. Encrypted reasoning is never logged. Logged reasoning is limited to 128 KiB per run; exceeding that limit fails the run only when reasoning logging is enabled. These settings do not select reasoning effort or a reasoning-token budget.
+`chat.logReasoning` displays reasoning in streaming terminal chat without duplicating it in the worker log. For other runs, it writes readable model reasoning to `<data directory>/logs/worker.log` and to CLI stderr. `chat.logTimings` writes the duration of each stage in milliseconds. Both are off by default and apply to chat, scheduled, and messaging runs. Logs can contain private prompt or tool content, so keep them local. Answer output and messaging replies contain only the answer. Encrypted reasoning is never logged. Logged reasoning is limited to 128 KiB per run; exceeding that limit fails the run only when reasoning logging is enabled. These settings do not select reasoning effort or a reasoning-token budget.
 
 Set either one in `config.json` and restart the worker so it reads the change.
 

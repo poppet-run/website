@@ -53,7 +53,7 @@ Each turn uses the session's saved provider, model, and skill. For a new session
 
 `/exit`, Ctrl-D at an empty idle composer, or Ctrl-C leaves the chat, including during an unfinished paste. Ctrl-C during an answer cancels that request and exits. Earlier completed answers stay saved. On exit, Poppet prints a command to resume the session. Queued requests are never retried automatically.
 
-With `chat.logReasoning` enabled, readable provider reasoning appears under a Thinking heading. `TERM=dumb` uses a single-line prompt without queuing. Both stdin and stdout must be terminals; use `chat new` and `chat send` in scripts.
+With `chat.logReasoning` enabled, readable provider reasoning appears under a Thinking heading, without duplicating the streamed reasoning in the worker log. `TERM=dumb` uses a single-line prompt without queuing. Both stdin and stdout must be terminals; use `chat new` and `chat send` in scripts.
 
 ## Session titles
 

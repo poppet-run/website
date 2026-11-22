@@ -23,13 +23,13 @@ Run setup and choose Discord when prompted:
 poppet setup
 ```
 
-Or save the settings yourself. Pass all four named flags for separate gateway setup:
+Or pass the three IDs as named flags and pipe the bot token from an environment variable:
 
 ```fish
-poppet gateway discord setup --owner-id <your-user-id> --guild-id <server-id> --home-channel-id <home-channel-id> --bot-token <bot-token>
+printf '%s\n' "$DISCORD_BOT_TOKEN" | poppet gateway discord setup --owner-id <your-user-id> --guild-id <server-id> --home-channel-id <home-channel-id>
 ```
 
-Use `poppet setup` for masked token entry without putting the token in command arguments or shell history.
+You can also pass `--bot-token <token>`. Piping an existing environment variable or using masked entry in `poppet setup` keeps the token out of the setup command arguments and shell history.
 
 The settings go into the `discord` section of `config.json`. The token is saved in a protected file in your data directory. Restart the worker after you change Discord settings:
 

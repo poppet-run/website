@@ -94,7 +94,11 @@ An edit changes only the fields you give, including an optional [end time](#end-
 
 A name or prompt change replaces a run that has not started yet, and the original run stays in `tasks show` as cancelled. A schedule change cancels pending work and works out the next future time. Editing a finished one-off's name or prompt does not run it again. Give it a new future time to run it again.
 
+Poppet stores at most 64 tasks, including paused and ended tasks. Delete an unused task before adding another when the store is full.
+
 ## Manage tasks from chat
+
+Chat can create at most five tasks in one run. Recurring cron schedules created or changed through chat must have at least five minutes between consecutive runs.
 
 Editing, resuming, rescheduling, or running a saved task from chat requires access to its saved messaging destination. For tasks with a manual-only skill, use the owner CLI for these changes.
 
@@ -217,7 +221,7 @@ Search errors return a failed tool result for the model to explain or handle wit
 
 ## Missed runs, pauses, and retries
 
-The worker runs one task at a time. The worker skips a recurring time that passes while it is stopped. If it was only briefly unavailable, it runs the most recent missed time once, as long as that time is within `tasks.catchUpMinutes`. The default is 60 minutes. An overdue one-off runs once. A recurring task has at most one pending or running run. Other due times are recorded as skipped.
+The worker runs one task at a time. The worker skips a recurring time that passes while it is stopped. If it was only briefly unavailable, it runs the most recent missed time once, as long as that time is within `tasks.catchUpMinutes`. The default is 60 minutes. With `tasks.catchUpMinutes` set to `0`, recurring slots missed during sleep are skipped too. An overdue one-off runs once. A recurring task has at most one pending or running run. Other due times are recorded as skipped.
 
 If the worker stops after saving a failed run, startup recovery records its occurrence as failed and keeps the failure reason.
 

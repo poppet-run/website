@@ -65,3 +65,5 @@ Disagree when there is a good reason, and admit uncertainty plainly.
 ## Limits
 
 Facts, profile, and personality are each limited to 8 KiB in each run. If one is too large, the run fails with an error. Poppet never trims them to fit. All three count toward the run's context budget.
+
+`profile.md` and `soul.md` must be regular files owned by your user, with no hard links or symbolic links. Group or world write permission is rejected; `0600` is a suitable mode. Invalid UTF-8 or NUL characters are also rejected.

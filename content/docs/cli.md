@@ -260,8 +260,8 @@ is running. Use `--to <gateway>` to deliver to that gateway's home channel, or
 
 | Command                                                                                            | Action                                   |
 | -------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| `gateway discord setup --owner-id <id> --guild-id <id> --home-channel-id <id> --bot-token <token>` | Save Discord settings and the bot token. |
-| `gateway slack setup --owner-id <id> --team-id <id> --home-channel-id <id> --bot-token <token> --app-token <token>` | Save Slack settings and both tokens. |
+| `gateway discord setup --owner-id <id> --guild-id <id> --home-channel-id <id> [--bot-token <token>]` | Save Discord settings; read an omitted token from stdin. |
+| `gateway slack setup --owner-id <id> --team-id <id> --home-channel-id <id> [--bot-token <token>] [--app-token <token>]` | Save Slack settings; read omitted tokens from stdin. |
 
 See [Discord](gateways/discord.md) and [Slack](gateways/slack.md) for setup, conversation behavior,
 controls, and uncertain deliveries. Use `poppet setup` for masked token entry.
