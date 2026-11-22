@@ -51,7 +51,7 @@ Use `/attach <path>` to attach a file to the next submitted message, including a
 
 Each turn uses the session's saved provider, model, and skill. For a new session, use `--skill <name>` before the first message. Omit it when resuming a saved session. A session is created when you first send a nonblank message.
 
-`/exit`, Ctrl-D at an empty idle composer, or Ctrl-C leaves the chat. Ctrl-C during an answer cancels that request and exits. Earlier completed answers stay saved. On exit, Poppet prints a command to resume the session. Queued requests are never retried automatically.
+`/exit`, Ctrl-D at an empty idle composer, or Ctrl-C leaves the chat, including during an unfinished paste. Ctrl-C during an answer cancels that request and exits. Earlier completed answers stay saved. On exit, Poppet prints a command to resume the session. Queued requests are never retried automatically.
 
 With `chat.logReasoning` enabled, readable provider reasoning appears under a Thinking heading. `TERM=dumb` uses a single-line prompt without queuing. Both stdin and stdout must be terminals; use `chat new` and `chat send` in scripts.
 
@@ -187,6 +187,8 @@ With [web search](web.md) set up, the model can search and then read the sources
 ```sh
 poppet chat new "Search for recent Bun releases, read a source, and cite it"
 ```
+
+Search omits local destinations such as `localhost`, `.localhost` subdomains, and `.local` hostnames.
 
 Search snippets may contain extracted page passages. Poppet can answer from those passages when they are sufficient, or read a source for more detail. Answers should cite source URLs and distinguish search excerpts from pages Poppet fetched directly.
 

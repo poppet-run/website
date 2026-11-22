@@ -47,11 +47,11 @@ After changing settings, stop and restart a foreground worker. For an installed 
 
 ## Start a conversation
 
-Mention the bot with a message to start a session in a thread. Follow-up messages in an attached thread need no mention. `/new` starts a fresh session; add `--skill <name>` to select a [skill](../skills.md). `/status` shows the session and latest run, and `/cancel` stops active and queued requests.
+Mention the bot with a message to start a session in a thread. Follow-up messages in an attached thread need no mention. `/new` starts a fresh session; add `--skill <name>` to select a [skill](../skills.md). `/status` shows the session and latest saved run, even one with no messages, and `/cancel` stops active and queued requests.
 
-These controls are ordinary messages, not Slack slash commands. Prefix them with the bot mention where needed. Only the configured owner can use them.
+Controls and approval replies accept surrounding whitespace. These controls are ordinary messages, not Slack slash commands. Prefix them with the bot mention where needed. Only the configured owner can use them.
 
-Attach images or text files using the [normal attachment types and limits](../chat.md#attach-files). Poppet downloads files through Slack's authenticated file host. Progress uses eyes and check-mark reactions. Typing indicators and remote thread naming are not implemented; session titles stay local.
+Attach images or text files using the [normal attachment types and limits](../chat.md#attach-files). With a file attached, `/new --skill <name>` can start a fresh session without a text prompt. Poppet downloads files through Slack's authenticated file host. Progress uses eyes and check-mark reactions. Typing indicators and remote thread naming are not implemented; session titles stay local.
 
 You can also [name a skill](../skills.md#name-a-skill-in-a-message) with `$name` in a message to use it for that turn without starting a new session.
 
@@ -59,7 +59,7 @@ You can also [name a skill](../skills.md#name-a-skill-in-a-message) with `$name`
 
 When a command needs approval, click **Approve once** or **Deny**, or reply with `/approve <id>` or `/deny <id>` using the ID shown in the thread. Only the owner can answer. Approval covers one command and expires after two minutes, cancellation, or worker restart. See [run commands](../commands.md#approve-commands-in-slack).
 
-[Reviewed MCP actions](../mcp.md#review-an-action) use these same controls in the originating conversation. The prompt shows the target, expected effects, and exact arguments, and approval covers one call.
+[Reviewed MCP actions](../mcp.md#review-an-action) use these same controls in the originating conversation. The prompt shows the target, expected effects, and exact arguments, and approval covers one call. If a reviewed MCP action stops a run, the reply includes the approval or review guidance.
 
 ## Scheduled results
 
@@ -81,6 +81,6 @@ Ask Poppet in chat to create or manage tasks. A task created in messaging posts 
 
 ## Troubleshooting
 
-Use `poppet worker status` to inspect the connection and delivery queue. Check the owner, workspace, and home-channel IDs, both tokens, Socket Mode, Interactivity & Shortcuts, event subscriptions, scopes, and channel membership. Restart the worker after changing settings.
+Use `poppet worker status` to inspect the connection and delivery queue. A reconnect or successful event acknowledgement clears a stale error. Check the owner, workspace, and home-channel IDs, both tokens, Socket Mode, Interactivity & Shortcuts, event subscriptions, scopes, and channel membership. Restart the worker after changing settings.
 
 Live verification requires a real Slack app. Check mentions and thread replies, owner rejection, attachments, cancellation, command approval, scheduled results and failure notices, and worker reconnection after restart.

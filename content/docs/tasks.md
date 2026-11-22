@@ -108,7 +108,7 @@ Pause task <task-id>.
 
 You can request an end time when creating or editing a recurring task in chat. Poppet asks when a time, timezone, or task is unclear. Pausing and resuming use task IDs, so Poppet asks you to choose when names match. Deletion removes the task and its history, and fails while a run is active. Retrying runs and cancelling active runs stay in the CLI.
 
-A task change is saved even if the chat reply fails afterwards. Check `tasks list` or `tasks show` before asking again.
+A task change is saved even if the chat reply fails afterwards. If a task changes between preparing and applying a request, the tool can report that the request is no longer valid. Check `tasks list` or `tasks show` before asking again.
 
 ## Deliver results to Discord
 
@@ -120,9 +120,9 @@ poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --to discor
 
 Use `--to discord:<channel-or-thread-id>` instead to send results to another channel or thread in your server. The worker checks access before saving the task, and it checks again before each send. A result never goes to a different conversation from the one you chose.
 
-Completed results and failure notices are sent to the saved destination. `tasks show` lists each message's delivery state. Poppet retries temporary failures a limited number of times. Failed or uncertain sends stay visible, and Poppet does not resend an uncertain one. Check the saved output before posting it again by hand.
+Completed results and failure notices are sent to the saved destination. `tasks show` lists each message's delivery state. After the channel acknowledges a send, the worker records its message ID before finishing a graceful shutdown. Poppet retries temporary failures a limited number of times. Failed or uncertain sends stay visible, and Poppet does not resend an uncertain one. Check the saved output before posting it again by hand.
 
-With [quiet hours](configuration.md#quiet-hours) configured, scheduled results and failure notices stay pending until the window ends. Holding uses no delivery attempts and does not change the task's execution status. `tasks show` displays `held until` with the end time. Its JSON `delivery` records include `heldUntil` in Unix milliseconds, or `null` when no quiet-hours hold applies.
+With [quiet hours](configuration.md#quiet-hours) configured, scheduled results and failure notices stay pending until the window ends. The worker logs the hold and its end time. Holding uses no delivery attempts and does not change the task's execution status. `tasks show` displays `held until` with the end time. Its JSON `delivery` records include `heldUntil` in Unix milliseconds, or `null` when no quiet-hours hold applies.
 
 Results and failure notices are standalone posts. They do not change the conversation they were posted to.
 
@@ -217,6 +217,8 @@ Search errors return a failed tool result for the model to explain or handle wit
 
 The worker runs one task at a time. The worker skips a recurring time that passes while it is stopped. If it was only briefly unavailable, it runs the most recent missed time once, as long as that time is within `tasks.catchUpMinutes`. The default is 60 minutes. An overdue one-off runs once. A recurring task has at most one pending or running run. Other due times are recorded as skipped.
 
+If the worker stops after saving a failed run, startup recovery records its occurrence as failed and keeps the failure reason.
+
 Pending recurring runs expire after 24 hours. One-off runs do not expire.
 
 To cancel a run that is pending or running, or to retry a failed one:
@@ -228,7 +230,7 @@ poppet tasks retry <task-id>
 
 Cancel selects the task's pending or active run. If neither exists, it fails without changing the schedule. Retry selects its latest occurrence and fails if that occurrence succeeded or is active. Add `--occurrence <occurrence-id>` to either command to select a specific occurrence belonging to the task. Restart an older worker after upgrading to these task-based commands.
 
-A quota failure pauses scheduled runs for that provider indefinitely. The CLI has no command to clear a quota pause. Inspect provider pauses with `poppet worker status`. Temporary and rate-limit failures delay later runs by 30 seconds, doubling after each failure up to five minutes. Poppet never retries a failed run on its own. `retry` starts a fresh session for it. Resume a paused task before retrying it.
+A quota failure pauses scheduled runs for that provider indefinitely. The CLI has no command to clear a quota pause. Inspect provider pauses with `poppet worker status`. Expired temporary holds no longer appear in status. Temporary and rate-limit failures delay later runs by 30 seconds, doubling after each failure up to five minutes. Poppet never retries a failed run on its own. `retry` starts a fresh session for it. Resume a paused task before retrying it.
 
 ## Remove a task
 
