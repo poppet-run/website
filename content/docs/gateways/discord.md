@@ -51,9 +51,9 @@ To start a fresh session, use `/new`. Add `--skill <name>` to use a [skill](../s
 @Poppet /new --skill weekly-review Review my Acorn project
 ```
 
-In a thread, `/status` shows the session, its skill, and its latest run. `/cancel` stops the active request and any that are queued.
+In a thread, `/status` shows the session, its skill, and its latest saved run, even if that run has no messages. `/cancel` stops the active request and any that are queued.
 
-These are plain messages, not Discord slash commands. The bot ignores other bots, webhooks, and anyone who is not the owner. Direct messages, forum channels and voice are not supported.
+Controls and approval replies accept surrounding whitespace. These are plain messages, not Discord slash commands. The bot ignores other bots, webhooks, and anyone who is not the owner. Direct messages, forum channels and voice are not supported.
 
 While it works, the bot shows the typing indicator. It also adds 👀 to your message, then replaces it with ✅ when the run succeeds. If the bot lacks reaction permission, chat still works.
 
@@ -67,7 +67,7 @@ Different threads can run at the same time, up to `chat.maxConcurrentRequests`, 
 
 ## Attachments
 
-Attach images or text files to a mention or thread message. Messages with files need no text. See [chat](../chat.md#attach-files) for supported types and limits. Files download when the request runs. If a queued file link expires, send the files again. A rejected file stops the message before inference.
+Attach images or text files to a mention or thread message. Messages with files need no text, including `/new --skill <name>` with an attachment. See [chat](../chat.md#attach-files) for supported types and limits. Files download when the request runs. If a queued file link expires, send the files again. A rejected file stops the message before inference.
 
 ## Replies and failures
 
@@ -75,7 +75,9 @@ Poppet saves each answer before it sends it. Poppet retries temporary send failu
 
 Poppet never moves a reply to another channel. If it can no longer post in a thread, the reply stays unsent, and the saved answer is still in `chat show`.
 
-Use `poppet worker status` to check the connection and delivery queue.
+Use `poppet worker status` to check the connection and delivery queue. A successful connection or request clears a stale connection error.
+
+If a reviewed MCP action stops a run, the reply includes the approval or review guidance.
 
 ## Approve commands
 

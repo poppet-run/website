@@ -97,7 +97,9 @@ After deletion, the conversation leaves the sidebar and the browser returns to a
 
 Web chat has no attachments, conversation search, renaming, model selection, session-wide skill selection, reasoning display, or run details. New conversations use the first message as their title. Use `poppet chat show <session-id>` to inspect saved runs.
 
-Tool permissions still apply. A Bash command or reviewed MCP action that needs human approval stops the run. The browser cannot approve it. Request the operation in Discord or Slack to approve it there. See [reviewed MCP actions](mcp.md#review-an-action) and [command approval](commands.md). Markdown is sanitized and inline images are removed.
+Tool permissions still apply. A Bash command or reviewed MCP action that needs human approval stops the run. The browser cannot approve it. Request the operation in Discord or Slack to approve it there. See [reviewed MCP actions](mcp.md#review-an-action) and [command approval](commands.md). Markdown is sanitized, inline images and interactive controls are removed, and links open in a new tab.
+
+Use your browser's usual modified clicks to open a sidebar conversation in another tab or window.
 
 ## Troubleshooting
 

@@ -69,7 +69,7 @@ Sign-in details are saved in `<data directory>/auth/connection.json`, readable o
 poppet provider logout openai-chatgpt
 ```
 
-`logout` tries to revoke the session with OpenAI and clears local tokens and verification. It keeps your account identity, registration, and host identifier, so signing back in reuses the same registration. Status shows you as disconnected but still includes the saved account identity and client ID. Logout does not touch your other providers.
+`logout` tries to revoke the session with OpenAI and clears local tokens and verification. The revocation request has a 20-second deadline, including response cleanup. Poppet reports when it cannot confirm remote revocation. It keeps your account identity, registration, and host identifier, so signing back in reuses the same registration. Status shows you as disconnected but still includes the saved account identity and client ID. Logout does not touch your other providers.
 
 To switch accounts or reset the registration, forget the saved connection before signing in again:
 

@@ -25,6 +25,8 @@ For unattended inference, set `POPPET_OPENCODE_GO_API_KEY` in the process enviro
 poppet provider models opencode-go
 ```
 
+A connection drop while downloading the model catalog is reported as a temporary failure.
+
 `models` lists the models that Poppet can use, without needing a key. Poppet currently supports `glm-5.3` and `gpt-6-luna`. Other OpenCode Go models are not supported yet.
 
 Save a supported model in `config.json`:

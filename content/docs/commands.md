@@ -52,7 +52,7 @@ Successful results still go to the task's destination, unless the whole answer i
 
 - A timeout from 1 to 300 seconds, set by the model for each command.
 - A standard input that is closed, so a command cannot wait for typed input.
-- The output from stdout and stderr, the exit code, and whether the output was cut short.
+- The output from stdout and stderr, the exit code, and whether the output was cut short. Truncated output keeps only complete UTF-8 characters.
 - A Bash shell that skips your shell profile.
 
 A completed receipt includes `status: "completed"` and `approvedBy`, identifying the owner or reviewer. The command has already finished, even if it produced no output. Its exit code shows whether it succeeded.
