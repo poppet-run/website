@@ -53,6 +53,8 @@ Deletion applies pending task, gateway, memory, and web chat database upgrades b
 
 Each part of the database upgrades itself when Poppet starts. Poppet refuses a database made by a newer version, or by a different application, and it never resets anything on its own. If that happens, point `POPPET_DATA_DIR` at a fresh directory or restore a backup.
 
+Sessions also record where they started for the [web sidebar](web-chat.md#filter-conversations): a chat, scheduled task, or gateway. New sessions keep that origin through renames, task deletion, and gateway thread resets. Existing sessions are classified from saved task and gateway history during upgrades. If no evidence of a task or gateway origin remains, an older session appears under **Chats**.
+
 ## Permissions
 
 The store directory is `0700`, and the database files are `0600`. The `auth/` and `channels/` directories use `0700`, and their credential files use `0600`. Credential reads reject files or directories accessible to other users instead of silently tightening their permissions. Credentials must be regular files owned by your user, without symbolic or hard links. Saved API-key files are limited to 64 KiB.
