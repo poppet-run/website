@@ -73,6 +73,12 @@ For same-machine development, use `http://127.0.0.1:8080` as the origin. HTTP or
 
 Enter the original access key in the browser. Anyone with that key can read and use all conversations. Sessions expire after 12 hours and end on sign-out or worker restart. Cookies are HttpOnly and SameSite=Strict, with Secure enabled for HTTPS. Changing the hash and restarting the worker revokes all logins.
 
+## Filter conversations
+
+The sidebar opens on **Chats**, which includes web and CLI conversations. Use **Show** to switch to **Scheduled tasks**, a gateway such as **Slack** or **Discord**, or **All sessions**. Gateway options appear when saved sessions exist for that gateway. Each view lists the most recently active sessions first. A task that sends its result to a gateway stays under **Scheduled tasks**.
+
+Changing the filter keeps your open conversation and draft in place. A direct conversation link works regardless of the selected filter. **+ New conversation** returns the sidebar to **Chats**.
+
 ## Send and recover messages
 
 Press Enter to send or Shift+Enter for a newline. You can draft the next message while a reply runs, but must wait for it to finish before sending. Web chat has no message queue.
