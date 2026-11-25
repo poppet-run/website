@@ -1,12 +1,12 @@
 +++
 title = "OpenCode Go"
-description = "Connect Poppet to OpenCode Go with an API key, choose a supported model, and manage credentials."
+description = "Connect Poppet to OpenCode Go with an API key, and choose a supported model."
 weight = 30
 +++
 
 # OpenCode Go
 
-Poppet uses your selected OpenCode Go model without a separate workload setting. Check the [provider usage requirements](https://opencode.ai/v2/docs/console/go/) for your account.
+OpenCode Go gives you a set of models through an OpenCode account. Check [OpenCode Go's usage terms](https://opencode.ai/v2/docs/console/go/) for your account before you connect Poppet.
 
 ## Connect
 
@@ -15,21 +15,17 @@ poppet provider login opencode-go
 poppet provider status opencode-go
 ```
 
-`login` requires an interactive terminal and masks typed or pasted characters with `*`, even when an environment key is set. Piped input and `--key-stdin` are not supported. Keys are never accepted as command-line arguments.
-
-For unattended inference, set `POPPET_OPENCODE_GO_API_KEY` in the process environment or use a key saved by an earlier interactive login. Login does not save the environment value.
+`login` asks for your API key and shows `*` for each character you type or paste. It needs an interactive terminal.
 
 ## Models
+
+Poppet supports two OpenCode Go models: `glm-5.3` and `gpt-6-luna`. Neither accepts images, but text file attachments work.
 
 ```sh
 poppet provider models opencode-go
 ```
 
-A connection drop while downloading the model catalog is reported as a temporary failure.
-
-`models` lists the models that Poppet can use, without needing a key. Poppet currently supports `glm-5.3` and `gpt-6-luna`. Other OpenCode Go models are not supported yet.
-
-Save a supported model in `config.json`:
+Save a model in `config.json`:
 
 ```json
 {
@@ -38,26 +34,14 @@ Save a supported model in `config.json`:
 }
 ```
 
-## Start a chat
+## Your key
 
-Start a chat with the configured model:
+Poppet saves your key in the `auth` folder of your data directory, where only you can read it. To use a key without saving it, set `POPPET_OPENCODE_GO_API_KEY`. See [API keys](../configuration.md#api-keys).
 
-```sh
-poppet chat new "Explain how to structure a TypeScript CLI"
-```
-
-The same model selection works with `chat interactive` and `tasks add`. Image attachments are not supported by the Go adapter; text-file attachments work.
-
-## Credentials
-
-Your key is saved in `<data directory>/auth/opencode-go.json`, readable only by your user. The `POPPET_OPENCODE_GO_API_KEY` environment variable overrides the saved key. See [API keys](../configuration.md#api-keys).
-
-## Log out
+## Sign out
 
 ```sh
 poppet provider logout opencode-go
 ```
 
-`logout` removes the saved key. It does not revoke the key on OpenCode's side.
-
-See [configuration](../configuration.md) for your default provider and model.
+This deletes the saved key from your computer. The key still works on OpenCode until you delete it there.

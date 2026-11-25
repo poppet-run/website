@@ -1,12 +1,12 @@
 +++
 title = "ChatGPT"
-description = "Connect Poppet to ChatGPT through browser sign-in, choose a model, and manage plan-usage consent and credentials."
+description = "Connect Poppet to your ChatGPT account, choose a model, and sign out."
 weight = 10
 +++
 
 # ChatGPT
 
-ChatGPT connects through browser sign-in, so you do not need an API key. Requests use your ChatGPT account and its plan limits.
+Poppet can use your ChatGPT account, so you do not need an API key. Your messages count toward your ChatGPT plan's limits.
 
 ## Connect
 
@@ -15,32 +15,35 @@ poppet provider login openai-chatgpt
 poppet provider status openai-chatgpt
 ```
 
-`login` opens your system browser. Choose the account and workspace, and approve plan-usage access if asked. The browser then shows a confirmation page. Return to the terminal, where Poppet runs its final checks.
+`login` opens your browser. Choose your account and workspace, and allow Poppet to use your plan if ChatGPT asks. When the browser shows a confirmation page, return to the terminal.
 
-If sign-in works but plan-usage access was not granted, `status` shows `planUsage: false`. Run `poppet provider login openai-chatgpt` again to approve it. Poppet asks for it again only when the saved sign-in lacks that access.
+If `status` shows `planUsage: false`, you signed in without allowing plan usage. Run `login` again to allow it.
 
-Poppet stores one ChatGPT account. To switch accounts, run `poppet provider logout openai-chatgpt --forget` before signing in again.
+Poppet can be signed in to one ChatGPT account at a time. To switch accounts, run `poppet provider logout openai-chatgpt --forget`, then sign in again.
 
 ## Headless and remote machines
 
-Over SSH, on Linux without a display, or with `--no-browser`, login prints a sign-in link instead of opening a browser:
+On a computer without a browser, or over SSH, add `--no-browser`. Poppet prints a sign-in link instead of opening a browser:
 
 ```sh
 poppet provider login openai-chatgpt --no-browser
 ```
 
-Open the link in a browser on another device and sign in. The browser then tries to open `http://127.0.0.1:<port>/auth/callback?...` and may show a connection error. Copy the full address from its address bar and paste it at Poppet's `Callback URL:` prompt in the remote terminal.
+1. Open the link in a browser on any device and sign in.
+2. The browser then tries to open an address starting with `http://127.0.0.1`, and may show a connection error. This is expected.
+3. Copy the full address from the browser's address bar.
+4. Paste it at the `Callback URL:` prompt in your terminal.
 
-Poppet checks the address against this sign-in attempt and its callback port. An address that does not match is ignored, so you can paste again. Sign-in times out after five minutes. Esc, Ctrl-C, or Ctrl-D cancels it.
+If you paste the wrong address, Poppet ignores it and waits for another. Sign-in times out after five minutes. Press Esc or Ctrl-C to cancel.
 
-Alternatively, forward a fixed callback port. Run this SSH command on the machine with the browser, then run login in that remote session:
+If you connect over SSH, you can skip the copy and paste by forwarding a port. On the computer with the browser, connect like this, then sign in on the remote computer:
 
 ```sh
 ssh -L 1455:127.0.0.1:1455 <host>
 poppet provider login openai-chatgpt --no-browser --callback-port 1455
 ```
 
-The browser callback reaches Poppet through the tunnel, with no paste needed. If the port is in use, login fails before printing a link. Both methods save credentials and registration on the remote machine.
+The browser then reaches Poppet through the SSH connection. If port 1455 is already in use, choose another port and use it in both commands.
 
 ## Models
 
@@ -48,7 +51,7 @@ The browser callback reaches Poppet through the tunnel, with no paste needed. If
 poppet provider models openai-chatgpt
 ```
 
-`models` always fetches the current list for your account. If your account is not eligible, or you have reached a usage limit, Poppet shows that error. It does not retry the request for you.
+This lists the models your account can use right now. If your account is not eligible, or you have reached a usage limit, Poppet shows ChatGPT's error.
 
 Save a model from the list in `config.json`:
 
@@ -59,24 +62,22 @@ Save a model from the list in `config.json`:
 }
 ```
 
-## Credentials
+## Your sign-in
 
-Sign-in details are saved in `<data directory>/auth/connection.json`, readable only by your user. Poppet refreshes access tokens before they expire. Tokens never appear in command output. If identity verification is temporarily unavailable after renewal, Poppet keeps the renewal in protected storage and verifies it on the next request before using the renewed access token.
+Poppet saves your sign-in in the `auth` folder of your data directory, where only you can read it. It renews your sign-in automatically.
 
-## Log out
+## Sign out
 
 ```sh
 poppet provider logout openai-chatgpt
 ```
 
-`logout` tries to revoke the session with OpenAI and clears local tokens and verification. The revocation request has a 20-second deadline, including response cleanup. Poppet reports when it cannot confirm remote revocation. It keeps your account identity, registration, and host identifier, so signing back in reuses the same registration. Status shows you as disconnected but still includes the saved account identity and client ID. Logout does not touch your other providers.
+Signing out asks ChatGPT to end Poppet's access, and deletes the sign-in from your computer. If Poppet cannot confirm that ChatGPT ended its access, it tells you. Poppet still remembers which account you used, and signing in again reconnects it.
 
-To switch accounts or reset the registration, forget the saved connection before signing in again:
+To also forget the account, for example to switch to another one, add `--forget`:
 
 ```sh
 poppet provider logout openai-chatgpt --forget
 ```
 
-`--forget` also removes the local connection file. The next login creates a new registration and host identifier. To remove an old entry from ChatGPT, disconnect Poppet in ChatGPT's settings. If remote revocation cannot be confirmed during logout, Poppet says so.
-
-See [configuration](../configuration.md) for your default provider and model.
+To remove Poppet from your ChatGPT account entirely, disconnect it in ChatGPT's settings.
