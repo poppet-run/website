@@ -1,17 +1,53 @@
 +++
 title = "MCP tools"
-description = "Connect trusted local and remote tool servers, and allow only the tools you choose for chat and scheduled tasks."
+description = "Give Poppet tools from other apps and services, and choose exactly which tools it can use."
 +++
 
 # MCP tools
 
-Poppet can connect to local MCP servers over stdio, and to remote MCP servers over Streamable HTTP. It offers their tools in chat, messaging, and scheduled tasks. Only the tools you list are offered. MCP is off until you add an enabled server to `config.json`.
+MCP is a standard way for apps and services to offer tools to an AI assistant. An MCP server might let Poppet look up records in a database, read your notes, or create calendar events. Poppet can connect to MCP servers that run as programs on your computer, and to remote servers on the internet.
 
-A local server runs as a program with your account's permissions. A remote server receives the arguments and headers you send it. Review and trust the executable or endpoint before you enable it. Tool allowlists are not a sandbox.
+MCP is off until you add a server. You then choose which of its tools Poppet can use. Poppet never uses a tool you have not allowed.
 
-## Configure a server
+A server that runs on your computer can do anything your user account can. A remote server receives everything Poppet sends it. Only add servers you trust. Allowing only some tools limits what Poppet asks for, but it does not limit what the server itself can do.
 
-Add `mcpServers` to `config.json`:
+## Add a remote server
+
+Add the server, sign in if it needs it, see its tools, and allow the ones you want:
+
+```sh
+poppet mcp add notes https://mcp.example.com/mcp --auth oauth
+poppet mcp login notes
+poppet mcp tools notes
+poppet mcp allow notes search
+poppet worker restart
+```
+
+The first word after `add` is a name you choose for the server, using lowercase letters, digits, and hyphens. `--auth` tells Poppet how to sign in:
+
+| `--auth` | Use when |
+| -------- | -------- |
+| `oauth` | The server asks you to sign in through your browser. Run `poppet mcp login <name>` next. |
+| `api-key` | The server gives you an API key. Poppet asks for it without showing it. |
+| `none` | The server needs no sign-in. |
+
+`mcp add` does not allow any tools. `mcp tools` connects to the server and lists its tools, and shows which ones you have allowed. `mcp allow` allows the tools you name. `mcp allow <name> --all` allows every tool the server has now. Tools the server adds later stay blocked until you allow them.
+
+Restart the worker after you add a server or change its tools.
+
+### Sign in with OAuth
+
+`poppet mcp login <name>` opens your browser to sign in. On a computer without a browser, add `--no-browser`, and follow the same steps as [ChatGPT sign-in on a remote machine](providers/openai-chatgpt.md#headless-and-remote-machines).
+
+If your sign-in expires, Poppet stops using that server's tools until you sign in again. Your other servers keep working. Run `poppet mcp login <name>` again. You do not need to restart the worker.
+
+`poppet mcp logout <name>` deletes your saved sign-in. It does not revoke Poppet's access on the service. Do that in the service's own settings.
+
+Some servers need extra OAuth settings, such as a client ID or scopes. See [OAuth settings](#oauth-settings).
+
+## Add a server that runs on your computer
+
+A local MCP server is a program that Poppet starts. Add it to `config.json`:
 
 ```json
 {
@@ -21,150 +57,41 @@ Add `mcpServers` to `config.json`:
       "enabled": true,
       "command": "/absolute/path/to/trusted-server",
       "args": ["--stdio"],
-      "cwd": "server-data",
-      "environment": {
-        "API_TOKEN": { "env": "REFERENCE_API_TOKEN" }
-      },
-      "tools": ["lookup_record"],
-      "scheduledTools": []
+      "tools": ["lookup_record"]
     }
   ]
 }
 ```
 
-Replace the command, arguments, and tool names with your server's values. `args` and `tools` are required. `cwd`, `environment`, `scheduledTools`, `reviewedTools`, `scheduledReviewedTools`, and `availableAfterUntrusted` are optional.
-
-- `id` is lowercase, starts with a letter, uses letters, digits, and hyphens, and is at most 64 characters.
-- The command runs directly, with no shell. Use an absolute path, especially for the background worker.
-- A relative `cwd` resolves beside `config.json`. Without it, the server uses Poppet's working directory.
-- Never put secret values in the command, its arguments, or `config.json`.
-
-The server gets a small standard environment, plus only the values you name. `{ "env": "NAME" }` passes one environment variable. `{ "credential": "name" }` reads a protected key from `<data directory>/auth/name.json`. The file must be `0600`, with a `0700` directory. Environment values are not added to the model's instructions, and matching values in the server's output are redacted. Background workers do not see your shell environment, so use a credential reference for them.
-
-### HTTP servers
-
-Add a remote server from the CLI:
+Replace the command, arguments, and tool names with the values from your server's instructions. Then check it and allow its tools:
 
 ```sh
-poppet mcp add remote https://mcp.example.com/mcp --auth api-key
-poppet mcp tools remote
-poppet mcp allow remote lookup_record
+poppet mcp tools reference
+poppet mcp allow reference lookup_record
+poppet worker restart
 ```
 
-`add` saves an enabled server with no tools allowed and does not connect to it.
-`--auth` is required: `none` sends no credentials, `api-key` reads a key
-from a hidden prompt or `--api-key <key>`, saves it as the protected credential
-`mcp-<id>`, and sends it as `Authorization: Bearer <key>`. `oauth` configures
-OAuth for a separate `mcp login` step.
+- `id` is a name you choose, using lowercase letters, digits, and hyphens.
+- `command` is the full path to the program. Poppet runs it directly, not through a shell.
+- `args` lists the arguments to pass. Use `[]` for none.
+- `tools` lists the tools Poppet can use. `mcp allow` and `mcp deny` change this list for you.
+- `cwd` is optional. It sets the folder the program runs in, relative to `config.json`.
 
-`mcp tools <id>` discovers tools and shows their `allowed` and `scheduled`
-permissions, plus per-call review and scheduled review flags. `mcp allow <id> <tools...>` adds discovered names to the interactive
-allowlist. `mcp allow <id> --all` saves all names discovered now; tools the
-server adds later remain blocked. It cannot be combined with explicit names
-or `--scheduled`. Use `mcp allow <id> <tools...> --scheduled` for explicitly
-owner-verified read-only tools; this grants both interactive and scheduled access.
-Unknown tools and failed discovery leave permissions unchanged.
+### Give a server a secret
 
-`mcp deny <id> <tools...>` removes interactive, scheduled, and review permissions without connecting to the
-server. Add `--scheduled` to remove only scheduled access from either scheduled list. These commands work
-with both HTTP and configured stdio servers. Restart the worker after adding,
-removing, or changing permissions. Until then inspection through that worker
-reflects its existing configuration.
-
-Custom API-key header names and prefixes belong in `headers` in `config.json`.
-For example, use `"X-API-Key": { "credential": "mcp-remote" }` instead of the
-Authorization entry for an unprefixed key. `poppet mcp remove <id>` deletes
-the entry, its `mcp-<id>` credential, and any saved sign-in.
-
-An entry with `url` instead of `command` connects over Streamable HTTP:
+Never put passwords or API keys in `config.json` or in the command. Instead, add an `environment` entry that tells Poppet where to find the secret:
 
 ```json
-{
-  "id": "remote",
-  "enabled": true,
-  "url": "https://mcp.example.com/mcp",
-  "headers": {
-    "Authorization": { "credential": "remote", "prefix": "Bearer " },
-    "X-Team": { "env": "REMOTE_TEAM" }
-  },
-  "tools": ["lookup_record"],
-  "scheduledTools": []
+"environment": {
+  "API_TOKEN": { "credential": "reference-token" }
 }
 ```
 
-An entry has either `command` or `url`, never both, and HTTP entries take no
-`args`, `cwd`, or `environment`. URLs must use `https:`; plain `http:` is
-accepted only for `localhost`, `127.0.0.1`, and `[::1]`. URLs cannot contain a
-username, password, or fragment. Put secrets in `headers`, not the path or
-query, which server logs may record.
+`{ "credential": "reference-token" }` reads the secret from `auth/reference-token.json` in your data directory. That file must be readable only by you. `{ "env": "NAME" }` passes on a variable from your shell instead, but the background worker cannot see your shell's variables, so use a credential file for it.
 
-Each header names an `{ "env": "NAME" }` or `{ "credential": "name" }` reference,
-as for stdio environments, with an optional non-secret `prefix` such as
-`"Bearer "`. Values must be non-empty visible ASCII. Header names are unique
-regardless of case. `Accept`, `Content-Type`, `Content-Length`, `Host`,
-`Last-Event-ID`, `Mcp-Session-Id`, and `Mcp-Protocol-Version` belong to the
-transport and cannot be configured. A missing reference makes that server
-unavailable. Resolved header values are redacted from results and rejected in
-tool definitions, like selected environment values.
+Poppet hides these values if the server ever sends them back.
 
-### OAuth sign-in
-
-```sh
-poppet mcp add notes https://mcp.example.com/mcp --auth oauth
-poppet mcp login notes
-poppet mcp tools notes
-poppet mcp allow notes search
-```
-
-`add` saves `"oauth": {}` in the entry. `login` starts sign-in and discovers the
-server's authorization server from its protected resource metadata, registers
-itself as a public client when the authorization server offers dynamic
-registration, and opens the browser with PKCE and a resource indicator. The
-callback, `--no-browser`, pasted callback addresses, and SSH forwarding work as
-for [ChatGPT sign-in](providers/openai-chatgpt.md). `login --no-browser` prints
-the sign-in link. Run `poppet mcp login <id>` to sign in again and
-`poppet mcp logout <id>` to delete tokens while keeping the registration;
-logging out does not revoke the grant at the authorization server.
-
-`oauth` accepts optional `clientId`, `clientSecret` (a `{ "credential": "name" }`
-reference, never a literal), `scopes`, and `callbackPort` (1024–65535) in
-`config.json`. `mcp login <id> --callback-port <port>` overrides the port for
-that sign-in without changing configuration. Use a pre-registered
-client when the authorization server has no dynamic registration; register a
-fixed loopback redirect such as `http://127.0.0.1:1455/auth/callback` and set
-the same `callbackPort`. Without `scopes`, Poppet requests what the server's
-metadata advertises. An OAuth entry cannot also configure an `Authorization`
-header; other headers are sent only to the MCP endpoint. Client metadata
-documents and unattended grants are unsupported.
-
-Tokens live in `<data directory>/auth/mcp-oauth-<id>.json`, protected like API
-keys and bound to the configured URL: changing the URL requires a new sign-in.
-Discovery, registration, and token requests use public HTTPS. Loopback OAuth
-endpoints, including plain HTTP, are allowed only for loopback MCP servers. A
-`WWW-Authenticate` resource metadata URL must share the server’s origin unless
-you explicitly set `oauth.resourceMetadataUrl`. Poppet also validates the browser
-authorization destination before opening it. Access tokens are redacted
-from results and rejected in tool definitions.
-
-A run never opens a browser. When the server rejects an access token, Poppet
-claims a short-lived refresh lease and releases the file lock before contacting
-the authorization server. A worker and CLI process adopt the same refreshed
-token, and a delayed rejection of an old token keeps the newer sign-in. A rejected
-or missing refresh token, a missing sign-in, or a changed URL puts the server in
-`needs-login`: its tools are unavailable, other servers keep working, and no
-backoff applies. The next request after `mcp login` reconnects, including in a
-running worker. A server asking for more scope fails that call with a
-diagnostic naming the scope; add it to `scopes` and sign in again.
-`mcp servers` reports `signIn` with `signedIn`, `expiresAt`, and granted
-`scopes`, never token values. Active connections check saved sign-in before
-sending requests, so logout blocks further calls without restarting the worker.
-Calls already sent before logout may still complete.
-
-Set `mcpServers` to `[]` in `config.json` to disable every server. Worker settings
-change after restart, including allowlist changes.
-
-
-## Check and use tools
+## Check your servers
 
 ```sh
 poppet mcp servers
@@ -172,70 +99,134 @@ poppet mcp tools reference
 poppet chat new "Use reference to look up record 123"
 ```
 
-`servers` shows each server's permissions, transport, connection state, and diagnostics without starting anything. For HTTP servers it shows the endpoint's origin, not its full URL. `tools <server>` starts the server to list all discovered tools and their interactive and scheduled permissions. These commands use the running worker when there is one.
+`mcp servers` shows each server, whether it is connected, which tools you allowed, and any problems. It does not start or contact anything. `mcp tools` connects to one server and lists all its tools.
 
-A server connects the first time a chat needs it. If it fails, the built-in tools keep working. Poppet tries to reconnect after 30 seconds, doubling the wait up to 10 minutes. `mcp servers` shows when the next try is due.
+Poppet connects to a server the first time a chat needs it. If the server fails, Poppet keeps working without it and tries again later, waiting longer each time, up to 10 minutes.
 
-If an allowed tool has an unsupported input or output schema, a description longer than 4096 characters, or requires task execution, Poppet skips that tool. The server stays connected and its other supported, allowed tools remain available. `poppet mcp servers` lists skipped tools and the reasons in its notes.
+Poppet skips a tool it cannot use, for example because its description is too long. `mcp servers` lists any skipped tools and why.
 
-Poppet does not retry tool calls. If a call fails after it was sent, Poppet records it as uncertain and does not repeat it. Check the server's state before asking for the action again.
+If a tool call fails partway through, Poppet does not repeat it, because the action may already have happened. Check the service before you ask again.
 
 ## Permissions
 
-Only tools in `tools` are offered to the model. In chat, a tool call still needs your explicit request in the current message.
+Poppet uses an allowed tool only when your current message asks for it.
 
-`scheduledTools` is empty by default. Add a tool there only after you have checked that it is read-only. These tools must also appear in `tools`. A separate `scheduledReviewedTools` list enables [scheduled reviewed actions](#schedule-a-reviewed-action). Server annotations do not grant access or enable review.
+### After Poppet reads untrusted content
 
-Poppet treats results from MCP servers as data. They cannot authorize memory changes, task changes, or page reads.
+A web page or tool result could contain text written to trick Poppet. Once Poppet reads a web page, a search result, or an MCP result during an answer, it stops using MCP tools for the rest of that answer. You can then ask again in a new message.
 
-By default, MCP tools are withdrawn for the rest of a run once a fetched page, search result, or MCP result enters it. This limits the run to one round of MCP calls.
+If you trust a server enough to keep using it after that, add `"availableAfterUntrusted": true` to its entry. This helps with servers where Poppet first reads documentation and then acts. Text Poppet has read can then influence its next calls to that server.
 
-Set `"availableAfterUntrusted": true` on a server only if you trust it to keep receiving calls after that content. This can support workflows that read the server's documentation before making another call. Text from a page, email, or earlier result can then influence later calls to that server, within its tool allowlist. The setting works for both stdio and HTTP servers. It does not restore reviewed MCP tools, memory or task mutation tools, grant access to returned URLs, or change scheduled-tool restrictions.
+### Scheduled tasks
+
+Scheduled tasks cannot use any MCP tool until you allow it for tasks. Only allow tools that read information and cannot change anything:
+
+```sh
+poppet mcp allow reference lookup_record --scheduled
+```
+
+This adds the tool to the server's `scheduledTools` list. To let tasks use tools that change things, see [schedule a reviewed action](#schedule-a-reviewed-action).
+
+### Remove a permission
+
+```sh
+poppet mcp deny reference lookup_record
+poppet mcp deny reference lookup_record --scheduled
+poppet mcp remove reference
+```
+
+`mcp deny` stops Poppet using a tool. With `--scheduled`, it only stops scheduled tasks using it. `mcp remove` deletes the server, along with any key or sign-in Poppet saved for it. To turn off every server at once, set `mcpServers` to `[]`. Restart the worker after any change.
 
 ## Review an action
 
-Add exact names to a server's `reviewedTools` in `config.json`, keeping them in `tools`. Restart the worker after editing. For example, these permission fields allow reads and review each proposed write:
+For tools that change things, such as `update_record`, you can ask Poppet to review every call first. Add the tool to the server's `reviewedTools` list in `config.json`, and keep it in `tools`:
 
 ```json
 {
   "tools": ["lookup_record", "update_record"],
   "scheduledTools": ["lookup_record"],
-  "reviewedTools": ["update_record"],
-  "scheduledReviewedTools": []
+  "reviewedTools": ["update_record"]
 }
 ```
 
-Use your server's actual tool names. Review lists contain unique names. `reviewedTools` must be a subset of `tools` and cannot overlap the read-only `scheduledTools` list. Omitting `reviewedTools` keeps the existing allowlist behavior. Server annotations such as `readOnlyHint` never enable or bypass review.
+A tool cannot be in both `reviewedTools` and `scheduledTools`, since `scheduledTools` is only for tools that change nothing. Restart the worker after editing. Before each call to a reviewed tool, Poppet asks your model whether the call matches what you asked for, as it does for [commands](commands.md#how-review-works). The review can allow the call, deny it, or ask you.
 
-Before dispatch, Poppet uses the current model to review the exact server, tool, and validated arguments against your current message. A denial or unavailable review stops the run without executing the call. If a person is needed, Discord, Slack, or Telegram shows the target, expected effects, reason, and exact invocation. Only the configured owner in that conversation can reply `/approve <id>` or `/deny <id>`. Discord and Slack also offer **Approve once** and **Deny** buttons. Approval permits one execution and expires after two minutes, cancellation, or worker restart. Use a private conversation for private arguments.
+When it asks you, Poppet shows the server, the tool, what it expects the call to do, and the exact details it will send. You can only answer in Discord or Slack, with **Approve once** or **Deny**, or with `/approve <id>` or `/deny <id>`. An approval covers one call, and expires after two minutes. In the terminal and web chat, the call does not run. Ask again in Discord or Slack.
 
-CLI and web chat stop when human approval is needed. Make a fresh request in Discord, Slack, or Telegram to approve it there.
+The details of the call appear in the thread, so use a private channel if they are private.
 
-Attachments and results from pages, searches, Bash, or MCP withdraw reviewed tools for the rest of the run, including calls waiting behind those results in the same batch. `availableAfterUntrusted` does not override this. Name the action and target in a fresh message.
+Poppet does not use reviewed tools after reading a web page, search result, command output, MCP result, or attachment, even with `availableAfterUntrusted`. Ask for the action in a new message.
 
-`poppet chat show <session>` displays the review decision, reason, outcome, and any owner's approval decision. A completed receipt with `approvedBy: "reviewer"` or `approvedBy: "owner"` describes a call that already ran. Inspect the server after an uncertain result before requesting another attempt. Reviewed HTTP calls stop at redirects and authentication challenges instead of resending the call. Sign in again if needed before making a new request.
-
-Review accepts up to 8 KiB of escaped invocation data and 32 KiB for the JSON-encoded owner message. Larger requests fail before dispatch.
+`poppet chat show <session-id>` shows each review, its reason, and the result.
 
 ## Schedule a reviewed action
 
-Add exact tool names to `scheduledReviewedTools`, keeping them in `reviewedTools` and `tools`. For the example above, set `"scheduledReviewedTools": ["update_record"]` to allow scheduled reviewed writes. An empty or omitted list grants none. Restart the worker after editing.
+To let a scheduled task use a reviewed tool, also add it to `scheduledReviewedTools`:
 
-`mcp allow --scheduled` grants read-only access through `scheduledTools`; it cannot enable scheduled reviewed actions. `mcp deny <server> <tools...> --scheduled` removes access from either scheduled list while keeping interactive access and review.
+```json
+{
+  "tools": ["lookup_record", "update_record"],
+  "reviewedTools": ["update_record"],
+  "scheduledReviewedTools": ["update_record"]
+}
+```
 
-Each call is reviewed against the saved task prompt. Only an allow decision executes it. Denial, unavailable review, or a need for human approval fails the occurrence without posting an approval request. Earlier actions may already have completed, and future recurring occurrences stay scheduled.
+Poppet reviews each call against the task's prompt. Only an allowed call runs. If the review denies the call or needs your approval, the run fails, because nobody is there to approve it. Actions that already finished are not undone, and the task's schedule continues. `poppet tasks show <task-id>` shows each review and its result.
 
-`poppet tasks show <task-id>` shows reviewed invocations, decisions, reasons, and outcomes. Add `--json` to inspect stored tool results. Inspect the server after an uncertain result before retrying; Poppet does not replay the call.
+## Server settings
+
+This is the full list of settings for a server in `mcpServers`.
+
+| Setting | Required | What it does |
+| ------- | -------- | ------------ |
+| `id` | Yes | A name you choose, up to 64 lowercase letters, digits, and hyphens, starting with a letter |
+| `enabled` | Yes | `false` turns the server off without removing it |
+| `command` | Local servers | The full path of the program to run |
+| `args` | Local servers | Arguments for the program |
+| `cwd` | No | The folder the program runs in |
+| `environment` | No | Secrets and variables to pass to the program |
+| `url` | Remote servers | The server's address. It must use `https`, unless the server is on this computer. |
+| `headers` | No | Extra headers to send to a remote server, such as an API key |
+| `oauth` | No | Browser sign-in settings for a remote server |
+| `tools` | Yes | Tools Poppet can use |
+| `scheduledTools` | No | Read-only tools that scheduled tasks can use |
+| `reviewedTools` | No | Tools that Poppet reviews before each call |
+| `scheduledReviewedTools` | No | Reviewed tools that scheduled tasks can use |
+| `availableAfterUntrusted` | No | Keep using this server after reading untrusted content |
+
+A server has either `command` or `url`, not both.
+
+### API key headers
+
+`--auth api-key` sends your key as `Authorization: Bearer <key>`. If your server expects the key in a different header, set it in `headers` instead:
+
+```json
+"headers": {
+  "X-API-Key": { "credential": "mcp-notes" }
+}
+```
+
+`mcp add` saves the key as the credential `mcp-<id>`. Add `"prefix": "Bearer "` to put text before the key.
+
+### OAuth settings
+
+Most servers need only `"oauth": {}`, which `mcp add --auth oauth` saves for you. If the service gives you a client ID, add it with any scopes you need:
+
+```json
+"oauth": {
+  "clientId": "your-client-id",
+  "clientSecret": { "credential": "notes-client-secret" },
+  "scopes": ["read", "write"],
+  "callbackPort": 1455
+}
+```
+
+When you register Poppet with the service, use `http://127.0.0.1:1455/auth/callback` as the redirect address, with the same port as `callbackPort`. If a tool says it needs more access, add the scope it names to `scopes`, and run `poppet mcp login <name>` again. Changing a server's `url` also means signing in again.
 
 ## Limits
 
-- Up to 8 servers. Each server can expose up to 128 tools.
-- Tool descriptions are up to 4096 characters. Input and output schemas are up to 16 KiB, depth 32, and 1024 nodes.
-- Poppet ignores vendor schema keywords that start with `x-`, such as FastMCP's `x-fastmcp-wrap-result`, when it checks a schema. Property names that start with `x-` are still checked.
-- Each tool call can take up to 10 seconds. Starting a server and listing its tools has an 8-second limit.
-- HTTP JSON responses, OAuth responses, HTTP errors, and individual server-sent events are capped at 256 KiB. Each successful event-stream response also has a 16 MiB total limit. For calls without per-call review, redirects stay on the endpoint's origin, or move to its HTTPS version, and must keep the request method. Reviewed calls do not follow redirects.
-- A dropped HTTP stream fails that connection. Poppet then reconnects with a new session, on the same backoff schedule as stdio servers.
-- Closing an HTTP server ends its session within 5 seconds.
-- Tool results fit within the 16 KiB tool-output limit. Long text is shortened and marked as truncated.
+- Up to 8 servers, each with up to 128 tools.
+- Each tool call can take up to 10 seconds.
+- Each tool result can be up to 16 KiB. Longer results are cut short.
 
-Poppet supports tool discovery and calls over stdio and Streamable HTTP. The legacy HTTP+SSE transport, resources, prompts, sampling, elicitation, and media forwarding are not supported.
+Poppet uses MCP tools only. It does not support MCP resources, prompts, or servers that use the older HTTP with SSE connection.
