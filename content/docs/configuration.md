@@ -76,6 +76,8 @@ Use the same value for every command, including the worker's login service. Each
 
 External gateway packages must be installed under `<data directory>/gateways/node_modules`. The install directory, entry points, and their parent directories must be owned by the Poppet user and not writable by other users. Entry points outside that local `node_modules` directory are rejected. CLI help shows bundled gateways without importing external adapters.
 
+External adapter authors must use `GatewayRegistration`, `GatewayAdapter`, `GatewayEnvironment`, and `GatewayInput` from `@poppet/gateway`. These replace `ChannelRegistration`, `MessagingChannel`, `ChannelEnvironment`, and `ChannelInput`. `ChannelError` is now `GatewayError`, and the shared settings helpers use `Gateway` in place of `Channel` in their names. Update older adapters before loading them with current Poppet. See the [gateway development guide](https://github.com/poppet-run/poppet/blob/main/docs/development.md#adding-a-gateway) for the current contract. Existing setup commands, configuration keys, and files in `channels/` keep their names.
+
 Different sessions and messaging conversations can run at the same time, while requests in one session stay in order. Set `chat.maxConcurrentRequests` to 1 to process one request at a time. A request waiting for command or reviewed MCP approval keeps its slot for up to two minutes. Restart the worker after changing the limit.
 
 Context size, conversation history, model turns, tool calls, and tool output use fixed limits. They are not settings. See [chat limits](chat.md#context-and-limits).
