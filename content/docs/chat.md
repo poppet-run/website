@@ -43,6 +43,8 @@ poppet chat interactive $session_id
 
 The terminal shows your conversation above an input box. Answers render Markdown and code highlighting. Resuming a session loads saved messages and attachment names without calling the model or replaying tools. Use Page Up/Page Down to scroll; resizing preserves your draft. `NO_COLOR` disables colour.
 
+On 256-colour and truecolour terminals, the welcome banner shows the Poppet mascot with a randomly chosen expression each time the prompt starts. Narrow terminals stack the artwork above the instructions or omit it. `NO_COLOR` and terminals limited to 16 colours omit the mascot.
+
 Press Enter to send, or Shift+Enter for a newline in terminals that support modified keys. Bracketed multiline paste stays in the composer until you send it. Up/Down recall messages from this invocation; input history is not saved to disk.
 
 You can draft and submit messages while an answer streams. They queue in order and run after the current turn. `/queue remove N` removes a numbered pending message. If a turn fails, the queue pauses: `/queue retry` retries that message first, while `/queue resume` skips it and continues. Pending messages are discarded when you exit.
