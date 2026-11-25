@@ -7,7 +7,7 @@ note = "Run from source with Bun. Connect your own model provider. Poppet is sti
 
 [[features]]
 title = "Saved conversations."
-description = "Chat in your terminal, come back to saved sessions, and search past conversations."
+description = "Chat in your terminal, return to a saved conversation, and search what Poppet told you before."
 guide = "docs/chat/"
 label = "Terminal"
 code = """poppet chat sessions
@@ -16,7 +16,7 @@ poppet chat interactive $session_id"""
 
 [[features]]
 title = "Memory and skills."
-description = "Keep a profile and facts that Poppet uses across chats. Save reusable procedures and pick one for a chat or task."
+description = "Tell Poppet about yourself and ask it to remember facts. Write procedures you use often and pick one for a chat or task."
 guide = "docs/memory/"
 label = "Terminal"
 code = """poppet memory set answer.style "Keep answers concise"
@@ -25,7 +25,7 @@ poppet chat new --skill weekly-review "Review my Acorn project\""""
 
 [[features]]
 title = "Scheduled tasks."
-description = "Run a prompt later or on a schedule. Edit, pause, or run tasks, and read the results whenever you like."
+description = "Run a prompt once later, or on a repeating schedule. Read the results in your terminal or have them posted to Discord or Slack."
 guide = "docs/tasks/"
 label = "Terminal"
 code = """poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London "Summarize my recent conversations"
@@ -33,8 +33,8 @@ poppet tasks list
 poppet tasks pause $task_id"""
 
 [[features]]
-title = "Chat from Discord, Slack, or Telegram."
-description = "Talk to Poppet through a Discord, Slack, or Telegram bot that only its owner can invoke. Send scheduled results to a channel you choose."
+title = "Chat from Discord or Slack."
+description = "Talk to Poppet in Discord or Slack threads. Only you can use the bot. Scheduled results can go to a channel you choose."
 guide = "docs/gateways/"
 label = "Discord thread"
 thread = [
@@ -70,8 +70,8 @@ guide = "docs/providers/openrouter/"
 
 [[providers]]
 title = "OpenCode Go"
-description = "For building and debugging."
+description = "Text chat with GLM-5.3 or GPT 6 Luna."
 guide = "docs/providers/opencode-go/"
 +++
 
-Chat in your terminal, a web browser, Discord, Slack, or Telegram, keep useful facts and procedures, and schedule tasks. Poppet runs on your computer, saves your sessions locally, and connects to a model provider you choose.
+Chat with Poppet in your terminal, a web browser, Discord, or Slack. It runs on your computer, keeps your conversations there, and sends each request to the model provider you choose.
