@@ -65,6 +65,8 @@ bun apps/cli/src/main.ts worker run
 
 Stop any worker that already owns this data directory first. For an installed service, make sure it launches this checkout, then use `poppet worker restart`. The worker prints the web address when the listener starts. Rebuild the web app and restart the worker after frontend changes because it loads assets at startup.
 
+The build writes Brotli and gzip copies of HTML, scripts, and styles when compression makes them smaller. The worker serves a compressed copy when the browser accepts it, so the reverse proxy does not need to compress responses. Browsers cache content-hashed scripts and styles for a year; HTML pages and API responses use `Cache-Control: no-store`.
+
 ## Connect from another device
 
 Put an HTTPS reverse proxy in front of `127.0.0.1:8080`. Set up DNS and certificates for your hostname, and make the public address match `origin` exactly. The proxy must preserve the public `Host` header and avoid buffering server-sent events so replies stream as they arrive. Keep the HTTP backend on loopback. Set `"trustProxy": true` in `web.json` only when this loopback proxy manages `X-Forwarded-For`. Poppet then uses the last address in that header if it is a valid IP address. Without this setting, login limits use the connection’s peer address.
