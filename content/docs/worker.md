@@ -5,7 +5,7 @@ description = "Keep Poppet running in the background for scheduled tasks, messag
 
 # Worker
 
-The worker is the part of Poppet that keeps running in the background. It runs [scheduled tasks](tasks.md), answers messages from [messaging gateways](gateways/_index.md) such as Discord and Slack, and serves [web chat](web-chat.md). Terminal chat works without it.
+The worker is the part of Poppet that keeps running in the background. It runs [scheduled tasks](tasks.md), answers messages from [messaging gateways](gateways/_index.md) such as Discord, Slack, and Telegram, and serves [web chat](web-chat.md). Terminal chat works without it.
 
 You can run the worker in a terminal window, or have it start each time you log in.
 

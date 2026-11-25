@@ -45,7 +45,7 @@ Write `$` and a skill's name to use it for one message:
 Run $weekly-review for the Acorn project
 ```
 
-This works in the terminal, web chat, and gateway threads. In a shell command, use single quotes so the shell leaves `$` alone:
+This works in the terminal, web chat, and gateways. In a shell command, use single quotes so the shell leaves `$` alone:
 
 ```sh
 poppet chat new 'Run $weekly-review for the Acorn project'
@@ -75,13 +75,13 @@ You can still choose a manual-only skill with `--skill`, `/new --skill`, or `$na
 
 ## Choose a skill in a gateway
 
-In a [messaging gateway](gateways/_index.md) thread, such as Discord or Slack, start a new session with a skill:
+In a [messaging gateway](gateways/_index.md), such as Discord, Slack, or Telegram, start a new session with a skill:
 
 ```text
 /new --skill weekly-review Review my Acorn project
 ```
 
-`/new` followed by a message starts a new session with no skill. Earlier sessions stay saved. If the skill is missing or has a problem, Poppet replies with the error and keeps the current session. In a channel rather than a thread, mention the bot first. See [Discord](gateways/discord.md#start-a-conversation) or [Slack](gateways/slack.md#start-a-conversation).
+`/new` followed by a message starts a new session with no skill. Earlier sessions stay saved. If the skill is missing or has a problem, Poppet replies with the error and keeps the current session. In a channel rather than a thread, mention the bot first. See [Discord](gateways/discord.md#start-a-conversation), [Slack](gateways/slack.md#start-a-conversation), or [Telegram](gateways/telegram.md#start-a-conversation).
 
 ## Skills Poppet chooses itself
 

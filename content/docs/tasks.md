@@ -105,7 +105,7 @@ You can keep up to 64 tasks, including paused and ended ones.
 
 ## Manage tasks from chat
 
-Ask Poppet in any chat, including a gateway thread, to create, list, change, pause, resume, skip, snooze, run, or delete a task:
+Ask Poppet in any chat, including a gateway conversation, to create, list, change, pause, resume, skip, snooze, run, or delete a task:
 
 ```text
 Every Friday at 09:00 Europe/London, summarize my recent conversations and deliver the result here.

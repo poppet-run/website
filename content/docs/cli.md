@@ -203,9 +203,9 @@ printf '%s\n' "$DISCORD_BOT_TOKEN" | poppet gateway discord setup --owner-id <us
 printf '%s\n%s\n' "$SLACK_BOT_TOKEN" "$SLACK_APP_TOKEN" | poppet gateway slack setup --owner-id <user-id> --team-id <workspace-id> --home-channel-id <channel-id>
 ```
 
-Telegram takes its bot token as an option, so the token is saved in your shell history.
+Telegram takes its bot token as an option. To keep it out of your shell history, read it into a variable first, as the [Telegram guide](gateways/telegram.md#connect-poppet) shows.
 
-See [Discord](gateways/discord.md) and [Slack](gateways/slack.md).
+See [Discord](gateways/discord.md), [Slack](gateways/slack.md), and [Telegram](gateways/telegram.md).
 
 ## Web search
 

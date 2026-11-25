@@ -25,7 +25,7 @@ poppet chat new --skill weekly-review "Review my Acorn project\""""
 
 [[features]]
 title = "Scheduled tasks."
-description = "Run a prompt once later, or on a repeating schedule. Read the results in your terminal or have them posted to Discord, Slack, or another messaging app."
+description = "Run a prompt once later, or on a repeating schedule. Read the results in your terminal or have them posted to Discord, Slack, or Telegram."
 guide = "docs/tasks/"
 label = "Terminal"
 code = """poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London "Summarize my recent conversations"
@@ -34,7 +34,7 @@ poppet tasks pause $task_id"""
 
 [[features]]
 title = "Chat from your messaging apps."
-description = "Talk to Poppet in threads in Discord, Slack, or another supported app. Only you can use the bot. Scheduled results can go to a channel you choose."
+description = "Talk to Poppet in Discord, Slack, or Telegram. Only you can use the bot. Scheduled results can go to a channel you choose."
 guide = "docs/gateways/"
 label = "Discord thread"
 thread = [
@@ -74,4 +74,4 @@ description = "Text chat with GLM-5.3 or GPT 6 Luna."
 guide = "docs/providers/opencode-go/"
 +++
 
-Chat with Poppet in your terminal, a web browser, Discord, or Slack. It runs on your computer, keeps your conversations there, and sends each request to the model provider you choose.
+Chat with Poppet in your terminal, a web browser, Discord, Slack, or Telegram. It runs on your computer, keeps your conversations there, and sends each request to the model provider you choose.
