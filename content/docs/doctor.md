@@ -1,106 +1,55 @@
 +++
 title = "Doctor"
-description = "Inspect setup and worker state without changing files or running model requests."
+description = "Check your Poppet setup for problems without changing anything."
 +++
 
 # Doctor
 
-Run `poppet doctor` to inspect local setup and get suggested next steps. Use
-`poppet doctor --json` for scripts. Both forms perform the same checks and return
-the same exit code.
+`poppet doctor` checks your setup and tells you what to fix. It only looks. It never changes files, contacts your provider, or sends messages.
 
-Human output starts with a count summary and groups findings into Needs attention,
-Could not check, Passed, and Skipped. Each check has a readable name, its
-observation source, a wrapped explanation, and a separate next step when needed. Text wraps to the
-terminal width, up to 100 columns, or 88 columns when redirected. Long paths, IDs,
-and URLs remain intact.
+```sh
+poppet doctor
+```
 
-Checks that could not finish use an UNKNOWN label and a separate "not checked"
-count. They do not mean that tasks failed or messages were lost. JSON keeps its
-existing status values: an incomplete check still has `incomplete: true` and
-returns exit code 2. Human output uses that flag to distinguish unavailable
-checks from confirmed problems.
+Doctor groups its results under Needs attention, Could not check, Passed, and Skipped. Each problem comes with a suggested next step. Read a suggested command before you run it, since it can change things that doctor itself does not.
 
-Human output uses green for successful checks, yellow for warnings and unknown
-results, red for confirmed errors, and gray for skipped checks and sources.
-Redirected output and `NO_COLOR=1` use plain text. JSON output contains no styling.
+## What doctor checks
 
-Doctor reads the selected `POPPET_DATA_DIR`, or the default data directory. It
-never creates a missing installation. Configuration errors do not prevent
-independent filesystem and worker checks.
+| Check | What it looks at |
+| ----- | ---------------- |
+| Installation | Whether your data directory exists |
+| Configuration | Whether `config.json` is valid |
+| Provider sign-in | Whether you are signed in to your provider, or have an API key set |
+| Background service | Whether the worker is installed to start at login |
+| Worker connection | Whether the worker is running and responding |
+| Worker configuration | Whether the worker is using different settings from `config.json`, so it needs a restart |
+| Scheduled tasks | Tasks that failed or were interrupted in the last 24 hours, and when the next one is due |
+| Paused provider work | Providers Poppet has paused for scheduled tasks, and when they resume |
+| Message delivery | Discord or Slack posts that are waiting, failed, or uncertain |
+| Messaging connections | Whether Discord or Slack reported a connection problem |
+| MCP servers | Whether your MCP servers are set up correctly and their programs exist |
+| Context files | Whether `profile.md` and `soul.md` are valid and under 8 KiB |
 
-## Checks
+Doctor skips checks for features you have not set up. Running the worker in a terminal is fine, so doctor skips the login check if you have not installed it.
 
-| Check                | What it observes                                                                                                                   |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `installation`       | Whether the selected data directory exists                                                                                         |
-| `configuration`      | Validated file settings and defaults, including chat limits and tool policies                                                      |
-| `authentication`     | Selected provider's saved credential metadata or environment API-key presence, without refresh; expired access tokens are warnings |
-| `worker.service`     | Service registration, which does not prove that the worker is responding                                                           |
-| `worker.socket`      | Protected local socket reachability and support for doctor inspection                                                              |
-| `worker.identity`    | Reported only when the worker's startup configuration differs from the CLI's configuration or the CLI configuration is invalid     |
-| `tasks`              | Failures and interruptions in the last 24 hours, up to five task/occurrence IDs, omitted count, running count and next due time    |
-| `provider-holds`     | Up to 20 provider IDs, saved hold reasons and retry times, with an omitted count                                                   |
-| `delivery`           | Pending, failed and uncertain sends; inspect the destination before retrying uncertain sends                                       |
-| `gateway.connection` | Local adapter connection observations and configuration failures, without a remote connectivity probe                              |
-| `mcp`                | Enabled configuration, executable availability and scheduled-tool allowlist consistency                                            |
-| `context`            | Existing `soul.md` and `profile.md` files against their UTF-8 and 8 KiB limits                                                     |
+## Could not check
 
-Disabled optional capabilities are skipped. An uninstalled background service is
-also skipped because foreground operation is supported. An unreachable worker is
-a warning: background scheduling and messaging cannot be confirmed ready.
+Some checks need the worker. If the worker is not running, doctor reports them under Could not check. This does not mean anything failed. Start the worker with `poppet worker run` or `poppet worker start`, then run doctor again.
 
-Doctor does not run model requests, refresh tokens, start MCP servers,
-send messages, install dependencies, acquire database ownership, migrate data,
-restart services, or repair files. Credential permission problems are reported
-without changing permissions. Suggested commands are text for you to review and
-run yourself; those commands can have effects that doctor does not.
+## What doctor cannot tell you
 
-Each check has a two-second deadline. Configuration, concurrent local checks and
-worker inspection run in bounded stages, within a ten-second overall budget under
-normal filesystem and OS scheduling. Each platform command has an additional
-1.8-second process timeout and a 64 KiB output limit. Worker responses are limited
-to 32 KiB. Errors are summarized without echoing config values, credentials,
-provider error bodies, messages, or tool arguments.
+Doctor does not send a request to your provider, start MCP servers, or post to Discord or Slack. A clean report means your settings look right, not that everything works. To confirm, send a message with `poppet chat new`.
 
-For messaging connection or delivery problems, inspect `poppet worker status` and `poppet worker logs`. Check the destination before retrying an uncertain send to avoid duplicates.
+For Discord or Slack problems, also check `poppet worker status` and `poppet worker logs`.
 
-## Worker and offline limits
+## Use doctor in a script
 
-Start or restart the worker after updating Poppet to enable the `/v1/doctor`
-inspection endpoint. Doctor uses its existing store connection and does not wait
-for an agent execution permit. Configuration identity is captured when the worker
-loads its configuration. A mismatch suppresses its saved-work summaries and
-suggests checking configuration and restarting.
+`poppet doctor --json` prints the same results as JSON. The exit code tells you the overall result:
 
-When a saved database exists but no compatible worker is available, doctor reports
-saved-work checks as incomplete. It does not open SQLite offline: even a read-only
-connection can create or change WAL/SHM sidecars. This also leaves unknown or newer
-schemas untouched. If no database exists, saved-work checks are skipped.
+| Exit code | Meaning |
+| --------- | ------- |
+| `0` | No problems found |
+| `1` | At least one problem to fix |
+| `2` | At least one check could not finish |
 
-Running work is reported without assuming it is stale. Delivery age is unavailable
-because the delivery records do not store creation times. Doctor does not select
-or validate a particular skill. MCP credential
-validity and tool behavior, provider reachability, and successful
-message delivery still require explicit live use. A passing report only covers
-the checks it actually performed.
-
-## JSON contract and exit codes
-
-Version 1 contains `version`, `dataDirectory`, `observedAt`, `exitCode`, and
-`checks`. Timestamps are Unix milliseconds. Each check contains:
-
-- `id`: stable check identifier from the table above.
-- `status`: `ok`, `warning`, `error`, or `skipped`.
-- `source`: `local`, `saved`, `worker`, or `not-checked`.
-- `observedAt`: when the observation was collected. Worker summaries retain the
-  worker's timestamp; saved credential presence is not a live provider probe.
-- `message`: explanation intended for people, not a machine parsing contract.
-- `nextStep`: suggested action, or `null`.
-- `incomplete`: whether required inspection could not finish safely or on time.
-
-Exit `0` means no actionable problem was found. Exit `1` means actionable warnings
-or errors were found. Exit `2` takes precedence when required inspection is
-incomplete. Skipped optional checks do not change the exit code. Scripts should
-use `version`, `id`, `status`, and `incomplete`, not parse message text.
-
+Each check in the JSON has an `id`, a `status` of `ok`, `warning`, `error`, or `skipped`, and `incomplete` when it could not finish. Use these fields in scripts. The `message` text is for people and may change.

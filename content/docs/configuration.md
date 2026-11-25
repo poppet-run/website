@@ -1,15 +1,15 @@
 +++
 title = "Configuration"
-description = "Save settings in config.json, set the data directory, and manage API keys and optional tools."
+description = "Change Poppet's settings in config.json, choose where it keeps data, and manage API keys."
 +++
 
 # Configuration
 
-Poppet reads ordinary settings from `config.json`. [Getting started](getting-started.md) shows the provider and model fields you need for your first chat. This page covers the remaining settings.
+Poppet reads its settings from `config.json` in your data directory. [Getting started](getting-started.md) covers the provider and model settings you need first. This page covers the rest.
 
-## Configuration file
+## Edit config.json
 
-Save settings in `<data directory>/config.json`, which defaults to `~/.config/poppet/config.json`. The file and every field in it are optional:
+The file is `~/.config/poppet/config.json` unless you [use a different data directory](#data-directory). Every setting is optional, and without the file Poppet uses its defaults. For example:
 
 ```json
 {
@@ -20,71 +20,48 @@ Save settings in `<data directory>/config.json`, which defaults to `~/.config/po
 }
 ```
 
-`POPPET_DATA_DIR` is the only environment variable that changes where Poppet looks for its files. Set it before running any command to use another data directory. Credentials and channel tokens stay in protected files beside the data, not in `config.json`.
-
-A missing file means Poppet uses its defaults, and it creates nothing. The file must be valid JSON, at most 64 KiB, owned by your user, and not writable by other users. Poppet rejects symlinks and hard links. Unknown keys, wrong types, and empty text values are errors. Poppet does not expand `~` in paths, so write paths in full.
-
-The retired `browser` key is ignored and can be removed from existing configuration. Built-in browser automation is no longer available.
-
-Restart the worker after you edit the file. New chats and tasks use the new defaults. Existing sessions and tasks keep the provider and model they were saved with.
-
-Check the result with:
+After you edit the file, check it and restart the worker:
 
 ```sh
 poppet config
+poppet worker restart
 ```
 
-It prints the validated settings and the config file's location. It does not open storage or contact a provider.
+`poppet config` shows the settings Poppet will use, and where it found the file. If something is wrong, it names the setting. Common mistakes are a missing comma or quote, a misspelled setting name, a number in quotes, or an empty value. Write paths in full, because Poppet does not expand `~`.
 
-## Data directory
+New chats and tasks use the new settings. Existing chats and tasks keep the provider and model they started with.
 
-To keep data somewhere other than `~/.config/poppet`, set `POPPET_DATA_DIR`:
-
-{{< shell >}}
-```bash
-export POPPET_DATA_DIR="$HOME/.local/share/poppet"
-poppet config
-```
-
-```fish
-set -lx POPPET_DATA_DIR "$HOME/.local/share/poppet"
-poppet config
-```
-{{< /shell >}}
-
-Use the same value for every command, including the worker's login service. Each data directory has its own configuration, credentials, and database.
+Keep passwords, API keys, and tokens out of `config.json`. Poppet saves those in separate protected files.
 
 ## Settings
 
-| Field                     | Default                | Purpose                                                                           |
-| ------------------------- | ---------------------- | --------------------------------------------------------------------------------- |
-| `provider`                | `openai-chatgpt`       | Provider for new chats and tasks: `openai-chatgpt`, `openrouter`, or `opencode-go` |
-| `model`                   | Unset                  | Model ID for new chats and tasks                                                  |
-| `applicationName`         | `Poppet`               | Name used during ChatGPT's initial registration                                   |
-| `discord`                 | Unset                  | Owner ID, server ID, and home channel ID; see [Discord](gateways/discord.md)      |
-| `slack`                   | Unset                  | Owner ID, workspace ID, and home channel ID; see [Slack](gateways/slack.md)       |
-| `webSearchProvider`       | Unset                  | Enable search with `brave` or `kagi` when that provider has a saved key             |
-| `mcpServers`              | `[]`                   | [Local tool servers and their permissions](mcp.md)                                |
-| `gatewayPackages`         | `[]`                   | External messaging adapters to load                                               |
-| `tasks.catchUpMinutes`    | `60`                   | How late a recurring task can start after a missed time, from 0 to 1440          |
-| `tasks.quietHours` | Unset | Daily window when scheduled messaging posts wait; see [quiet hours](#quiet-hours) |
-| `chat.outputTokens`       | `2048`                 | Requested output limit, from 1 to 32768, capped by the model's own limit          |
-| `chat.runDeadlineSeconds` | `300`                  | Overall time limit for one run, from 30 to 3600 seconds                           |
-| `chat.logReasoning`       | `false`                | Show or log readable reasoning; streamed terminal reasoning is not duplicated in the worker log                     |
-| `chat.logTimings`         | `false`                | Log the duration of each request stage                                            |
-| `chat.maxConcurrentRequests` | `3` | Requests that can run at once across CLI, web chat, messaging, and scheduled runs, from 1 to 8 |
+| Setting | Default | What it does |
+| ------- | ------- | ------------ |
+| `provider` | `openai-chatgpt` | Provider for new chats and tasks: `openai-chatgpt`, `openrouter`, or `opencode-go` |
+| `model` | None | Model ID for new chats and tasks, from `poppet provider models` |
+| `chat.outputTokens` | `2048` | Longest answer to ask the model for, in tokens, from 1 to 32768 |
+| `chat.runDeadlineSeconds` | `300` | Time limit for one answer, from 30 to 3600 seconds |
+| `chat.maxConcurrentRequests` | `3` | How many answers Poppet works on at once, from 1 to 8 |
+| `chat.logReasoning` | `false` | Show the model's reasoning, and write it to the worker log. See [reasoning and timing logs](#reasoning-and-timing-logs). |
+| `chat.logTimings` | `false` | Write how long each step of an answer took to the worker log |
+| `tasks.catchUpMinutes` | `60` | How late a missed repeating task can still run, from 0 to 1440 minutes |
+| `tasks.quietHours` | None | Hours when scheduled posts wait. See [quiet hours](#quiet-hours). |
+| `webSearchProvider` | None | `brave` or `kagi`. See [web search](web.md#turn-on-web-search). |
+| `mcpServers` | `[]` | MCP servers and their tools. See [MCP tools](mcp.md). |
+| `discord` | None | Your Discord IDs. See [Discord](gateways/discord.md). |
+| `slack` | None | Your Slack IDs. See [Slack](gateways/slack.md). |
+| `applicationName` | `Poppet` | The name ChatGPT shows for Poppet when you first sign in |
+| `gatewayPackages` | `[]` | Extra messaging integrations to load |
 
-External gateway packages must be installed under `<data directory>/gateways/node_modules`. The install directory, entry points, and their parent directories must be owned by the Poppet user and not writable by other users. Entry points outside that local `node_modules` directory are rejected. CLI help shows bundled gateways without importing external adapters.
+Install packages listed in `gatewayPackages` into `gateways/node_modules` in your data directory.
 
-External adapter authors must use `GatewayRegistration`, `GatewayAdapter`, `GatewayEnvironment`, and `GatewayInput` from `@poppet/gateway`. These replace `ChannelRegistration`, `MessagingChannel`, `ChannelEnvironment`, and `ChannelInput`. `ChannelError` is now `GatewayError`, and the shared settings helpers use `Gateway` in place of `Channel` in their names. Update older adapters before loading them with current Poppet. See the [gateway development guide](https://github.com/poppet-run/poppet/blob/main/docs/development.md#adding-a-gateway) for the current contract. Existing setup commands, configuration keys, and files in `channels/` keep their names.
+Some limits are fixed and cannot be changed, such as how much conversation history Poppet sends. See [chat limits](chat.md#limits).
 
-Different sessions and messaging conversations can run at the same time, while requests in one session stay in order. Set `chat.maxConcurrentRequests` to 1 to process one request at a time. A request waiting for command or reviewed MCP approval keeps its slot for up to two minutes. Restart the worker after changing the limit.
-
-Context size, conversation history, model turns, tool calls, and tool output use fixed limits. They are not settings. See [chat limits](chat.md#context-and-limits).
+Web chat has its own settings file. See [web chat](web-chat.md).
 
 ## Quiet hours
 
-Set `tasks.quietHours` in `config.json` to hold scheduled posts to Discord and Slack overnight:
+Quiet hours hold scheduled posts to Discord and Slack, so they do not arrive overnight:
 
 ```json
 {
@@ -94,98 +71,55 @@ Set `tasks.quietHours` in `config.json` to hold scheduled posts to Discord and S
 }
 ```
 
-Use 24-hour `HH:MM` times and an IANA time zone name. The window can cross midnight. Start and end must differ; invalid times, unknown zones, and UTC offsets such as `+01:00` are rejected. Without this setting, nothing is held.
+Use 24-hour times and a time zone name such as `Europe/London`. The hours can run past midnight.
 
-Tasks still run at their scheduled times. Results and [failure notices](tasks.md#failure-notices) ready during the window wait until it ends. Replies to your messages, approval prompts, and tasks without a messaging destination are not held.
+Tasks still run on time. Results and [failure notices](tasks.md#failure-notices) that are ready during quiet hours wait until they end. Replies to your own messages and approval requests are never held.
 
-On a daylight-saving change, a time skipped by the clock takes effect when the clock jumps past it. A time that occurs twice uses its first occurrence. A window ending at 01:30 when the clocks go back ends at the first 01:30 and does not resume during the repeated hour.
+Restart the worker after you change quiet hours. The new hours also apply to posts that are already waiting. `poppet tasks show <task-id>` shows when a waiting result will be posted.
 
-Restart with `poppet worker restart` after changing or removing the setting. The worker checks the window before each post, so the change also applies to posts already waiting. Inspect held posts with `poppet tasks show <task-id>`; the worker log also records the hold.
+## Data directory
+
+Poppet keeps everything in `~/.config/poppet` by default. To use another folder, set `POPPET_DATA_DIR`:
+
+{{< shell >}}
+```bash
+export POPPET_DATA_DIR="$HOME/.local/share/poppet"
+poppet config
+```
+
+```fish
+set -gx POPPET_DATA_DIR "$HOME/.local/share/poppet"
+poppet config
+```
+{{< /shell >}}
+
+Each data directory has its own settings, sign-ins, and conversations. Set the same value for every command, including when you install the worker. See [storage](storage.md) for what the folder contains.
 
 ## API keys
 
-Login saves each API key in `<data directory>/auth/<provider>.json`. The file is `0600`, inside a `0700` directory. Provider login requires an interactive terminal and masks typed or pasted characters with `*`, even when an environment key is set. It does not read keys from environment variables, command-line arguments, or piped input; `--key-stdin` is no longer supported.
+`poppet provider login` saves your OpenRouter or OpenCode Go key in a protected file. It needs an interactive terminal, and shows `*` in place of each character you type or paste.
 
-Web search login and MCP setup accept `--api-key <key>` or a masked prompt. Use the prompt to keep those keys out of command arguments and shell history.
+To use a key without saving it, set one of these environment variables. It takes the place of the saved key.
 
-These variables override the saved key for inference and status, but provider login does not save their values. An empty or invalid value is an error, and Poppet does not fall back to the saved key:
+| Variable | Provider |
+| -------- | -------- |
+| `POPPET_OPENROUTER_API_KEY` | OpenRouter |
+| `POPPET_OPENCODE_GO_API_KEY` | OpenCode Go |
 
-| Variable                        | Used for           |
-| ------------------------------- | ------------------ |
-| `POPPET_OPENROUTER_API_KEY`     | OpenRouter         |
-| `POPPET_OPENCODE_GO_API_KEY`    | OpenCode Go        |
+If the variable is set but empty or wrong, Poppet reports an error rather than using the saved key. The background worker cannot see variables from your shell, so save the key with `provider login` for scheduled tasks and messaging.
 
-`provider logout` removes the saved key. It does not revoke the key with the provider, and it does not unset an environment variable. See [OpenRouter](providers/openrouter.md) and [OpenCode Go](providers/opencode-go.md) for login examples.
+`poppet provider logout` deletes the saved key. It does not cancel the key with the provider. Do that on the provider's website.
 
-## Discord
-
-`poppet gateway discord setup` saves the ordinary Discord settings in `config.json` and the bot token in a protected file:
-
-```json
-{
-  "discord": {
-    "ownerId": "200",
-    "guildId": "300",
-    "homeChannelId": "400"
-  }
-}
-```
-
-Use your own IDs. Removing the `discord` section turns Discord off and keeps the saved token. See [Discord](gateways/discord.md) for setup and permissions.
-
-## Telegram
-
-`poppet gateway telegram setup` saves the owner ID, chat ID, home conversation ID, and bot token together in `<data directory>/channels/telegram.json` with `0600` permissions. Home defaults to the chat. Telegram has no section in `config.json` and needs no `gatewayPackages` entry. Remove the settings file to disable it, and restart the worker after changes. See [Telegram](gateways/telegram.md).
-
-## Slack
-
-`poppet gateway slack setup` saves ordinary Slack settings in `config.json` and both tokens in `<data directory>/channels/slack.json`:
-
-```json
-{
-  "slack": {
-    "ownerId": "U123",
-    "teamId": "T123",
-    "homeChannelId": "C123"
-  }
-}
-```
-
-Use your own IDs. Removing the `slack` section turns Slack off and keeps the saved tokens. Use `poppet setup` for masked token entry. Restart the worker after changing settings. See [Slack](gateways/slack.md).
-
-## Web chat
-
-Configure browser chat separately in `<data directory>/web.json`, with `origin`, `hostname`, `port`, and `accessKeyHash`. It stays disabled when that file is absent. Build the web app and restart the worker after setup. See [web chat](web-chat.md) for access-key and HTTPS instructions.
-
-## Web search
-
-Set `webSearchProvider` in `config.json` to enable search, then save that provider's key:
-
-```json
-{
-  "webSearchProvider": "kagi"
-}
-```
-
-```sh
-poppet web login
-poppet web status
-```
-
-Search uses only saved credentials in `auth/brave-search.json` or `auth/kagi-search.json`. Environment variables cannot supply or override search keys.
-
-Choose `brave` or `kagi`; there is no default provider. Remove `webSearchProvider` to disable search while keeping saved keys. Kagi uses its v1 API with a bearer key. Each provider's key is stored separately, so switching providers keeps both keys. `web status` shows whether search is enabled and configured, without making a remote request. Restart the worker after you change search settings or keys. See [web search](web.md).
-
-The removed `webSearch` field is rejected as an unknown setting, even when it is `false`. Remove it from existing configuration. To enable search, set `webSearchProvider` and save its key. To keep search disabled, remove both fields.
+Web search keys are separate. They come only from `poppet web login`, never from environment variables. See [web search](web.md#turn-on-web-search).
 
 ## Reasoning and timing logs
 
-Poppet requests readable reasoning when the provider supports it and saves the reasoning it returns with each assistant message in the [session database](storage.md#what-is-saved), even when `chat.logReasoning` is off.
+Some models think through a problem before they answer. Poppet saves this reasoning with each answer when the provider shares it.
 
-`chat.logReasoning` displays reasoning in streaming terminal chat without duplicating it in the worker log. For other runs, it writes readable model reasoning to `<data directory>/logs/worker.log` and to CLI stderr. `chat.logTimings` writes the duration of each stage in milliseconds. Both are off by default and apply to chat, scheduled, and messaging runs. Logs can contain private prompt or tool content, so keep them local. Answer output and messaging replies contain only the answer. Encrypted reasoning is never logged. Logged reasoning is limited to 128 KiB per run; exceeding that limit fails the run only when reasoning logging is enabled. These settings do not select reasoning effort or a reasoning-token budget.
+With `chat.logReasoning` set to `true`, terminal chats show the reasoning as Poppet works. `chat new` and the interactive prompt show it under a Thinking heading. When `chat send` goes through the worker, Poppet also writes the reasoning to the worker log. For scheduled tasks and messaging, Poppet writes the reasoning to the worker log.
 
-Set either one in `config.json` and restart the worker so it reads the change.
+With `chat.logTimings` set to `true`, Poppet writes how long each step took to the worker log.
 
-## Skill files
+Poppet logs up to 128 KiB of reasoning per answer. While `chat.logReasoning` is on, an answer with more reasoning than that fails.
 
-Skills live in `<data directory>/skills/<name>/SKILL.md`. There is no path setting. See [skills](skills.md).
+Both are off by default. Reasoning can include private details from your messages and tools, so keep the log private. Neither setting changes how hard the model thinks. Restart the worker after you change them.
