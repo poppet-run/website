@@ -97,6 +97,8 @@ Your proxy must:
 - pass the original `Host` header through unchanged
 - turn off response buffering for web chat, so replies appear as Poppet writes them
 
+The worker compresses web chat pages itself, so your proxy does not need to.
+
 If your proxy sets the `X-Forwarded-For` header, add `"trustProxy": true` to `web.json`. Poppet then limits sign-in attempts by each visitor's real address instead of the proxy's address.
 
 ## Signing in
@@ -107,7 +109,7 @@ You stay signed in for 12 hours, until you sign out, or until the worker restart
 
 ## Find a conversation
 
-The sidebar starts on **Chats**, which shows conversations from web chat and the terminal. Use **Show** to switch to **Scheduled tasks**, **Slack**, **Discord**, or **All sessions**. The Slack and Discord views appear once you have conversations there. The most recent conversations are at the top.
+The sidebar starts on **Chats**, which shows conversations from web chat and the terminal. Use **Show** to switch to **Scheduled tasks**, **All sessions**, or one gateway, such as **Telegram**. Each gateway's view appears once you have conversations there. The most recent conversations are at the top.
 
 Changing the view keeps your open conversation and your draft. **+ New conversation** switches back to **Chats**. To open a conversation in another tab, use your browser's usual modified click.
 
@@ -140,9 +142,9 @@ See [delete old sessions](chat.md#delete-old-sessions) for what else deletion af
 
 Web chat does not support attachments, search, renaming, choosing a model, choosing a skill for the whole conversation, showing reasoning, or showing run details. Use the [terminal](chat.md) for these. For example, `poppet chat show <session-id>` shows run details for a web conversation.
 
-You cannot approve commands or [reviewed MCP actions](mcp.md#review-an-action) in web chat. If Poppet needs your approval, the reply stops. Ask again in a [messaging gateway](gateways/_index.md) thread to approve it there. See [run commands](commands.md).
+You cannot approve commands or [reviewed MCP actions](mcp.md#review-an-action) in web chat. If Poppet needs your approval, the reply stops. Ask again in a [messaging gateway](gateways/_index.md) to approve it there. See [run commands](commands.md).
 
-Links in answers open in a new tab. Web chat shows images in answers as their description, and removes checkboxes.
+Replies show as plain text until the page has loaded its formatting, and stay readable as plain text if it fails to load. Web chat shows HTML in replies as text, apart from a few simple tags such as `<br>`. Images show as their description, and checklists lose their checkboxes. Links open in a new tab. Web chat shows other kinds of links, such as `file:` links, as plain text.
 
 ## Limits
 

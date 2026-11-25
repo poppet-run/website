@@ -74,10 +74,11 @@ poppet worker logs
 Check that:
 
 - the worker is running and shows the gateway as connected
-- your user ID, server or workspace ID, and home channel ID are right in `config.json`
+- the IDs you gave during setup are right
 - you are writing as the owner, in a channel where the bot is present
-- the bot has the permissions listed in its gateway guide, such as the [Discord guide](gateways/discord.md#create-the-bot) or the [Slack guide](gateways/slack.md#create-the-app)
+- the bot has the permissions listed in its gateway guide, such as the [Discord guide](gateways/discord.md#create-the-bot), the [Slack guide](gateways/slack.md#create-the-app), or the [Telegram guide](gateways/telegram.md#create-the-bot)
 - for Slack, you are not in a direct message or a shared channel
+- for Telegram, the bot has no webhook set, and no other program uses its token
 
 Restart the worker after you change any of these.
 

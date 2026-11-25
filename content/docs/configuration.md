@@ -53,7 +53,9 @@ Keep passwords, API keys, and tokens out of `config.json`. Poppet saves those in
 | `applicationName` | `Poppet` | The name ChatGPT shows for Poppet when you first sign in |
 | `gatewayPackages` | `[]` | Extra messaging integrations to load |
 
-Install packages listed in `gatewayPackages` into `gateways/node_modules` in your data directory.
+Telegram has no setting in `config.json`. Setup saves its IDs with its token. See [Telegram](gateways/telegram.md).
+
+Install packages listed in `gatewayPackages` into `gateways/node_modules` in your data directory. A package made for an older version of Poppet may need an update before it loads.
 
 Some limits are fixed and cannot be changed, such as how much conversation history Poppet sends. See [chat limits](chat.md#limits).
 

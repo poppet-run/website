@@ -5,7 +5,7 @@ description = "How Poppet runs shell commands on your computer, and how you appr
 
 # Run commands
 
-Poppet can run shell commands on your computer in chats, gateway threads, and scheduled tasks. Every model that can use tools has this ability, and there is no setting to turn it off.
+Poppet can run shell commands on your computer in chats, gateway conversations, and scheduled tasks. Every model that can use tools has this ability, and there is no setting to turn it off.
 
 Commands run as your user account. They can read, change, and delete anything your account can. Poppet has no sandbox, and it cannot use `sudo`. Because of this, Poppet reviews every command before it runs.
 
@@ -25,18 +25,18 @@ The review is a second opinion from a model, and it can be wrong. It reads the c
 
 ## Approve a command
 
-To approve commands, chat in [Discord](gateways/discord.md) or [Slack](gateways/slack.md). When a command needs approval, Poppet posts the exact command, the folder it runs in, its time limit, and the reason for asking. Click **Approve once** or **Deny**, or reply with the ID from the message:
+To approve commands, chat through a [messaging gateway](gateways/_index.md). When a command needs approval, Poppet posts the exact command, the folder it runs in, its time limit, and the reason for asking. In Discord and Slack, click **Approve once** or **Deny**. In any gateway, you can also reply with the ID from the message:
 
 ```text
 /approve <id>
 /deny <id>
 ```
 
-Only you can answer, and only in the same thread. An approval covers that one command and nothing else. A request expires after two minutes, or when you cancel the reply or restart the worker. To try again after that, ask Poppet again.
+Only you can answer, and only in the same conversation. An approval covers that one command and nothing else. A request expires after two minutes, or when you cancel the reply or restart the worker. To try again after that, ask Poppet again.
 
 In Slack, the buttons need **Interactivity & Shortcuts** turned on in your [Slack app settings](gateways/slack.md#create-the-app). Replying with `/approve <id>` works without it.
 
-In the terminal or web chat, a command that needs approval does not run. Ask for the same thing in a gateway thread to approve it there.
+In the terminal or web chat, a command that needs approval does not run. Ask for the same thing in a gateway to approve it there.
 
 [Reviewed MCP actions](mcp.md#review-an-action) use the same buttons and replies.
 

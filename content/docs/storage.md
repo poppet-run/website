@@ -14,7 +14,7 @@ profile.md        your profile, which you write
 soul.md           Poppet's personality, which you write
 skills/           your skills
 auth/             provider, web search, and MCP sign-ins and keys
-channels/         messaging gateway tokens
+channels/         messaging gateway tokens, and Telegram's settings
 store/            conversations, facts, and tasks
 logs/             the worker's log
 ```

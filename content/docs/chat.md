@@ -5,7 +5,7 @@ description = "Start a conversation, return to saved sessions, and search earlie
 
 # Chat
 
-Chat with Poppet from your terminal, a [web browser](web-chat.md), or a thread in a [messaging gateway](gateways/_index.md), such as Discord or Slack. Poppet saves every conversation as a session on your computer, so you can return to it or search it later. If you have not connected a provider yet, start with [getting started](getting-started.md).
+Chat with Poppet from your terminal, a [web browser](web-chat.md), or a [messaging gateway](gateways/_index.md), such as Discord, Slack, or Telegram. Poppet saves every conversation as a session on your computer, so you can return to it or search it later. If you have not connected a provider yet, start with [getting started](getting-started.md).
 
 ## Start and continue a session
 
@@ -89,7 +89,7 @@ You cannot delete a session while Poppet is answering in it. `chat delete` delet
 
 Deleting a session also affects other places that used it:
 
-- A gateway thread linked to the session starts a new session with its next message.
+- A gateway conversation linked to the session starts a new session with its next message.
 - Scheduled tasks keep their results, but no longer link to the deleted session.
 - Saved facts stay, with their history.
 
@@ -124,7 +124,7 @@ The session keeps a copy of the skill from when it started, so editing or deleti
 
 ## Run commands
 
-Poppet can run shell commands on your computer when it needs to. A separate review checks each command first. Some commands need your approval, and you can only give it in a gateway thread. In the terminal and web chat, a command that needs approval does not run. See [run commands](commands.md).
+Poppet can run shell commands on your computer when it needs to. A separate review checks each command first. Some commands need your approval, and you can only give it in a gateway conversation. In the terminal and web chat, a command that needs approval does not run. See [run commands](commands.md).
 
 ## Schedule tasks from chat
 
@@ -145,7 +145,7 @@ poppet chat new --attach ./screenshot.png "What does this error mean?"
 poppet chat send <session-id> --attach ./build.log --attach ./config.json "Why did this fail?"
 ```
 
-Put `--attach <path>` before the message. Repeat it for more files. In the interactive prompt, use `/attach <path>`. In a gateway, attach files to your message as usual. A message with files does not need any text. Each gateway's guide covers its attachments, such as [Discord](gateways/discord.md#attachments).
+Put `--attach <path>` before the message. Repeat it for more files. In the interactive prompt, use `/attach <path>`. In Discord or Slack, attach files to your message as usual. Telegram does not accept attachments. A message with files does not need any text. Each gateway's guide covers its attachments, such as [Discord](gateways/discord.md#attachments).
 
 | Type | Accepted | Size limit |
 | ---- | -------- | ---------- |
