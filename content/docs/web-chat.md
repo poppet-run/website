@@ -109,6 +109,8 @@ Web chat has no attachments, conversation search, renaming, model selection, ses
 
 Tool permissions still apply. A Bash command or reviewed MCP action that needs human approval stops the run. The browser cannot approve it. Request the operation in Discord or Slack to approve it there. See [reviewed MCP actions](mcp.md#review-an-action) and [command approval](commands.md).
 
+Replies appear as plain text until the Markdown renderer loads. If it cannot load, replies stay readable as plain text.
+
 Web chat displays raw HTML in replies as text. A few inline formatting tags, such as `<br>` and `<kbd>`, still render when written without attributes. Images appear as their alt text, and task lists appear without checkboxes. Relative links and links using `http`, `https`, or `mailto` open in a new tab. Other link destinations are dropped, leaving the link text.
 
 Use your browser's usual modified clicks to open a sidebar conversation in another tab or window.
