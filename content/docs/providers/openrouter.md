@@ -1,23 +1,23 @@
 +++
 title = "OpenRouter"
-description = "Connect Poppet to OpenRouter with an API key, choose a model, and manage credentials."
+description = "Connect Poppet to OpenRouter with an API key, and choose a model."
 weight = 20
 +++
 
 # OpenRouter
 
-OpenRouter gives you access to many models with one API key. Requests use your OpenRouter credits.
+OpenRouter gives you many models through one account. You pay with OpenRouter credits.
 
 ## Connect
+
+Create an API key on [OpenRouter](https://openrouter.ai/settings/keys), then save it:
 
 ```sh
 poppet provider login openrouter
 poppet provider status openrouter
 ```
 
-`login` requires an interactive terminal and masks typed or pasted characters with `*`, even when an environment key is set. Piped input and `--key-stdin` are not supported. Keys are never accepted as command-line arguments.
-
-For unattended inference, set `POPPET_OPENROUTER_API_KEY` in the process environment or use a key saved by an earlier interactive login. Login does not save the environment value.
+`login` asks for your key and shows `*` for each character you type or paste. It needs an interactive terminal.
 
 ## Models
 
@@ -25,9 +25,7 @@ For unattended inference, set `POPPET_OPENROUTER_API_KEY` in the process environ
 poppet provider models openrouter
 ```
 
-A connection drop while downloading the model catalog is reported as a temporary failure. Malformed catalog entries are skipped when usable entries remain.
-
-`models` lists the models that Poppet can use, without needing a key. The list leaves out models that generate images or audio, and dynamic routers such as `openrouter/auto` and `openrouter/free`. Poppet only sends requests that the chosen model supports, and it does not route them to other providers. Both coding and general chats work with OpenRouter.
+This lists the models Poppet can use. It leaves out models that only make images or audio, and OpenRouter's automatic model pickers such as `openrouter/auto`.
 
 Save a model from the list in `config.json`:
 
@@ -40,18 +38,16 @@ Save a model from the list in `config.json`:
 
 ## Errors
 
-Poppet reports out-of-credit errors, rate limits, provider outages, and interrupted responses as errors. It does not retry them or switch to another model. Send the message again when you are ready.
+If you run out of credits, hit a rate limit, or OpenRouter has an outage, Poppet shows the error. It does not retry or switch to another model. Send your message again when you are ready.
 
-## Credentials
+## Your key
 
-Your key is saved in `<data directory>/auth/openrouter.json`, readable only by your user. The `POPPET_OPENROUTER_API_KEY` environment variable overrides the saved key. See [API keys](../configuration.md#api-keys).
+Poppet saves your key in the `auth` folder of your data directory, where only you can read it. To use a key without saving it, set `POPPET_OPENROUTER_API_KEY`. See [API keys](../configuration.md#api-keys).
 
-## Log out
+## Sign out
 
 ```sh
 poppet provider logout openrouter
 ```
 
-`logout` removes the saved key. It does not revoke the key on OpenRouter's side.
-
-See [configuration](../configuration.md) for your default provider and model.
+This deletes the saved key from your computer. The key still works on OpenRouter until you delete it there.

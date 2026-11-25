@@ -1,34 +1,34 @@
 +++
 title = "Getting started"
-description = "Install Poppet from source, connect a model provider, save your settings, and send your first message."
+description = "Install Poppet, connect a model provider, and send your first message."
 next = "/docs/chat"
 +++
 
 # Getting started
 
-Poppet runs from source. You need Git, Bun 1.4.4, and an account with one of the providers below.
+You install Poppet from its source code. You need Git, Bun 1.4.4, and an account with one of the supported providers.
 
-Each model request comes out of your provider account's quota. If you already pay for ChatGPT, start there. It needs no API key. OpenRouter works for general chat too. OpenCode Go is another supported provider.
+Every message you send uses your provider account's quota. If you already pay for ChatGPT, start with ChatGPT. It needs no API key. OpenRouter and OpenCode Go use an API key instead. See [providers](providers/_index.md) to compare them.
 
 ## 1. Install Poppet
 
-Install Git and Bun 1.4.4, then clone the app:
+Install Git and Bun 1.4.4, then download Poppet:
 
 ```sh
 git clone https://github.com/poppet-run/poppet.git
 cd poppet
 ```
 
-If you use [mise](https://mise.jdx.dev/), run `mise install` here to install the pinned Bun version. Otherwise, install that version through [Bun's installation guide](https://bun.sh/docs/installation).
+If you use [mise](https://mise.jdx.dev/), run `mise install` in this folder to get the right Bun version. Otherwise, follow [Bun's installation guide](https://bun.sh/docs/installation).
 
-Install the dependencies and link the `poppet` command from this checkout:
+Install Poppet's dependencies and add the `poppet` command:
 
 ```sh
 bun install --frozen-lockfile
 bun link
 ```
 
-`bun link` puts `poppet` in Bun's global bin directory. If your shell cannot find `poppet`, add that directory to your `PATH`:
+If your terminal then says it cannot find `poppet`, add Bun's command folder to your `PATH`:
 
 {{< shell >}}
 ```bash
@@ -41,7 +41,7 @@ fish_add_path (bun pm bin -g)
 ```
 {{< /shell >}}
 
-The command runs from this checkout, so keep the checkout in place. Source changes take effect without linking again. Check the install from any directory:
+The `poppet` command runs from the folder you downloaded, so leave that folder where it is. Check that the command works:
 
 ```sh
 poppet --help
@@ -53,13 +53,15 @@ poppet --help
 poppet setup
 ```
 
-Setup asks you to choose a provider, sign in if needed, and pick a model from its list. You can also configure Discord or Slack and install the background worker on macOS or Linux with systemd. On other platforms, setup prints the foreground worker command. It saves your choices in `config.json` and your credentials in protected files. Run it again later and it offers your current settings as the defaults.
+Setup asks you to choose a provider, sign in, and pick a model. It can also connect Discord or Slack. On macOS, and on Linux with systemd, it offers to start the [worker](worker.md) each time you log in. On other systems it shows the command to run the worker yourself.
 
-Setup needs an interactive terminal. If you prefer to configure things yourself, continue with step 3.
+Setup saves your choices in `config.json` and keeps your sign-in details in separate protected files. If you run it again, it starts from your current settings.
 
-## 3. Connect a provider and save a model
+Setup needs an interactive terminal. If you would rather edit the settings yourself, follow step 3 instead.
 
-For ChatGPT, sign in through your browser, then list the models available to your account:
+## 3. Connect a provider without setup
+
+For ChatGPT, sign in through your browser, then list the models your account can use:
 
 ```sh
 poppet provider login openai-chatgpt
@@ -67,11 +69,11 @@ poppet provider models openai-chatgpt
 poppet provider status openai-chatgpt
 ```
 
-Pick your account and approve plan usage in the browser, then come back to the terminal. The [ChatGPT guide](providers/openai-chatgpt.md) explains consent, credentials, and logout.
+In the browser, pick your account and approve access to your plan, then return to the terminal. The [ChatGPT guide](providers/openai-chatgpt.md) covers what you approve and how to sign out.
 
-For OpenRouter or OpenCode Go, follow the [OpenRouter guide](providers/openrouter.md) or the [OpenCode Go guide](providers/opencode-go.md) instead.
+For OpenRouter or OpenCode Go, follow the [OpenRouter guide](providers/openrouter.md) or the [OpenCode Go guide](providers/opencode-go.md).
 
-Save the provider and a model ID from the list in `~/.config/poppet/config.json`:
+Then save the provider and a model ID from the list in `~/.config/poppet/config.json`:
 
 ```json
 {
@@ -80,7 +82,7 @@ Save the provider and a model ID from the list in `~/.config/poppet/config.json`
 }
 ```
 
-Keep credentials out of this file. Check the result:
+Never put passwords or API keys in this file. Check that Poppet reads it correctly:
 
 ```sh
 poppet config
@@ -90,12 +92,9 @@ poppet config
 
 ```sh
 poppet chat new "Help me plan a small TypeScript project"
-poppet chat sessions
 ```
 
-Poppet streams the answer to your terminal and saves the conversation. Session and run IDs print to stderr.
-
-To continue a conversation, copy its session ID:
+Poppet prints a `Session:` line with the conversation's ID, then writes the answer as it arrives. Poppet saves the conversation under that ID. To continue it, copy the ID:
 
 {{< shell >}}
 ```bash
@@ -109,16 +108,16 @@ poppet chat send $session_id "What should I build first?"
 ```
 {{< /shell >}}
 
-To chat interactively in a terminal, run `poppet chat interactive`, or add a session ID to resume one. Press Enter to send, Shift+Enter for a newline in supported terminals, and `/exit` to leave. You can queue messages while an answer streams. See [chat](chat.md#interactive-prompt).
+For a back-and-forth conversation, run `poppet chat interactive`. Press Enter to send and type `/exit` to leave. See [chat](chat.md#interactive-prompt) for more.
 
-If a request fails, see [troubleshooting](troubleshooting.md).
+If a message fails, see [troubleshooting](troubleshooting.md).
 
 ## Add what you need
 
-You can keep chatting without setting up anything else.
+You can keep chatting without setting up anything else. When you want more:
 
-- [Memory](memory.md) keeps your profile and facts you ask Poppet to save.
-- [Skills](skills.md) let you choose a reusable procedure for a chat or task.
-- [Scheduled tasks](tasks.md) run prompts later. They need the [worker](worker.md) running.
-- [Messaging](gateways/_index.md) lets you chat from Discord or Slack threads, or Telegram chats and forum topics.
-- [Web search](web.md) and [MCP tools](mcp.md) add optional tools.
+- [Memory](memory.md) keeps facts about you between conversations.
+- [Skills](skills.md) let you reuse a procedure in a chat or task.
+- [Scheduled tasks](tasks.md) run a prompt later. They need the [worker](worker.md) running.
+- [Messaging](gateways/_index.md) lets you chat from Discord or Slack.
+- [Web search](web.md) and [MCP tools](mcp.md) give Poppet more tools.
