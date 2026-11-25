@@ -5,7 +5,7 @@ description = "Run a prompt later or on a schedule, read the results, and edit, 
 
 # Scheduled tasks
 
-A scheduled task runs a prompt for you once at a later time, or repeatedly on a schedule. Tasks only run while the [worker](worker.md) is running. You can read the results in your terminal, or have them posted to Discord or Slack. Connect a provider through [getting started](getting-started.md) first.
+A scheduled task runs a prompt for you once at a later time, or repeatedly on a schedule. Tasks only run while the [worker](worker.md) is running. You can read the results in your terminal, or have them posted through a [messaging gateway](gateways/_index.md), such as Discord or Slack. Connect a provider through [getting started](getting-started.md) first.
 
 ## Create your first task
 
@@ -105,7 +105,7 @@ You can keep up to 64 tasks, including paused and ended ones.
 
 ## Manage tasks from chat
 
-Ask Poppet in any chat, or in a Discord or Slack thread, to create, list, change, pause, resume, skip, snooze, run, or delete a task:
+Ask Poppet in any chat, including a gateway thread, to create, list, change, pause, resume, skip, snooze, run, or delete a task:
 
 ```text
 Every Friday at 09:00 Europe/London, summarize my recent conversations and deliver the result here.
@@ -120,13 +120,13 @@ Some limits apply to tasks created or changed from chat:
 
 - Poppet can create up to five tasks per message.
 - A repeating task must have at least five minutes between runs.
-- To change a task that posts to Discord or Slack, ask from a place where Poppet can post to that destination.
+- To change a task that posts to a gateway, ask from a place where Poppet can post to that destination.
 - Tasks that use a [manual-only skill](skills.md#manual-only-skills) can only be changed with the `poppet tasks` commands.
 - Retrying and cancelling runs need the `poppet tasks` commands.
 
-## Send results to Discord or Slack
+## Send results to a gateway
 
-After you set up [Discord](gateways/discord.md) or [Slack](gateways/slack.md), add `--to` when you create a task:
+After you set up a [messaging gateway](gateways/_index.md), add `--to` with the gateway's name when you create a task:
 
 ```sh
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --to discord "Summarize my recent conversations"
@@ -134,11 +134,10 @@ poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --to discor
 
 | Option | Posts to |
 | ------ | -------- |
-| `--to discord` | Your Discord home channel |
-| `--to discord:<channel-or-thread-id>` | Another Discord channel or thread in your server |
-| `--to slack` | Your Slack home channel |
-| `--to slack:<channel-id>` | Another Slack channel |
-| `--to slack:<channel-id>:<thread-timestamp>` | A Slack thread, such as `slack:C123:1730000000.000001` |
+| `--to <gateway>` | The gateway's home channel, such as `--to discord` |
+| `--to <gateway>:<destination>` | Another channel or thread, such as `--to slack:C123` |
+
+Each gateway's guide lists the destinations it supports.
 
 Poppet checks that it can post there when you create the task, and again before each post. It never posts results anywhere else. A task without `--to` keeps its results on your computer.
 
@@ -156,7 +155,7 @@ An answer that mentions `NO_REPLY` alongside other text is posted as usual. To c
 
 ### Failure notices
 
-When a task that posts to Discord or Slack fails, Poppet posts a short notice in the same place:
+When a task that posts to a gateway fails, Poppet posts a short notice in the same place:
 
 ```text
 Scheduled task "<name>" failed (<reason code>). Inspect it with: poppet tasks show <task-id>
@@ -174,7 +173,7 @@ A task can keep one note between runs, up to 4 KiB. This lets a repeating task r
 poppet tasks add release-watch --cron "0 9 * * *" --tz Europe/London "Read https://example.com/releases and find the newest release version. Compare it with the task note. If there is no note or the version differs, save the new version as the note and report it. Otherwise reply NO_REPLY."
 ```
 
-Replace the example address with the page you want to watch. Add `--to discord` or `--to slack` before the prompt to post the results.
+Replace the example address with the page you want to watch. Add `--to <gateway>` before the prompt to post the results.
 
 Each run sees the current note and can replace or clear it. The new note is saved only if the run completes. A failed or cancelled run leaves the note as it was. Editing the task keeps its note. Notes are separate from your [saved facts](memory.md).
 

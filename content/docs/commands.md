@@ -1,11 +1,11 @@
 +++
 title = "Run commands"
-description = "How Poppet runs shell commands on your computer, and how you approve them in Discord or Slack."
+description = "How Poppet runs shell commands on your computer, and how you approve them in a messaging gateway."
 +++
 
 # Run commands
 
-Poppet can run shell commands on your computer in chats, Discord and Slack threads, and scheduled tasks. Every model that can use tools has this ability, and there is no setting to turn it off.
+Poppet can run shell commands on your computer in chats, gateway threads, and scheduled tasks. Every model that can use tools has this ability, and there is no setting to turn it off.
 
 Commands run as your user account. They can read, change, and delete anything your account can. Poppet has no sandbox, and it cannot use `sudo`. Because of this, Poppet reviews every command before it runs.
 
@@ -16,7 +16,7 @@ Before each command, Poppet sends a separate request to your current model, aski
 The review gives one of three answers:
 
 - **Allow.** The command runs once, exactly as reviewed.
-- **Needs approval.** You must approve the command first. In Discord or Slack, Poppet asks you in the thread. In the terminal and web chat, the command does not run. A scheduled task fails.
+- **Needs approval.** You must approve the command first. In a [messaging gateway](gateways/_index.md), Poppet asks you in the thread. In the terminal and web chat, the command does not run. A scheduled task fails.
 - **Deny.** The command does not run, and Poppet stops answering.
 
 If the review fails or times out, the command does not run.
@@ -36,13 +36,13 @@ Only you can answer, and only in the same thread. An approval covers that one co
 
 In Slack, the buttons need **Interactivity & Shortcuts** turned on in your [Slack app settings](gateways/slack.md#create-the-app). Replying with `/approve <id>` works without it.
 
-In the terminal or web chat, a command that needs approval does not run. Ask for the same thing in Discord or Slack to approve it there.
+In the terminal or web chat, a command that needs approval does not run. Ask for the same thing in a gateway thread to approve it there.
 
 [Reviewed MCP actions](mcp.md#review-an-action) use the same buttons and replies.
 
 ## Scheduled tasks
 
-Nobody is around to approve a command during a scheduled task. If a command needs approval, that run fails straight away. The task's schedule continues. If the task posts to Discord or Slack, Poppet posts a short [failure notice](tasks.md#failure-notices) there. Run `poppet tasks show <task-id>` for details.
+Nobody is around to approve a command during a scheduled task. If a command needs approval, that run fails straight away. The task's schedule continues. If the task posts to a gateway, Poppet posts a short [failure notice](tasks.md#failure-notices) there. Run `poppet tasks show <task-id>` for details.
 
 Commands that finished before the failure are not undone, so check your computer before you run the task again.
 

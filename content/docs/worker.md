@@ -5,7 +5,7 @@ description = "Keep Poppet running in the background for scheduled tasks, messag
 
 # Worker
 
-The worker is the part of Poppet that keeps running in the background. It runs [scheduled tasks](tasks.md), answers [Discord and Slack](gateways/_index.md) messages, and serves [web chat](web-chat.md). Terminal chat works without it.
+The worker is the part of Poppet that keeps running in the background. It runs [scheduled tasks](tasks.md), answers messages from [messaging gateways](gateways/_index.md) such as Discord and Slack, and serves [web chat](web-chat.md). Terminal chat works without it.
 
 You can run the worker in a terminal window, or have it start each time you log in.
 
@@ -67,7 +67,7 @@ poppet worker status
 poppet worker logs
 ```
 
-`worker status` shows whether the worker is installed and running, what it is working on, how many tasks are waiting, when the next one is due, and any paused providers. It also shows whether Discord and Slack are connected. It works for a worker in a terminal too.
+`worker status` shows whether the worker is installed and running, what it is working on, how many tasks are waiting, when the next one is due, and any paused providers. It also shows whether each gateway is connected. It works for a worker in a terminal too.
 
 `worker logs` shows the end of the worker's log, `logs/worker.log` in your data directory. The log records when tasks start and finish, connection problems, and errors. It does not include your messages or Poppet's answers, unless you turn on [reasoning logs](configuration.md#reasoning-and-timing-logs).
 
@@ -96,7 +96,7 @@ After you update Poppet, run `poppet worker restart` so the worker uses the new 
 
 ## Simultaneous answers
 
-Poppet answers up to 3 conversations at once, across the terminal, web chat, Discord, Slack, and scheduled tasks. Messages in the same conversation are answered in order. Cancelling one conversation does not affect the others.
+Poppet answers up to 3 conversations at once, across the terminal, web chat, gateways, and scheduled tasks. Messages in the same conversation are answered in order. Cancelling one conversation does not affect the others.
 
 To change the limit, set [`chat.maxConcurrentRequests`](configuration.md#settings) from 1 to 8 and restart the worker. An answer waiting up to two minutes for your approval keeps its place while it waits.
 

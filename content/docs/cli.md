@@ -62,7 +62,7 @@ poppet --completions fish > ~/.config/fish/completions/poppet.fish
 
 | Command | What it does |
 | ------- | ------------ |
-| `setup` | Choose a provider and model, connect Discord or Slack, and start the worker |
+| `setup` | Choose a provider and model, connect a gateway, and start the worker |
 | `config` | Show your settings and where Poppet found them |
 | `doctor` | Check your setup for problems |
 | `store status` | Show where your data is, and how many conversations it holds |
@@ -154,7 +154,7 @@ See [skills](skills.md).
 | `--tz <time-zone>` | `add`, `edit` | Set the time zone for `--cron` |
 | `--until <time>` | `add`, `edit` | End a repeating task, or remove the end with `none` |
 | `--skill <name>` | `add` | Follow a [skill](skills.md) |
-| `--to <destination>` | `add` | Post results to Discord or Slack |
+| `--to <gateway>` | `add` | Post results to a [messaging gateway](gateways/_index.md) |
 | `--name <name>` | `edit` | Rename the task |
 | `--prompt <prompt>` | `edit` | Change the prompt |
 | `--occurrence <id>` | `cancel`, `retry` | Choose a run from `tasks show` |
@@ -178,26 +178,32 @@ While the worker runs, other commands go through it. See [worker](worker.md).
 
 ## Messaging
 
-`poppet setup` is the easiest way to connect Discord or Slack. These commands connect them without the interactive prompts, for example from a script.
+`poppet setup` can connect Discord and Slack for you. These commands connect a gateway without the interactive prompts, for example from a script. Telegram can only be connected this way.
 
 | Command | What it does |
 | ------- | ------------ |
 | `gateway discord setup` | Connect Discord |
 | `gateway slack setup` | Connect Slack |
+| `gateway telegram setup` | Connect Telegram |
 
 | Option | Used with | What it does |
 | ------ | --------- | ------------ |
-| `--owner-id <id>` | `discord`, `slack` | Set your user ID |
+| `--owner-id <id>` | `discord`, `slack`, `telegram` | Set your user ID |
 | `--guild-id <id>` | `discord` | Set your server ID |
 | `--team-id <id>` | `slack` | Set your workspace ID |
 | `--home-channel-id <id>` | `discord`, `slack` | Set the home channel's ID |
+| `--chat-id <id>` | `telegram` | Set the chat's ID |
+| `--home-conversation-id <id>` | `telegram` | Set the home conversation, if it is not the chat itself |
+| `--bot-token <token>` | `telegram` | Set the bot token |
 
-Pass the tokens through standard input, to keep them out of your shell history. For Slack, put the bot token on the first line and the app token on the second:
+For Discord and Slack, pass the tokens through standard input, to keep them out of your shell history. For Slack, put the bot token on the first line and the app token on the second:
 
 ```sh
 printf '%s\n' "$DISCORD_BOT_TOKEN" | poppet gateway discord setup --owner-id <user-id> --guild-id <server-id> --home-channel-id <channel-id>
 printf '%s\n%s\n' "$SLACK_BOT_TOKEN" "$SLACK_APP_TOKEN" | poppet gateway slack setup --owner-id <user-id> --team-id <workspace-id> --home-channel-id <channel-id>
 ```
+
+Telegram takes its bot token as an option, so the token is saved in your shell history.
 
 See [Discord](gateways/discord.md) and [Slack](gateways/slack.md).
 

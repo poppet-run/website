@@ -1,6 +1,6 @@
 +++
 title = "Troubleshooting"
-description = "Fix common problems with setup, providers, scheduled tasks, Discord, Slack, and tools."
+description = "Fix common problems with setup, providers, scheduled tasks, messaging gateways, and tools."
 +++
 
 # Troubleshooting
@@ -64,7 +64,7 @@ poppet tasks show <task-id>
 
 If your computer was asleep or the worker was stopped, see [missed runs](tasks.md#missed-runs) before you retry.
 
-## Discord or Slack does not reply
+## A gateway does not reply
 
 ```sh
 poppet worker status
@@ -73,10 +73,10 @@ poppet worker logs
 
 Check that:
 
-- the worker is running and shows Discord or Slack as connected
+- the worker is running and shows the gateway as connected
 - your user ID, server or workspace ID, and home channel ID are right in `config.json`
 - you are writing as the owner, in a channel where the bot is present
-- the bot has the permissions in the [Discord guide](gateways/discord.md#create-the-bot) or the scopes and events in the [Slack guide](gateways/slack.md#create-the-app)
+- the bot has the permissions listed in its gateway guide, such as the [Discord guide](gateways/discord.md#create-the-bot) or the [Slack guide](gateways/slack.md#create-the-app)
 - for Slack, you are not in a direct message or a shared channel
 
 Restart the worker after you change any of these.

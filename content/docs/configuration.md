@@ -61,7 +61,7 @@ Web chat has its own settings file. See [web chat](web-chat.md).
 
 ## Quiet hours
 
-Quiet hours hold scheduled posts to Discord and Slack, so they do not arrive overnight:
+Quiet hours hold scheduled posts to [messaging gateways](gateways/_index.md), so they do not arrive overnight:
 
 ```json
 {

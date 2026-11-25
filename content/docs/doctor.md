@@ -25,8 +25,8 @@ Doctor groups its results under Needs attention, Could not check, Passed, and Sk
 | Worker configuration | Whether the worker is using different settings from `config.json`, so it needs a restart |
 | Scheduled tasks | Tasks that failed or were interrupted in the last 24 hours, and when the next one is due |
 | Paused provider work | Providers Poppet has paused for scheduled tasks, and when they resume |
-| Message delivery | Discord or Slack posts that are waiting, failed, or uncertain |
-| Messaging connections | Whether Discord or Slack reported a connection problem |
+| Message delivery | Gateway posts that are waiting, failed, or uncertain |
+| Messaging connections | Whether a gateway reported a connection problem |
 | MCP servers | Whether your MCP servers are set up correctly and their programs exist |
 | Context files | Whether `profile.md` and `soul.md` are valid and under 8 KiB |
 
@@ -38,9 +38,9 @@ Some checks need the worker. If the worker is not running, doctor reports them u
 
 ## What doctor cannot tell you
 
-Doctor does not send a request to your provider, start MCP servers, or post to Discord or Slack. A clean report means your settings look right, not that everything works. To confirm, send a message with `poppet chat new`.
+Doctor does not send a request to your provider, start MCP servers, or post to gateways. A clean report means your settings look right, not that everything works. To confirm, send a message with `poppet chat new`.
 
-For Discord or Slack problems, also check `poppet worker status` and `poppet worker logs`.
+For gateway problems, also check `poppet worker status` and `poppet worker logs`.
 
 ## Use doctor in a script
 

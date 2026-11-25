@@ -25,7 +25,7 @@ poppet chat new --skill weekly-review "Review my Acorn project\""""
 
 [[features]]
 title = "Scheduled tasks."
-description = "Run a prompt once later, or on a repeating schedule. Read the results in your terminal or have them posted to Discord or Slack."
+description = "Run a prompt once later, or on a repeating schedule. Read the results in your terminal or have them posted to Discord, Slack, or another messaging app."
 guide = "docs/tasks/"
 label = "Terminal"
 code = """poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London "Summarize my recent conversations"
@@ -33,8 +33,8 @@ poppet tasks list
 poppet tasks pause $task_id"""
 
 [[features]]
-title = "Chat from Discord or Slack."
-description = "Talk to Poppet in Discord or Slack threads. Only you can use the bot. Scheduled results can go to a channel you choose."
+title = "Chat from your messaging apps."
+description = "Talk to Poppet in threads in Discord, Slack, or another supported app. Only you can use the bot. Scheduled results can go to a channel you choose."
 guide = "docs/gateways/"
 label = "Discord thread"
 thread = [

@@ -140,7 +140,7 @@ See [delete old sessions](chat.md#delete-old-sessions) for what else deletion af
 
 Web chat does not support attachments, search, renaming, choosing a model, choosing a skill for the whole conversation, showing reasoning, or showing run details. Use the [terminal](chat.md) for these. For example, `poppet chat show <session-id>` shows run details for a web conversation.
 
-You cannot approve commands or [reviewed MCP actions](mcp.md#review-an-action) in web chat. If Poppet needs your approval, the reply stops. Ask again in Discord or Slack to approve it there. See [run commands](commands.md).
+You cannot approve commands or [reviewed MCP actions](mcp.md#review-an-action) in web chat. If Poppet needs your approval, the reply stops. Ask again in a [messaging gateway](gateways/_index.md) thread to approve it there. See [run commands](commands.md).
 
 Links in answers open in a new tab. Web chat shows images in answers as their description, and removes checkboxes.
 
