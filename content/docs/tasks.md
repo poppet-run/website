@@ -154,6 +154,10 @@ If the task's previous finished occurrence also failed, the new failure posts no
 
 Notices use the same destination checks, quiet hours, and delivery retries as results. In the `delivery` array from `tasks show`, a notice has a run ID of `notice:<occurrence-id>:<finished-at>`. A failure notice does not change the recurring schedule.
 
+## Deliver results to Telegram
+
+Set up [Telegram](gateways/telegram.md) and run the combined worker. Use `--to telegram` for its home conversation, `--to telegram:<chat-id>` for the configured chat, or `--to telegram:<chat-id>:<topic-id>` for a forum topic in that chat. Other chats are rejected. Quiet hours and failure notices apply to Telegram too.
+
 ## Deliver results to Slack
 
 Set up [Slack](gateways/slack.md) and run the combined worker. Use `--to slack` for its home channel, `--to slack:C123` for another channel, or `--to slack:C123:1730000000.000001` for a thread. Replace the IDs and timestamp with your destination. The same access checks, quiet completion, quiet hours, failure notices, and delivery retries described above apply to Slack.

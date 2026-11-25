@@ -5,7 +5,7 @@ description = "Start a conversation, resume saved sessions, and search earlier a
 
 # Chat
 
-Chat with Poppet from your terminal, a [web browser](web-chat.md), or a [Discord or Slack thread](gateways/_index.md). Poppet saves sessions locally, so you can resume them or search earlier answers later. If you have not connected a provider yet, start with [getting started](getting-started.md).
+Chat with Poppet from your terminal, a [web browser](web-chat.md), or a [Discord, Slack, or Telegram conversation](gateways/_index.md). Poppet saves sessions locally, so you can resume them or search earlier answers later. If you have not connected a provider yet, start with [getting started](getting-started.md).
 
 ## Start and continue a session
 
@@ -120,7 +120,7 @@ The session saves a copy of the skill when it starts. Later turns use that copy,
 
 ## Run commands
 
-With the [command tool](commands.md) available, the model can run shell commands on your computer. A separate review checks each command before it runs. Commands that need your approval wait for it in Discord or Slack, while CLI and web chat commands that need approval stop without executing. Request the operation in Discord or Slack to approve it there.
+With the [command tool](commands.md) available, the model can run shell commands on your computer. A separate review checks each command before it runs. Commands that need your approval wait for it in Discord, Slack, or Telegram, while CLI and web chat commands that need approval stop without executing. Request the operation in Discord, Slack, or Telegram to approve it there.
 
 ## Schedule tasks from chat
 
