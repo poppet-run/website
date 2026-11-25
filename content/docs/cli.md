@@ -262,9 +262,10 @@ is running. Use `--to <gateway>` to deliver to that gateway's home channel, or
 | -------------------------------------------------------------------------------------------------- | ---------------------------------------- |
 | `gateway discord setup --owner-id <id> --guild-id <id> --home-channel-id <id> [--bot-token <token>]` | Save Discord settings; read an omitted token from stdin. |
 | `gateway slack setup --owner-id <id> --team-id <id> --home-channel-id <id> [--bot-token <token>] [--app-token <token>]` | Save Slack settings; read omitted tokens from stdin. |
+| `gateway telegram setup --owner-id <id> --chat-id <id> [--home-conversation-id <id>] --bot-token <token>` | Save Telegram settings and token; home defaults to the chat. |
 
-See [Discord](gateways/discord.md) and [Slack](gateways/slack.md) for setup, conversation behavior,
-controls, and uncertain deliveries. Use `poppet setup` for masked token entry.
+See [Discord](gateways/discord.md), [Slack](gateways/slack.md), and [Telegram](gateways/telegram.md) for setup, conversation behavior,
+controls, and uncertain deliveries. Use `poppet setup` for masked Discord and Slack token entry; Telegram uses the flags above.
 
 ## Worker
 

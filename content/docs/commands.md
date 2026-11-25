@@ -1,11 +1,11 @@
 +++
 title = "Run commands"
-description = "Let Poppet run shell commands on your computer, with a review before each one and your approval in Discord or Slack when it is needed."
+description = "Let Poppet run shell commands on your computer, with a review before each one and your approval in Discord, Slack, or Telegram when it is needed."
 +++
 
 # Run commands
 
-Poppet can run shell commands on your computer for chats, Discord and Slack threads, and scheduled tasks. Commands run as your user account, with its files and permissions. Poppet does not sandbox them, and it does not have root access or a sudo password.
+Poppet can run shell commands on your computer for chats, Discord and Slack threads, Telegram conversations, and scheduled tasks. Commands run as your user account, with its files and permissions. Poppet does not sandbox them, and it does not have root access or a sudo password.
 
 Because of that, every command is reviewed before it runs.
 
@@ -16,7 +16,7 @@ Before each command, a separate request to your current model reviews it against
 The reviewer returns one of three decisions:
 
 - **Allow.** The command runs once, exactly as reviewed.
-- **Needs approval.** A person must approve it first. In Discord or Slack, Poppet asks you there. CLI and web chat commands stop without executing. Request the operation in Discord or Slack to approve it there. A scheduled task fails.
+- **Needs approval.** A person must approve it first. In Discord, Slack, or Telegram, Poppet asks you there. CLI and web chat commands stop without executing. Request the operation in Discord, Slack, or Telegram to approve it there. A scheduled task fails.
 - **Deny.** The command does not run, and the run ends.
 
 If the reviewer fails, times out, or returns an unreadable answer, nothing runs. A denied command cannot be retried within the same run.
@@ -35,6 +35,10 @@ When a command needs approval, Poppet posts its exact command, working directory
 ```
 
 Only the owner can answer, in the same conversation. An approval covers that one command, with the same directory and timeout, and nothing else. Requests expire after two minutes, or when the run is cancelled or the worker restarts. Repeated clicks or replies cannot execute the command again. Poppet confirms button clicks privately and disables the buttons when the request ends. Updating the message is best effort; after a restart, an old button may still appear but cannot revive the request. Ask again to get a new review.
+
+## Approve commands in Telegram
+
+Poppet posts the command and approval ID in the conversation. Reply `/approve <id>` or `/deny <id>` as the configured owner in that conversation. There are no buttons. Approval permits one execution and expires after two minutes, cancellation, or worker restart. See [Telegram](gateways/telegram.md#approve-an-action).
 
 ## Approve commands in Slack
 

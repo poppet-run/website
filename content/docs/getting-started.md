@@ -120,5 +120,5 @@ You can keep chatting without setting up anything else.
 - [Memory](memory.md) keeps your profile and facts you ask Poppet to save.
 - [Skills](skills.md) let you choose a reusable procedure for a chat or task.
 - [Scheduled tasks](tasks.md) run prompts later. They need the [worker](worker.md) running.
-- [Messaging](gateways/_index.md) lets you chat from Discord or Slack threads.
+- [Messaging](gateways/_index.md) lets you chat from Discord or Slack threads, or Telegram chats and forum topics.
 - [Web search](web.md) and [MCP tools](mcp.md) add optional tools.

@@ -45,7 +45,7 @@ Write `$` followed by a skill's name to use it for one message:
 Run $weekly-review for the Acorn project
 ```
 
-This works in terminal chat, web chat, Discord, and Slack, including with models that cannot use tools. In a shell, use single quotes so the shell does not expand the name:
+This works in terminal chat, web chat, Discord, Slack, and Telegram, including with models that cannot use tools. In a shell, use single quotes so the shell does not expand the name:
 
 ```sh
 poppet chat new 'Run $weekly-review for the Acorn project'

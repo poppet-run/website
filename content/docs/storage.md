@@ -14,7 +14,7 @@ profile.md        your profile (you write it)
 soul.md           Poppet's personality (you write it)
 skills/           your skill files
 auth/             provider, search, and MCP credentials
-channels/         Discord bot token and Slack bot and app tokens
+channels/         Discord and Slack tokens; Telegram settings and token
 store/            conversations, facts, tasks, and search index
 logs/             worker log
 ```
@@ -37,7 +37,7 @@ This opens the database, applies any pending upgrades, and prints its path, sche
 
 Assistant messages also keep provider continuation data, including any readable or encrypted reasoning the provider returned. Readable reasoning is saved even when [`chat.logReasoning`](configuration.md#reasoning-and-timing-logs) is off; that setting controls diagnostic logging.
 
-Provider, search, and MCP credentials are kept in `auth/`. Discord and Slack tokens are kept in `channels/`. These credentials are not stored in the database.
+Provider, search, and MCP credentials are kept in `auth/`. Discord and Slack tokens and all Telegram settings are kept in `channels/`. These credentials are not stored in the database.
 
 Reviewed MCP calls save their review decision before dispatch, including any owner approval. Calls interrupted during review remain interrupted. Calls interrupted after dispatch may have had effects and are recorded as uncertain. Existing calls have no review metadata. Inspect them with `poppet chat show <session>` or `poppet tasks show <task-id>` before requesting a retry.
 

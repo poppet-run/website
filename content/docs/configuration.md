@@ -131,6 +131,10 @@ These variables override the saved key for inference and status, but provider lo
 
 Use your own IDs. Removing the `discord` section turns Discord off and keeps the saved token. See [Discord](gateways/discord.md) for setup and permissions.
 
+## Telegram
+
+`poppet gateway telegram setup` saves the owner ID, chat ID, home conversation ID, and bot token together in `<data directory>/channels/telegram.json` with `0600` permissions. Home defaults to the chat. Telegram has no section in `config.json` and needs no `gatewayPackages` entry. Remove the settings file to disable it, and restart the worker after changes. See [Telegram](gateways/telegram.md).
+
 ## Slack
 
 `poppet gateway slack setup` saves ordinary Slack settings in `config.json` and both tokens in `<data directory>/channels/slack.json`:
