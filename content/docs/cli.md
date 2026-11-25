@@ -11,8 +11,8 @@ are placeholders; replace them before running a command. Quote prompts and value
 that contain spaces.
 
 Every command has its own help, for example `poppet tasks add --help` or
-`poppet provider login -h`. Help works without credentials. Gateway help reads configuration to list external
-adapters; other help works without valid configuration.
+`poppet provider login -h`. Help works without credentials or valid configuration. Gateway help lists bundled
+gateways without loading external adapters.
 Argument errors print the relevant command's help and exit unsuccessfully.
 The remaining words of a message, memory value, or task prompt are joined with
 spaces; flags inside that text stay literal. Use `--` before the text when it
