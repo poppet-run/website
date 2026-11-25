@@ -1,17 +1,15 @@
 +++
 title = "Skills"
-description = "Save a reusable Markdown procedure and choose it for a chat or task."
+description = "Write a procedure once and choose it for a chat or task."
 +++
 
 # Skills
 
-A skill is a Markdown procedure you write and keep locally. Choose one for a chat or a scheduled task, or name one in a message, and Poppet follows it using its existing tools and permissions. A skill cannot grant new permissions.
+A skill is a set of instructions you write in a Markdown file, such as how to run your weekly review. Choose a skill for a chat or a scheduled task, or name it in a message, and Poppet follows it. A skill cannot give Poppet any permission it does not already have.
 
 ## Write a skill
 
-Create one file at `<data directory>/skills/<name>/SKILL.md`. It must be UTF-8 Markdown of at most 8192 bytes. Names use 1 to 128 letters, digits, underscores, or hyphens.
-
-For example, save this as `skills/weekly-review/SKILL.md`:
+Each skill is a file named `SKILL.md` in its own folder, inside `skills` in your data directory. The folder name is the skill's name. For example, create `~/.config/poppet/skills/weekly-review/SKILL.md`:
 
 ```markdown
 # Weekly review
@@ -20,7 +18,9 @@ Search past conversations. Read relevant exchanges,
 then summarize progress, unresolved questions, and next actions. Cite session IDs.
 ```
 
-The first heading and the start of the first paragraph describe the skill to the model, so write them to say when it applies.
+Poppet shows the model the first heading and the start of the first paragraph, so it can tell when the skill applies. Write them to say what the skill is for.
+
+Skill names can use letters, digits, underscores, and hyphens, up to 128 characters. A skill file can be up to 8 KiB.
 
 ## Use a skill
 
@@ -31,37 +31,37 @@ poppet chat new --skill weekly-review "Review my Acorn project"
 poppet tasks add weekly-review --cron "0 9 * * 1" --tz Europe/London --skill weekly-review "Review my Acorn project"
 ```
 
-Put `--skill` before the message or prompt, and choose at most one skill. `skills show` checks the file and prints it, so use it to confirm a new skill is valid. Poppet rejects symlinks, hard links, non-regular files, invalid UTF-8, and oversized files. Listing and showing skills need no model or login.
+Run `poppet skills show <name>` after you write a skill. It prints the skill, or tells you what is wrong with the file. Put `--skill` before the message or prompt. You can choose one skill per chat or task.
 
-When Poppet starts a chat or task with a skill, it saves the skill's name and text with that session or task. Later messages and retries use that saved copy, even if you edit or delete the file. To use an updated skill, start a new chat or create a new task.
+Poppet saves a copy of the skill with the chat or task. Later messages use that copy, even if you edit or delete the file. To use an edited skill, start a new chat or create a new task.
 
-Skills are plain files. Poppet does not run scripts, download skills, or follow references.
+Poppet only reads skill files. It does not run scripts, download skills, or follow links in them.
 
 ## Name a skill in a message
 
-Write `$` followed by a skill's name to use it for one message:
+Write `$` and a skill's name to use it for one message:
 
 ```text
 Run $weekly-review for the Acorn project
 ```
 
-This works in terminal chat, web chat, Discord, Slack, and Telegram, including with models that cannot use tools. In a shell, use single quotes so the shell does not expand the name:
+This works in the terminal, web chat, Discord, and Slack. In a shell command, use single quotes so the shell leaves `$` alone:
 
 ```sh
 poppet chat new 'Run $weekly-review for the Acorn project'
 ```
 
-Poppet saves the skill's name and full text with that message. Later turns replay the saved text even if you edit or delete the file. Naming it again in a later message reads the current file, unless it is the session's selected skill; that skill keeps its saved session snapshot. Naming a skill does not change the session's selected skill.
+The name must match the skill's folder name exactly, including capital letters. Punctuation straight after the name is fine. Poppet ignores names inside code and names that do not match a skill, so `$HOME` in a message stays as it is. A message can name up to four skills.
 
-The name must stand alone outside inline code and triple-backtick code blocks, and match a skill directory exactly, including case. Sentence punctuation after it is fine. `${name}`, `\$name`, `$name/path`, and `$name=1` stay ordinary text. Unknown names stay ordinary text too. Put shell variables in code when you do not want them treated as skill names.
+Poppet saves the skill's text with your message. Naming the skill again in a later message reads the current file. Naming a skill does not change the skill chosen for the session.
 
-A message can load up to four distinct skills. Repeated names load once. The session's selected skill is not loaded again and does not count toward that limit. A named skill with an invalid file rejects the message before a run is saved. Check it with `poppet skills show <name>`, or write the name without `$`.
+If a named skill's file has a problem, Poppet refuses the message. Check the file with `poppet skills show <name>`, or remove the `$` from your message.
 
-Manual-only skills can be named. Text inside attachments is not scanned. Scheduled task prompts do not expand `$name`; use `tasks add --skill` instead. Named skills count toward the context budget and grant no permissions, including permission to read URLs found only in their text.
+Poppet does not look for skill names inside attachments or scheduled task prompts. For a task, use `tasks add --skill` instead.
 
 ## Manual-only skills
 
-To keep the model from choosing a skill itself, put this exact comment on the first line, without indentation:
+Poppet can choose a skill by itself when it looks useful. To stop it choosing a skill, make this exact comment the first line of the file:
 
 ```markdown
 <!-- manual-only -->
@@ -71,29 +71,25 @@ To keep the model from choosing a skill itself, put this exact comment on the fi
 Review the release checklist and report anything still unfinished.
 ```
 
-Poppet leaves the skill out of the model's index, refuses model requests to view it, and prevents the model from selecting it when creating a task. You can still choose it with `--skill`, `/new --skill`, or a `$name` mention. Existing permissions still apply.
+You can still choose a manual-only skill with `--skill`, `/new --skill`, or `$name`. `poppet skills list` marks these skills as `manual-only`. If the marker is not exactly on the first line, the skill is not manual-only.
 
-A misplaced or misspelled marker does not hide the skill. Check with `poppet skills list`, which marks these skills as `manual-only`. `skills list --json` still returns names only; `skills show <name> --json` includes the `manualOnly` boolean.
+## Choose a skill in Discord or Slack
 
-## Choose a skill in messaging
-
-In Discord or Slack, start a thread with a skill using the `/new` command:
+In a Discord or Slack thread, start a new session with a skill:
 
 ```text
 /new --skill weekly-review Review my Acorn project
 ```
 
-Use `/new` without `--skill` to start a session with no skill. Either command starts a new session in the thread. Earlier sessions stay saved. A skill that is missing or invalid gets an error reply, and the thread keeps its current session. Mention the bot when starting from a parent channel. See [Discord](gateways/discord.md#start-a-conversation) or [Slack](gateways/slack.md#start-a-conversation).
+`/new` followed by a message starts a new session with no skill. Earlier sessions stay saved. If the skill is missing or has a problem, Poppet replies with the error and keeps the current session. In a channel rather than a thread, mention the bot first. See [Discord](gateways/discord.md#start-a-conversation) or [Slack](gateways/slack.md#start-a-conversation).
 
-## Skills the model can choose
+## Skills Poppet chooses itself
 
-Chats that can use tools also see a list of your valid skills without the manual-only marker, with the description from each one. Before a multi-step task, the model can read a matching skill. The list is read once per run. It covers up to 64 skills, within an 8 KiB limit. If the list is too long, Poppet shortens it and says so.
-
-A skill you choose with `--skill` is always included. A skill the model reads grants no permissions, and it cannot change memory or tasks.
+Poppet sees a list of your skills, except manual-only ones, with the description from each. Before a task with several steps, it can read a skill that matches. The list holds up to 64 skills.
 
 ## Draft a skill from a conversation
 
-Poppet can help you write a skill, but it does not save one. After a procedure works, ask in the same chat:
+Poppet can help write a skill, but it does not save skill files. After a procedure works well in a chat, ask in the same chat:
 
 ```text
 Turn the weekly review we just completed into a skill named weekly-review.
@@ -102,4 +98,4 @@ steps using existing Poppet tools, pitfalls, and how to verify the result.
 Generalize private project details and omit credentials and unrelated facts.
 ```
 
-Review the draft against what actually happened. Remove account names, paths, and private details, then save it yourself at `<data directory>/skills/<name>/SKILL.md`. Test it in a fresh chat on a harmless input before you rely on it, and check the saved file with `poppet skills show <name>`.
+Check the draft against what actually happened, and remove account names, paths, and private details. Save it yourself as `skills/<name>/SKILL.md` in your data directory, check it with `poppet skills show <name>`, then try it in a new chat on something harmless.

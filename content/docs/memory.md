@@ -1,15 +1,19 @@
 +++
 title = "Memory"
-description = "Save preferences and facts across conversations, and edit your profile and Poppet's personality."
+description = "Save facts across conversations, and tell Poppet about yourself and how to write."
 +++
 
 # Memory
 
-Memory has three parts: saved facts, your profile, and Poppet's personality. Facts are short values saved under a key, either by you or by Poppet when you ask in chat. Every new run reads them with your profile and personality.
+Poppet reads three things at the start of every answer:
+
+- **Saved facts.** Short notes, each saved under a name called a key. You or Poppet can save them.
+- **Your profile.** A file where you describe yourself.
+- **Poppet's personality.** A file that describes how Poppet writes.
 
 ## Saved facts
 
-Save a fact with a key, then list and change it:
+Save a fact under a key, then list, change, or forget it:
 
 ```sh
 poppet memory set answer.style "Keep answers concise"
@@ -18,13 +22,13 @@ poppet memory set answer.style "Explain the reasoning"
 poppet memory forget answer.style
 ```
 
-`set` creates a key or replaces its current value. `forget` needs an existing key. Keys start with a letter or digit and may contain letters, digits, dots, underscores, and hyphens, up to 128 characters. Values are nonempty text of up to 4096 bytes. You can store up to 128 facts, with an 8 KiB limit on their serialized keys and values. Writes that exceed the byte limit are refused. If older facts exceed it, shorten or forget facts to bring them within the limit.
+`memory set` creates a fact or replaces it. `memory list` shows each fact, when it last changed, and whether you or Poppet changed it. Memory commands work without a provider connection.
 
-Memory commands need no model or login. Listing shows each key, its value, when it changed, and where it came from.
+Keys start with a letter or digit and can contain letters, digits, dots, underscores, and hyphens, up to 128 characters. Each value can be up to 4 KiB of text. You can save up to 128 facts. Together they can take up 8 KiB. If you reach that limit, shorten or forget some facts before you add more.
 
 ## Ask Poppet to change a fact
 
-In chat, ask Poppet to remember, replace, or forget a fact:
+In any chat, ask Poppet to remember, replace, or forget a fact:
 
 ```sh
 poppet chat new "Remember that I prefer concise answers, under answer.style"
@@ -32,38 +36,42 @@ poppet chat send $session_id "Replace answer.style with Explain the reasoning"
 poppet chat send $session_id "Forget the saved fact answer.style"
 ```
 
-Poppet changes memory only when your current message asks for it. It does not infer facts from conversations, web pages, or skills. Poppet marks changes made in chat with that origin, and they stay saved even if the rest of the reply fails. Forgetting a fact does not remove it from earlier messages.
+Poppet changes memory only when your message asks it to. It does not pick up facts on its own from conversations, web pages, or skills. The change is saved even if the rest of the reply fails, and Poppet uses it from your next message.
 
-Chat changes apply from the next run onward. Scheduled runs can read facts but cannot change them.
+Forgetting a fact does not remove it from earlier conversations. Scheduled tasks can read facts but cannot change them.
 
 ## Fact history
 
-Every change is kept, so you can see how a fact changed and restore an earlier value:
+Poppet keeps every version of a fact, so you can see how it changed and go back:
 
 ```sh
 poppet memory history answer.style
 poppet memory revert answer.style 1
 ```
 
-`history` lists each revision with its origin and, for chat changes, the run that made it if that run still exists. [Deleting a session](chat.md#delete-old-sessions) keeps facts and their history but clears links to its runs. Revision timestamps stay in order even if the system clock moves backwards. Use a positive whole revision number for `revert`. It does not erase history. It adds a new revision with the old value. Reverting to a forgotten revision forgets the fact again.
+`memory history` lists each version with a number, and shows whether you or Poppet made it. `memory revert` restores the version you choose by saving it as a new version, so nothing is lost. Reverting to a version where the fact was forgotten forgets it again.
 
 ## Profile
 
-Edit `profile.md` in your data directory for your name, background, and preferences. With the default data directory, that is `~/.config/poppet/profile.md`. Poppet does not create the file for you. It must be a plain UTF-8 file, and it is limited to 8 KiB.
+Create `profile.md` in your data directory to tell Poppet your name, background, and preferences. With the default data directory, that is `~/.config/poppet/profile.md`. Poppet does not create this file for you.
 
 ## Personality
 
-Edit `soul.md` in the same directory to change how Poppet writes:
+Create `soul.md` in the same folder to change how Poppet writes:
 
 ```markdown
 Be warm, direct, and concise. Use dry humor sparingly.
 Disagree when there is a good reason, and admit uncertainty plainly.
 ```
 
-`soul.md` describes how Poppet speaks, and `profile.md` describes you. Neither file gives Poppet permission to use tools or change its rules. A missing or blank `soul.md` keeps the default personality. Like the profile, it is limited to 8 KiB.
+`soul.md` describes how Poppet speaks, and `profile.md` describes you. Without `soul.md`, Poppet uses its default personality. Neither file lets Poppet do anything it could not do before.
 
 ## Limits
 
-Facts, profile, and personality are each limited to 8 KiB in each run. If one is too large, the run fails with an error. Poppet never trims them to fit. All three count toward the run's context budget.
+Your facts, `profile.md`, and `soul.md` can each be up to 8 KiB. If one is larger, Poppet stops with an error instead of cutting it short. All three count toward how much Poppet can send the model, so long files leave less room for the conversation.
 
-`profile.md` and `soul.md` must be regular files owned by your user, with no hard links or symbolic links. Group or world write permission is rejected; `0600` is a suitable mode. Invalid UTF-8 or NUL characters are also rejected.
+`profile.md` and `soul.md` must be plain text files that only you can change. If Poppet refuses one, make sure it is a regular file, not a link, and set its permissions:
+
+```sh
+chmod 600 ~/.config/poppet/profile.md ~/.config/poppet/soul.md
+```
