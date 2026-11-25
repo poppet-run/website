@@ -1,11 +1,11 @@
 +++
 title = "Chat"
-description = "Start a conversation, resume saved sessions, and search earlier answers."
+description = "Start a conversation, return to saved sessions, and search earlier answers."
 +++
 
 # Chat
 
-Chat with Poppet from your terminal, a [web browser](web-chat.md), or a [Discord, Slack, or Telegram conversation](gateways/_index.md). Poppet saves sessions locally, so you can resume them or search earlier answers later. If you have not connected a provider yet, start with [getting started](getting-started.md).
+Chat with Poppet from your terminal, a [web browser](web-chat.md), or a [Discord or Slack thread](gateways/_index.md). Poppet saves every conversation as a session on your computer, so you can return to it or search it later. If you have not connected a provider yet, start with [getting started](getting-started.md).
 
 ## Start and continue a session
 
@@ -14,7 +14,7 @@ poppet chat new "Help me plan a small TypeScript project"
 poppet chat sessions
 ```
 
-The answer streams to stdout. The session and run IDs print to stderr. To continue or inspect a session later, copy its ID:
+`chat new` starts a session and prints its ID before the answer. `chat sessions` lists your saved sessions. To continue one, copy its ID:
 
 {{< shell >}}
 ```bash
@@ -30,9 +30,9 @@ poppet chat show $session_id
 ```
 {{< /shell >}}
 
-`chat new` and `chat send` each submit one message. `chat show` prints the conversation and a table of runs with their states, token usage, tool calls, and failures. Add `--json` for every saved message, tool call, run output, and usage record. Poppet stores provider continuation data separately and leaves it out of both forms. Listing and inspecting sessions need no model or login.
+`chat send` adds one message to a saved session. `chat show` prints the conversation, followed by a table of runs. A run is one answer from Poppet, with its status, token usage, tools used, and any error. Add `--json` to see every saved detail.
 
-Different sessions can run at the same time, up to `chat.maxConcurrentRequests`, which defaults to 3. Requests in the same session run in order. If a worker is running, these commands go through it. See [chat while the worker runs](worker.md#chat-while-the-worker-runs).
+Listing, showing, and searching sessions work without a provider connection.
 
 ## Interactive prompt
 
@@ -41,23 +41,31 @@ poppet chat interactive
 poppet chat interactive $session_id
 ```
 
-The terminal shows your conversation above an input box. Answers render Markdown and code highlighting. Resuming a session loads saved messages and attachment names without calling the model or replaying tools. Use Page Up/Page Down to scroll; resizing preserves your draft. `NO_COLOR` disables colour.
+The interactive prompt shows your conversation above a text box, with formatted answers and highlighted code. Give a session ID to continue a saved session. Poppet shows its earlier messages without asking the model again.
 
-Press Enter to send, or Shift+Enter for a newline in terminals that support modified keys. Bracketed multiline paste stays in the composer until you send it. Up/Down recall messages from this invocation; input history is not saved to disk.
+| Key or command | What it does |
+| -------------- | ------------ |
+| Enter | Send the message |
+| Shift+Enter | Start a new line, in terminals that support it |
+| Up and Down | Recall messages you sent since opening the prompt |
+| Page Up and Page Down | Scroll the conversation |
+| `/attach <path>` | Attach a file to your next message |
+| `/queue remove <number>` | Remove a waiting message |
+| `/queue retry` | After a failure, send the failed message again and continue |
+| `/queue resume` | After a failure, skip the failed message and continue |
+| `/exit`, Ctrl-C, or Ctrl-D in an empty text box | Leave the prompt |
 
-You can draft and submit messages while an answer streams. They queue in order and run after the current turn. `/queue remove N` removes a numbered pending message. If a turn fails, the queue pauses: `/queue retry` retries that message first, while `/queue resume` skips it and continues. Pending messages are discarded when you exit.
+You can keep typing and sending while an answer is still arriving. Poppet queues your messages and answers them in order. If one fails, the queue pauses until you choose `/queue retry` or `/queue resume`. Messages still waiting when you leave are discarded.
 
-Use `/attach <path>` to attach a file to the next submitted message, including a queued message. Files are read when that turn starts.
+Pressing Ctrl-C during an answer cancels it and leaves the prompt. Answers that already finished stay saved. When you leave, Poppet prints the command to return to the session.
 
-Each turn uses the session's saved provider, model, and skill. For a new session, use `--skill <name>` before the first message. Omit it when resuming a saved session. A session is created when you first send a nonblank message.
+To use a [skill](skills.md) for the whole session, start with `poppet chat interactive --skill <name>`. Poppet creates the session when you send your first message.
 
-`/exit`, Ctrl-D at an empty idle composer, or Ctrl-C leaves the chat, including during an unfinished paste. Ctrl-C during an answer cancels that request and exits. Earlier completed answers stay saved. On exit, Poppet prints a command to resume the session. Queued requests are never retried automatically.
-
-With `chat.logReasoning` enabled, readable provider reasoning appears under a Thinking heading, without duplicating the streamed reasoning in the worker log. `TERM=dumb` uses a single-line prompt without queuing. Both stdin and stdout must be terminals; use `chat new` and `chat send` in scripts.
+The prompt needs a real terminal. In scripts, use `chat new` and `chat send`. Set `NO_COLOR=1` to turn off colour.
 
 ## Session titles
 
-A new session takes a title from its first message. For terminal and messaging chats, after the first answer, Poppet makes one optional request to improve the title. That request uses a short excerpt of your message, has a ten-second limit, and uses a little extra provider quota. If it fails, the fallback title stays. Titles are at most 80 characters.
+Poppet names a new session after your first message. In the terminal, Discord, and Slack, it then asks the model for a better title once, using a short part of your message. This uses a little of your provider quota. Titles are at most 80 characters.
 
 Rename a session at any time:
 
@@ -65,7 +73,7 @@ Rename a session at any time:
 poppet chat rename $session_id "Weekly project review"
 ```
 
-Names you set win over automatic titles. Renaming needs no model or login.
+A title you set replaces the automatic one.
 
 ## Delete old sessions
 
@@ -75,13 +83,15 @@ poppet chat prune --days 90 --dry-run
 poppet chat prune --days 90
 ```
 
-`chat delete` takes one or more session IDs. It removes their messages, runs, tool calls, attachments, and search entries. If any ID is unknown or any selected session has a pending or running reply, nothing is deleted. Stop the reply first.
+`chat delete` removes one or more sessions, with their messages, attachments, and search entries. `chat prune --days 90` removes every session with no activity in the last 90 days. Add `--dry-run` to see what it would remove first. Renaming a session does not count as activity.
 
-`chat prune` removes sessions whose last activity was more than the given number of days ago. `--days` is required and accepts whole numbers from 1 to 36500. Sessions with pending or running replies are skipped. Renaming does not count as activity.
+You cannot delete a session while Poppet is answering in it. `chat delete` deletes nothing if any session you name is busy or does not exist. `chat prune` skips busy sessions. Deletion cannot be undone.
 
-Use `--dry-run` to list what pruning would remove without deleting it. Both commands print the removed sessions, or the selected sessions for a dry run. Add `--json` for their saved session records. They need no model or login and go through the worker when it owns storage. Deletion cannot be undone.
+Deleting a session also affects other places that used it:
 
-Deleting a session also removes its Discord or Slack thread binding, so the next message in that thread starts a new session. Task history and notes stay saved without links to the deleted session or runs. Saved facts keep their values and origins but lose their source run IDs. Web chat removes the conversation's submission receipts.
+- A Discord or Slack thread linked to the session starts a new session with its next message.
+- Scheduled tasks keep their results, but no longer link to the deleted session.
+- Saved facts stay, with their history.
 
 ## Search past conversations
 
@@ -90,25 +100,19 @@ poppet chat search "project TypeScript"
 poppet chat show <session-id-from-search>
 ```
 
-Search prints a table of up to ten matches, ranked by relevance. Use `poppet chat search --json "project TypeScript"` for the full result, including `matches` and `truncated`. Each match includes its session and message IDs, the session title, and a short excerpt. Search queries are plain text, at most 256 characters. Every word must match. Search treats operators such as `OR` as ordinary words.
+Search shows up to ten matches, best first, with the session, the session title, and a short excerpt. Every word you search for must appear. Words such as `OR` count as ordinary words. A search can be up to 256 characters.
 
-Search covers your messages and Poppet's final answers from completed runs. It leaves out failed input, tool results, and intermediate text. It needs no model or login.
+Search covers your messages and Poppet's finished answers. It skips failed messages, tool results, and attachments.
 
-Models with tool access can also search earlier conversations and read the context around a match, so you can ask "Find our earlier storage decision and explain why we chose it." Saved statements may be out of date, so Poppet cites them by session and message ID.
+You can also ask Poppet to search for you, for example "Find our earlier storage decision and explain why we chose it." Poppet tells you which session and message it found, since an earlier answer may be out of date.
 
 ## Provider and model
 
-New sessions use the `provider` and `model` in `config.json`. Existing sessions keep their saved provider and model, even if you change the file later. Start a new session to use a different one.
-
-OpenCode Go uses the selected model without a separate coding flag:
-
-```sh
-poppet chat new "Explain how to structure a TypeScript CLI"
-```
+New sessions use the `provider` and `model` in `config.json`. A session keeps the provider and model it started with, even if you change the file later. Start a new session to use a different model.
 
 ## Save memory
 
-Ask Poppet to remember, change, or forget a fact in the current message. For example, ask it to remember `answer.style` as "Keep answers concise", then check it with `poppet memory list`. Scheduled runs cannot change memory. See [memory](memory.md#ask-poppet-to-change-a-fact).
+Ask Poppet in a message to remember, change, or forget a fact. For example, ask it to remember `answer.style` as "Keep answers concise", then check with `poppet memory list`. Scheduled tasks cannot change memory. See [memory](memory.md#ask-poppet-to-change-a-fact).
 
 ## Choose a skill
 
@@ -116,15 +120,15 @@ Ask Poppet to remember, change, or forget a fact in the current message. For exa
 poppet chat new --skill weekly-review "Review my Acorn project"
 ```
 
-The session saves a copy of the skill when it starts. Later turns use that copy, even if the file changes or is deleted. To use a skill for one message, send text such as `Run $weekly-review for Acorn`. In shell commands, single-quote the message to preserve `$`. See [skills](skills.md#name-a-skill-in-a-message).
+The session keeps a copy of the skill from when it started, so editing or deleting the skill file later does not change it. To use a skill for one message, write its name after `$`, such as `Run $weekly-review for Acorn`. In a shell command, put the message in single quotes so the shell leaves `$` alone. See [skills](skills.md#name-a-skill-in-a-message).
 
 ## Run commands
 
-With the [command tool](commands.md) available, the model can run shell commands on your computer. A separate review checks each command before it runs. Commands that need your approval wait for it in Discord, Slack, or Telegram, while CLI and web chat commands that need approval stop without executing. Request the operation in Discord, Slack, or Telegram to approve it there.
+Poppet can run shell commands on your computer when it needs to. A separate review checks each command first. Some commands need your approval, and you can only give it in Discord or Slack. In the terminal and web chat, a command that needs approval does not run. See [run commands](commands.md).
 
 ## Schedule tasks from chat
 
-Ask Poppet to create, list, inspect, edit, delete, pause, resume, skip, snooze, or run a task. For example:
+Ask Poppet to create, list, change, pause, resume, skip, snooze, run, or delete a task. For example:
 
 ```text
 Every Friday at 09:00 Europe/London, summarize my recent conversations.
@@ -132,45 +136,29 @@ List my scheduled tasks.
 Pause task <task-id>.
 ```
 
-Poppet asks when a time or timezone is unclear. A task change is saved even if the reply fails afterwards, so check `poppet tasks list` before asking again. Scheduled runs cannot manage tasks. See [scheduled tasks](tasks.md#manage-tasks-from-chat).
+Poppet asks when a time or time zone is unclear. A task change is saved even if the rest of the reply fails, so check `poppet tasks list` before you ask again. See [scheduled tasks](tasks.md#manage-tasks-from-chat).
 
 ## Attach files
 
 ```sh
 poppet chat new --attach ./screenshot.png "What does this error mean?"
-poppet chat send <session> --attach ./build.log --attach ./config.json "Why did this fail?"
+poppet chat send <session-id> --attach ./build.log --attach ./config.json "Why did this fail?"
 ```
 
-`--attach <path>` goes before the message and can repeat. In the interactive
-prompt, `/attach <path>` adds a file to the next message. In Discord or Slack, attach files
-to the message itself; a message with files needs no text. See
-[Discord](gateways/discord.md#attachments) or [Slack](gateways/slack.md#start-a-conversation).
+Put `--attach <path>` before the message. Repeat it for more files. In the interactive prompt, use `/attach <path>`. In Discord or Slack, attach files to your message as usual. A message with files does not need any text. See [Discord](gateways/discord.md#attachments) or [Slack](gateways/slack.md#start-a-conversation).
 
-Images are PNG, JPEG, WebP, or GIF, identified by their bytes rather than their
-name, and need a model that accepts images. Text files are UTF-8 without NUL
-bytes and need an allowed extension such as `.txt`, `.md`, `.log`, `.csv`,
-`.json`, `.yaml`, or a common source-code extension. PDFs and other files are
-refused. One message holds at most 4 files, each image at most 5 MiB and each
-text file at most 64 KiB. These limits are fixed.
+| Type | Accepted | Size limit |
+| ---- | -------- | ---------- |
+| Images | PNG, JPEG, WebP, or GIF | 5 MiB each |
+| Text files | `.txt`, `.md`, `.log`, `.csv`, `.json`, `.yaml`, and common source code files | 64 KiB each |
 
-A rejected file stops the whole message, with a reply naming the file and why;
-the model never answers without a file you sent. Sending an image to a session
-whose model does not accept images fails before inference. Start a new session
-with a model that does.
+Each message can have up to 4 files. Poppet refuses PDFs and other file types. Images need a model that accepts images. If your session's model does not, start a new session with one that does.
 
-Files are saved in the database with the message, and later turns in the session
-resend them while their exchange stays in the retained history. Each image counts
-as 6 KiB of the context budget, and each text file at its size. Only the 8 newest
-images are resent; older ones are replaced by a note naming the attachment ID, so
-the model knows an image was there. `chat show` lists each message's attachments
-by ID, name, type, and size, not their contents. Conversation search does not
-index attachment contents.
+If Poppet refuses a file, it refuses the whole message and tells you which file and why.
 
-The model receives text files labelled as untrusted file content, and is told
-never to follow instructions found in attachments. A message with attachments
-withdraws task, memory, and MCP mutations for its run, as a fetched page does; ask
-for those changes in a follow-up message.
+Poppet keeps attachments with the conversation and sends them again with later messages, so the model can still refer to them. After 8 images, older images are left out.
 
+Poppet tells the model never to follow instructions found inside a file. As a precaution, a message with attachments cannot change memory or tasks. It also cannot use MCP tools, unless you [trust the server](mcp.md#after-poppet-reads-untrusted-content). Ask for those in a separate message.
 
 ## Read a web page
 
@@ -178,28 +166,35 @@ for those changes in a follow-up message.
 poppet chat new "Summarize https://example.com/ and cite the source"
 ```
 
-When a message includes a public `http` or `https` URL, the model can read that page. It works with plain text and static HTML. It does not run JavaScript, and it does not read PDFs, login-protected pages, or downloads. Each read has a 15-second limit and a 1 MiB size limit. URLs found in history, skills, or other pages do not allow new reads.
+When your message includes a public web address, Poppet can read that page. It reads plain text and ordinary web pages, but not PDFs, downloads, pages behind a login, or pages that need JavaScript to show their content. See [read and search the web](web.md#read-a-page).
 
 ## Search the web
 
-With [web search](web.md) set up, the model can search and then read the sources it finds:
+With [web search](web.md) turned on, Poppet can search the web and read the pages it finds:
 
 ```sh
 poppet chat new "Search for recent Bun releases, read a source, and cite it"
 ```
 
-Search omits local destinations such as `localhost`, `.localhost` subdomains, and `.local` hostnames.
+Poppet asks the model to cite the pages it used, and to say whether a fact came from a search result or from a page it read in full.
 
-Search snippets may contain extracted page passages. Poppet can answer from those passages when they are sufficient, or read a source for more detail. Answers should cite source URLs and distinguish search excerpts from pages Poppet fetched directly.
+## When a message fails
 
-## Failures and cancellation
+Poppet saves your message before it asks the model. If the answer does not finish, because of a provider error, Ctrl-C, or a time limit, `chat show` lists the run as failed or interrupted. The failed message stays in the conversation, but Poppet leaves it out of what it sends to the model next time.
 
-Poppet saves each message before it asks the model for an answer. Only a completed answer is saved as the answer. Provider errors, Ctrl-C, closed output, and time limits leave a failed or interrupted run that you can inspect with `chat show`. A failed message stays in the history, but Poppet leaves it out of later context. To try again, send a new message. Poppet never retries a request or switches to another provider or model by itself.
+Poppet never retries a message by itself, and it never switches to another provider or model. To try again, send the message again.
 
-## Context and limits
+## Limits
 
-Each run includes recent complete exchanges, up to 20, within a 256 KiB context budget. Poppet keeps room for the answer, and it refuses a message that cannot fit. Trimming affects only what is sent to the model, not the saved history.
+Poppet sends the model up to the last 20 exchanges of a conversation, within a 256 KiB budget. Older messages stay saved, but the model no longer sees them. A single message too large to fit is refused.
 
-Each run has a time limit set by `chat.runDeadlineSeconds`, which defaults to 300 seconds. Each model request also has its own 60-second limit. A run allows sixteen model turns and sixteen tool calls. Each tool result is capped at 16 KiB. Answers are capped at 128 KiB of text.
+| Limit | Value |
+| ----- | ----- |
+| Time for one answer | 300 seconds, set with [`chat.runDeadlineSeconds`](configuration.md#settings) |
+| Time for each model request | 60 seconds |
+| Model requests per answer | 16 |
+| Tool uses per answer | 16 |
+| Each tool result | 16 KiB |
+| Answer length | 128 KiB of text |
 
-Recorded usage is the sum of every model turn. If any turn does not report usage, Poppet shows the total as unknown.
+Up to 3 conversations can get answers at the same time. Messages in one conversation are answered in order. To change the limit, set [`chat.maxConcurrentRequests`](configuration.md#settings).
