@@ -37,11 +37,15 @@ Listing, showing, and searching sessions work without a provider connection.
 ## Interactive prompt
 
 ```sh
-poppet chat interactive
-poppet chat interactive $session_id
+poppet chat
+poppet chat $session_id
 ```
 
+Run `poppet chat` to start a new conversation, or `poppet chat <session-id>` to return to one. This replaces the earlier `chat interactive` command.
+
 The interactive prompt shows your conversation above a text box, with formatted answers and highlighted code. Give a session ID to continue a saved session. Poppet shows its earlier messages without asking the model again.
+
+The welcome screen shows a small mascot with a randomly chosen expression. It moves above the welcome text in narrower terminals and is hidden when there is too little room or colour is turned off.
 
 | Key or command | What it does |
 | -------------- | ------------ |
@@ -59,7 +63,7 @@ You can keep typing and sending while an answer is still arriving. Poppet queues
 
 Pressing Ctrl-C during an answer cancels it and leaves the prompt. Answers that already finished stay saved. When you leave, Poppet prints the command to return to the session.
 
-To use a [skill](skills.md) for the whole session, start with `poppet chat interactive --skill <name>`. Poppet creates the session when you send your first message.
+To use a [skill](skills.md) for the whole session, start with `poppet chat --skill <name>`. Poppet creates the session when you send your first message.
 
 The prompt needs a real terminal. In scripts, use `chat new` and `chat send`. Set `NO_COLOR=1` to turn off colour.
 
@@ -136,7 +140,7 @@ List my scheduled tasks.
 Pause task <task-id>.
 ```
 
-Poppet asks when a time or time zone is unclear. A task change is saved even if the rest of the reply fails, so check `poppet tasks list` before you ask again. See [scheduled tasks](tasks.md#manage-tasks-from-chat).
+Set [`timeZone`](configuration.md#time-zone) so Poppet can use your local time when you give no offset or time zone. It asks when the intended time is still unclear. A task change is saved even if the rest of the reply fails, so check `poppet tasks list` before you ask again. See [scheduled tasks](tasks.md#manage-tasks-from-chat).
 
 ## Attach files
 

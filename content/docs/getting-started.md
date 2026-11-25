@@ -108,7 +108,7 @@ poppet chat send $session_id "What should I build first?"
 ```
 {{< /shell >}}
 
-For a back-and-forth conversation, run `poppet chat interactive`. Press Enter to send and type `/exit` to leave. See [chat](chat.md#interactive-prompt) for more.
+For a back-and-forth conversation, run `poppet chat`. Press Enter to send and type `/exit` to leave. See [chat](chat.md#interactive-prompt) for more.
 
 If a message fails, see [troubleshooting](troubleshooting.md).
 

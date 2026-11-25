@@ -92,7 +92,7 @@ Without a provider name, these commands use the `provider` in `config.json`. See
 | ------- | ------------ |
 | `chat new <message>` | Start a conversation |
 | `chat send <session-id> <message>` | Continue a conversation |
-| `chat interactive [session-id]` | Open the interactive prompt |
+| `chat [session-id]` | Open the interactive prompt |
 | `chat sessions` | List your conversations |
 | `chat show <session-id>` | Show a conversation and details of each answer |
 | `chat search <words>` | Search your conversations |
@@ -150,8 +150,8 @@ See [skills](skills.md).
 | ------ | --------- | ------------ |
 | `--in <delay>` | `add` | Run once, after a delay such as `30m` |
 | `--at <time>` | `add`, `edit` | Run once, at a date and time |
-| `--cron <schedule>` | `add`, `edit` | Run on a repeating schedule, with `--tz` |
-| `--tz <time-zone>` | `add`, `edit` | Set the time zone for `--cron` |
+| `--cron <schedule>` | `add`, `edit` | Run on a repeating schedule, using `--tz` or the configured `timeZone` |
+| `--tz <time-zone>` | `add`, `edit` | Set the time zone for `--cron`; defaults to [`timeZone`](configuration.md#time-zone) |
 | `--until <time>` | `add`, `edit` | End a repeating task, or remove the end with `none` |
 | `--skill <name>` | `add` | Follow a [skill](skills.md) |
 | `--to <gateway>` | `add` | Post results to a [messaging gateway](gateways/_index.md) |
