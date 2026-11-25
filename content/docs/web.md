@@ -1,29 +1,34 @@
 +++
 title = "Read and search the web"
-description = "Read public pages without a browser, or turn on web search with Brave or Kagi."
+description = "Let Poppet read web pages you link, or turn on web search with Brave or Kagi."
 +++
 
 # Read and search the web
 
-Poppet can read public web pages in any chat that uses tools, including scheduled tasks. Web search is optional. When it is on, the model can search with Brave or Kagi, then read the pages it finds.
+Poppet can read a web page when you include its address in a message or task. It can also search the web, once you turn on search with a Brave or Kagi account.
 
 ## Read a page
 
-Include a public `http` or `https` address in your message:
+Include a web address in your message:
 
 ```sh
 poppet chat new "Summarize https://example.com/ and cite the source"
 ```
 
-Poppet reads plain text and static HTML. It removes scripts, styles, and hidden content, and it does not run JavaScript. It cannot read PDFs, pages behind a login, or downloads.
+Poppet reads the text of the page. It cannot read:
 
-Each read has a 15-second limit, follows at most three redirects, and is capped at 1 MiB. The address must resolve only to public IP addresses, and it must use a standard port. Poppet rejects addresses that contain a username or password. The result includes the final address, the page title, the text, and whether it was shortened.
+- PDFs or other downloads
+- pages behind a login
+- pages that need JavaScript to show their content
+- addresses on your own network, such as `localhost` or a router's address
 
-Poppet reads a page only when its address is in your current message. Addresses found in earlier conversations, skills, or other pages do not count.
+Each page can be up to 1 MiB, and Poppet gives up after 15 seconds.
+
+Poppet only reads addresses that are in your current message, or that it found with web search in the same answer. It does not follow addresses it finds in earlier conversations, skills, or other pages. This stops a web page from sending Poppet somewhere you did not ask it to go.
 
 ## Turn on web search
 
-Set `webSearchProvider` in `config.json` to enable search, then save that provider's key:
+Web search needs an API key from [Brave](https://api-dashboard.search.brave.com/documentation/services/llm-context) or [Kagi](https://kagi.com/api/keys). Choose a provider in `config.json`:
 
 ```json
 {
@@ -31,33 +36,24 @@ Set `webSearchProvider` in `config.json` to enable search, then save that provid
 }
 ```
 
-Use `"kagi"` for Kagi. No provider is selected by default. Remove `webSearchProvider` to disable search while keeping saved keys. Set a provider before running `web login` or `web logout`.
+Use `"kagi"` for Kagi. Then save your key, check it, and restart the worker:
 
 ```sh
 poppet web login
 poppet web status
+poppet worker restart
 ```
 
-`web login` prompts for the key without showing it. Use `--api-key <key>` in a script. Get a key from [Brave's LLM Context API](https://api-dashboard.search.brave.com/documentation/services/llm-context) or from [Kagi's API keys page](https://kagi.com/api/keys). `web status` reports whether search is enabled and has a key, and it does not contact the provider.
+`web login` asks for the key without showing it. `web status` tells you whether search is on and has a key. It does not contact Brave or Kagi.
 
-Search uses saved credentials only; environment variables cannot supply or override its keys. Each provider's key is saved separately, so you can switch between Brave and Kagi without losing either key. `web logout` removes the saved key for the selected provider. Restart the worker after you change search settings or keys.
+Poppet keeps a separate key for each provider, so you can switch between them by changing `webSearchProvider`. To turn search off, remove `webSearchProvider`. Your keys stay saved. `poppet web logout` removes the key for the selected provider.
 
-`web status` reports search as disabled when no provider is selected. With a provider selected, it reports search as enabled and separately shows whether a key is saved.
+If your `config.json` has an old `webSearch` field, remove it. Poppet reports it as an error.
 
-If your configuration still contains `webSearch`, remove it. Poppet rejects that field. See [configuration](configuration.md#web-search) for migration steps.
+## What Poppet sends
 
-If search is off or has no key, the search tool is not offered to the model. Reading pages still works.
+Poppet sends only the search words to Brave or Kagi, not your conversation, profile, or other keys. The model chooses the search words, so they can include details from your message. Avoid asking for searches that would reveal something you want to keep private.
 
-## How search works
+Each search returns up to five results. Poppet can answer from the search results, or read the pages they link to for more detail. See [search the web](chat.md#search-the-web) for how Poppet cites its sources.
 
-The model sends its query to the selected provider. Poppet sends only the query and fixed search options. It does not send your conversation, profile, or any inference keys. The model writes the query, so it may include details from your request. Do not ask for searches that would reveal information you want to keep private.
-
-Each search returns up to five results, with a title, URL, and snippet. Brave uses its LLM Context API with a 2,048-token context budget. Its snippets contain extracted page passages joined with blank lines. Kagi returns search snippets.
-
-Results stay in provider order and fit the 16 KiB tool-output limit. Poppet reserves space for URLs first, then shares the remaining space across titles and finally snippets. Text may be shortened, and URLs that cannot fit are omitted. The result reports whether it was truncated.
-
-Each search has a 15-second limit and a 1 MiB response limit. Poppet does not retry or fall back to the other provider.
-
-Pages that appear in search results can be read in the same run. That permission lasts only for that run. Links that appear only in snippets or page text do not get this permission. Poppet treats search results as data, so they cannot change memory or tasks.
-
-See [chat](chat.md#search-the-web) for how answers cite sources.
+Poppet treats search results and web pages as information, never as instructions. They cannot change your memory or tasks.
