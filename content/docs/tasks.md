@@ -1,262 +1,255 @@
 +++
 title = "Scheduled tasks"
-description = "Schedule prompts, inspect results, and edit, pause, snooze, or run saved tasks."
+description = "Run a prompt later or on a schedule, read the results, and edit, pause, or skip tasks."
 +++
 
 # Scheduled tasks
 
-Run a prompt once at a future time, or repeat it on a schedule. Tasks run while a [worker](worker.md) is running, and you read their results with `tasks show`. Connect a provider through [getting started](getting-started.md) first.
+A scheduled task runs a prompt for you once at a later time, or repeatedly on a schedule. Tasks only run while the [worker](worker.md) is running. You can read the results in your terminal, or have them posted to Discord or Slack. Connect a provider through [getting started](getting-started.md) first.
 
-## Create and inspect a task
+## Create your first task
 
-Each task saves the provider and model from `config.json` when you add it. The worker uses those saved choices even if you change `config.json` later.
-
-For a quick test, schedule a task one minute from now and start the worker:
+To try it out, schedule a task one minute from now and start the worker:
 
 ```sh
 poppet tasks add summary --in 1m "Summarize my recent conversations"
 poppet worker run
 ```
 
-`--in` accepts a positive whole number followed by `s`, `m`, `h`, or `d`. A day means 24 elapsed hours. Use exactly one schedule form: `--in`, `--at`, or `--cron` with `--tz`.
-
-The worker prints a line when a task starts, finishes, fails, is cancelled, or is skipped. Failures show a reason code. Prompts and answers go to the saved results, not the console.
-
-Leave the worker running, then use a second terminal with the same `POPPET_DATA_DIR`:
+The worker prints a line each time a task starts and finishes. Leave it running, and in a second terminal, check the result:
 
 ```sh
 poppet tasks list
 poppet tasks show <task-id>
-poppet tasks pause <task-id>
-poppet tasks resume <task-id>
 ```
 
-## Recurring schedules
+`tasks show` lists each time the task was due, what happened, and the answer. Poppet calls each scheduled time an occurrence, and the commands below use that word.
 
-Use a five-field cron expression and a timezone:
+## Choose when a task runs
+
+Every task needs one of these:
+
+| Option | Runs | Example |
+| ------ | ---- | ------- |
+| `--in` | Once, after a delay in seconds, minutes, hours, or days | `--in 30m`, `--in 2d` |
+| `--at` | Once, at a date and time | `--at 2099-10-22T09:00:00+01:00` |
+| `--cron` with `--tz` | Repeatedly, on a cron schedule in a time zone | `--cron "0 9 * * *" --tz Europe/London` |
+
+For `--at`, include a time zone offset such as `+01:00`, or `Z` for UTC. For `--tz`, use a time zone name such as `Europe/London` or `America/New_York`.
+
+A cron schedule has five parts: minute, hour, day of the month, month, and day of the week. For example, `0 9 * * *` means 09:00 every day, and `30 8 * * 1-5` means 08:30 on weekdays.
 
 ```sh
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London "Summarize my recent conversations"
 ```
 
-One-off times need `Z` or a UTC offset, such as `2099-10-22T09:00:00+01:00`. Recurring schedules keep the same local time across daylight saving changes. Catch-up follows the same forward schedule. If a saved schedule cannot advance, Poppet pauses that task and logs the failure while continuing to process other tasks. A time that a change skips moves forward, and a time that happens twice runs once.
+A repeating task keeps the same local time when the clocks change for daylight saving. If the clocks skip its time, it runs at the next valid time. If a time happens twice, it runs once.
 
-Each run starts a fresh session. It has the current profile, saved facts, conversation search, page reading, and web search if it is set up. Scheduled runs cannot change memory, and they cannot manage tasks.
+Each task remembers the provider and model from `config.json` when you create it, and keeps using them even if you change `config.json` later.
 
-## End a recurring task
+Each run starts a new conversation. It can read your profile and saved facts, search past conversations, read web pages, and search the web if you set that up. A scheduled task cannot change memory or other tasks.
 
-Add `--until` to give a recurring task an end time. Without it, the task has no end time.
+## End a repeating task
+
+Add `--until` to stop a repeating task after a date and time:
 
 ```sh
 poppet tasks add release-watch --cron "0 9 * * *" --tz Europe/London --until 2099-10-29T09:00:00+00:00 "Tell me only if the release page changed"
 ```
 
-Use a future timestamp with `Z` or a UTC offset. `--until` applies only to cron tasks, and a new task needs at least one scheduled time at or before it.
+In this example, the 09:00 run on 29 October is the last one. `--until` takes a future date with a time zone offset, and only works with `--cron`.
 
-The end time limits scheduled times, not when work finishes. In this example, the 09:00 run on 29 October is included. No later time is scheduled. A run scheduled within the limit can still start or finish after it, including after a snooze, subject to the usual [missed-run and expiry rules](#missed-runs-pauses-and-retries).
+Once there are no runs left, `tasks list` shows the task as `ended`. It keeps its history. To start it again, set a later end time or remove it:
 
-When no later scheduled time remains, `tasks list` and `tasks show` display `ended` for an unpaused task. `tasks show` also displays `Until`. This can happen while the final run is still pending or running. The worker logs the ending once, and the task and its history stay saved. CLI JSON includes `endAt` in Unix milliseconds, or `null` for no end time.
-
-Set a later end time or clear it to schedule future runs again:
-
-```fish
+```sh
 poppet tasks edit <task-id> --until 2099-11-30T18:00:00+00:00
 poppet tasks edit <task-id> --until none
 ```
 
-An ended task restarts from the current time without replaying missed runs. Editing a paused task keeps it paused. A new cron schedule keeps the end time; changing to a one-off clears it.
+The task picks up from now, without making up the runs it skipped.
 
-An earlier end time cancels a pending run if its scheduled time falls after the new limit, even if it was snoozed. A running task must finish or be cancelled before you edit it.
+## Edit a task
 
-Skipping the last scheduled time ends the task. With no pending or future run, an ended task rejects run, skip, and snooze requests. Resume does not bypass the end time. You can still retry an unsuccessful run scheduled within the limit, subject to the usual retry rules.
-
-## Edit and control the next run
-
-Edit a task without changing its ID or losing its history:
+Change a task without losing its ID or history:
 
 ```sh
 poppet tasks edit <task-id> --name "Morning review"
 poppet tasks edit <task-id> --prompt "Summarize open decisions from recent conversations."
 poppet tasks edit <task-id> --cron "30 8 * * 1-5" --tz Europe/London
 poppet tasks edit <task-id> --at 2099-10-22T09:00:00+01:00
+```
+
+An edit changes only what you give it. A new cron schedule needs both `--cron` and `--tz`. The provider, model, skill, and destination cannot be changed. To change those, create a new task. Editing a paused task keeps it paused.
+
+If you change the prompt or schedule before the next run starts, Poppet cancels that run and plans the next one with your changes. You cannot edit a task while it is running. To run a finished one-off task again, give it a new time with `--at`.
+
+## Pause, skip, or run a task now
+
+```sh
+poppet tasks pause <task-id>
+poppet tasks resume <task-id>
 poppet tasks run <task-id>
 ```
 
-Ask in chat to skip or snooze the next run. These actions have no CLI command. A snooze must end later than the next run's current ready time.
+| Action | What it does |
+| ------ | ------------ |
+| `tasks pause` | Stops the task until you resume it, and cancels its next run |
+| `tasks resume` | Starts scheduling the task again |
+| `tasks run` | Runs the task now, without changing its schedule |
+| Skip, from chat | Skips only the next run |
+| Snooze, from chat | Moves the next run to a later time |
 
-An edit changes only the fields you give, including an optional [end time](#end-a-recurring-task). A new schedule needs both a cron expression and a timezone, and a new one-off time must be in the future with a UTC offset. Provider, model, skill, and destination stay the same. You can edit a paused task without resuming it.
+Skipping and snoozing have no commands. Ask Poppet in a chat instead, such as "Skip the next run of my daily summary."
 
-| Control     | What it does                                                                                                                               |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Skip via chat | Skips the next run only. A recurring task keeps its schedule. A one-off task has no later run.                                            |
-| Snooze via chat | Delays the next run until a later time. Cron times missed during the snooze do not run later.                                             |
-| `tasks run` | Queues a normal run now, without changing the schedule. It confirms that the run is queued, not that it finished.                          |
-
-A name or prompt change replaces a run that has not started yet, and the original run stays in `tasks show` as cancelled. A schedule change cancels pending work and works out the next future time. Editing a finished one-off's name or prompt does not run it again. Give it a new future time to run it again.
-
-Poppet stores at most 64 tasks, including paused and ended tasks. Delete an unused task before adding another when the store is full.
+You can keep up to 64 tasks, including paused and ended ones.
 
 ## Manage tasks from chat
 
-Chat can create at most five tasks in one run. Recurring cron schedules created or changed through chat must have at least five minutes between consecutive runs.
-
-Editing, resuming, rescheduling, or running a saved task from chat requires access to its saved messaging destination. For tasks with a manual-only skill, use the owner CLI for these changes.
-
-Ask Poppet in chat or in a Discord or Slack thread to create, list, inspect, edit, delete, pause, resume, skip, snooze, or run a task:
+Ask Poppet in any chat, or in a Discord or Slack thread, to create, list, change, pause, resume, skip, snooze, run, or delete a task:
 
 ```text
 Every Friday at 09:00 Europe/London, summarize my recent conversations and deliver the result here.
 End task <task-id> at 2099-10-29T09:00:00+00:00.
-Clear the end time for task <task-id>.
 List my scheduled tasks.
 Pause task <task-id>.
 ```
 
-You can request an end time when creating or editing a recurring task in chat. Poppet asks when a time, timezone, or task is unclear. Pausing and resuming use task IDs, so Poppet asks you to choose when names match. Deletion removes the task and its history, and fails while a run is active. Retrying runs and cancelling active runs stay in the CLI.
+Poppet asks when a time, time zone, or task is unclear. A change is saved even if the rest of the reply fails, so check `poppet tasks list` before you ask again.
 
-A task change is saved even if the chat reply fails afterwards. If a task changes between preparing and applying a request, the tool can report that the request is no longer valid. Check `tasks list` or `tasks show` before asking again.
+Some limits apply to tasks created or changed from chat:
 
-## Deliver results to Discord
+- Poppet can create up to five tasks per message.
+- A repeating task must have at least five minutes between runs.
+- To change a task that posts to Discord or Slack, ask from a place where Poppet can post to that destination.
+- Tasks that use a [manual-only skill](skills.md#manual-only-skills) can only be changed with the `poppet tasks` commands.
+- Retrying and cancelling runs need the `poppet tasks` commands.
 
-Set up [Discord](gateways/discord.md), start the combined worker with `poppet worker run`, and send results to your home channel:
+## Send results to Discord or Slack
+
+After you set up [Discord](gateways/discord.md) or [Slack](gateways/slack.md), add `--to` when you create a task:
 
 ```sh
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --to discord "Summarize my recent conversations"
 ```
 
-Use `--to discord:<channel-or-thread-id>` instead to send results to another channel or thread in your server. The worker checks access before saving the task, and it checks again before each send. A result never goes to a different conversation from the one you chose.
+| Option | Posts to |
+| ------ | -------- |
+| `--to discord` | Your Discord home channel |
+| `--to discord:<channel-or-thread-id>` | Another Discord channel or thread in your server |
+| `--to slack` | Your Slack home channel |
+| `--to slack:<channel-id>` | Another Slack channel |
+| `--to slack:<channel-id>:<thread-timestamp>` | A Slack thread, such as `slack:C123:1730000000.000001` |
 
-Completed results and failure notices are sent to the saved destination. `tasks show` lists each message's delivery state. After the channel acknowledges a send, the worker records its message ID before finishing a graceful shutdown. Poppet retries temporary failures a limited number of times. Failed or uncertain sends stay visible, and Poppet does not resend an uncertain one. Check the saved output before posting it again by hand.
+Poppet checks that it can post there when you create the task, and again before each post. It never posts results anywhere else. A task without `--to` keeps its results on your computer.
 
-With [quiet hours](configuration.md#quiet-hours) configured, scheduled results and failure notices stay pending until the window ends. The worker logs the hold and its end time. Holding uses no delivery attempts and does not change the task's execution status. `tasks show` displays `held until` with the end time. Its JSON `delivery` records include `heldUntil` in Unix milliseconds, or `null` when no quiet-hours hold applies.
+Results appear as new messages. They do not start or continue a conversation in that channel.
 
-Results and failure notices are standalone posts. They do not change the conversation they were posted to.
+`tasks show` shows whether each result was posted. If Poppet cannot tell whether a post went through, it does not try again, to avoid posting twice. Check the channel, and post the saved answer yourself if needed.
 
-Tasks without a destination keep their results local.
+To hold posts overnight, set [quiet hours](configuration.md#quiet-hours). Results ready during quiet hours wait until they end, and `tasks show` shows when they will be posted.
 
 ### Stay quiet when there is nothing to report
 
-Make the prompt conditional, for example "Tell me only if the page changed." Scheduled runs are instructed to answer with exactly `NO_REPLY` when the condition is not met. When the whole answer is `NO_REPLY`, ignoring surrounding whitespace, Poppet posts nothing. An answer that mentions `NO_REPLY` alongside other text is delivered as usual.
+Write the prompt so it only reports when something happens, such as "Tell me only if the page changed." When there is nothing to report, Poppet answers with exactly `NO_REPLY` and posts nothing. The run still counts as complete, and `tasks show` shows `no action`.
 
-The occurrence still completes. The worker logs `status=completed no_action=true`, and `poppet tasks show <task-id>` shows `no action` in the delivery column. JSON output includes `noAction: true`, and the saved output remains available. This also applies to tasks without a messaging destination. To compare against a previous run, [keep a task note](#keep-a-note-between-runs).
+An answer that mentions `NO_REPLY` alongside other text is posted as usual. To compare with the previous run, [keep a note](#keep-a-note-between-runs).
 
 ### Failure notices
 
-When a task with a destination fails, Poppet queues a short notice there:
+When a task that posts to Discord or Slack fails, Poppet posts a short notice in the same place:
 
 ```text
 Scheduled task "<name>" failed (<reason code>). Inspect it with: poppet tasks show <task-id>
 ```
 
-The notice includes the task name and reason code, never model output or error text. The reason is `before-start` if the task failed before a run existed, or `unknown` if the run has no saved reason. Read the details with `poppet tasks show <task-id>` before retrying.
+The notice never includes the answer or error details. Run the command it shows to see what went wrong.
 
-If the task's previous finished occurrence also failed, the new failure posts nothing. A failure after a success posts again. Failures that finished more than 24 hours ago are not queued. Interrupted, cancelled, and expired occurrences post nothing.
-
-Notices use the same destination checks, quiet hours, and delivery retries as results. In the `delivery` array from `tasks show`, a notice has a run ID of `notice:<occurrence-id>:<finished-at>`. A failure notice does not change the recurring schedule.
-
-## Deliver results to Telegram
-
-Set up [Telegram](gateways/telegram.md) and run the combined worker. Use `--to telegram` for its home conversation, `--to telegram:<chat-id>` for the configured chat, or `--to telegram:<chat-id>:<topic-id>` for a forum topic in that chat. Other chats are rejected. Quiet hours and failure notices apply to Telegram too.
-
-## Deliver results to Slack
-
-Set up [Slack](gateways/slack.md) and run the combined worker. Use `--to slack` for its home channel, `--to slack:C123` for another channel, or `--to slack:C123:1730000000.000001` for a thread. Replace the IDs and timestamp with your destination. The same access checks, quiet completion, quiet hours, failure notices, and delivery retries described above apply to Slack.
+If a task keeps failing, Poppet posts only the first notice. It posts again after the task next succeeds and then fails. Poppet does not post notices for runs you cancelled, runs that were interrupted, or failures more than 24 hours old. Notices follow quiet hours like any other post.
 
 ## Keep a note between runs
 
-Each task can keep one note of up to 4096 UTF-8 bytes. A new task has no note. Use it to remember the last value a recurring task checked:
+A task can keep one note between runs, up to 4 KiB. This lets a repeating task remember what it saw last time:
 
 ```sh
 poppet tasks add release-watch --cron "0 9 * * *" --tz Europe/London "Read https://example.com/releases and find the newest release version. Compare it with the task note. If there is no note or the version differs, save the new version as the note and report it. Otherwise reply NO_REPLY."
 ```
 
-Replace the example URL with the release page you want to watch. Add `--to discord` or `--to slack` before the prompt to deliver results to a configured home channel.
+Replace the example address with the page you want to watch. Add `--to discord` or `--to slack` before the prompt to post the results.
 
-Each run receives the task's current note. It can call `poppet_tasks.save_note` to replace the note with nonempty text or clear it with `null`. Only scheduled runs get this tool, and each can write only its own task's note. A note over the byte limit is rejected so the model can shorten it.
+Each run sees the current note and can replace or clear it. The new note is saved only if the run completes. A failed or cancelled run leaves the note as it was. Editing the task keeps its note. Notes are separate from your [saved facts](memory.md).
 
-The last value saved takes effect only when the occurrence completes, including a `NO_REPLY` completion. Failed, cancelled, or interrupted occurrences leave the note unchanged. If the run completed before the worker stopped, startup recovery can record that completion and save its note. A retry starts with the task's current note and discards values from the earlier attempt. The running occurrence keeps the note it started with.
+To see or clear a note:
 
-Notes belong to one task and do not change [saved facts](memory.md). They are data, not instructions or permission to run commands. A URL found only in a note does not authorize a page read. The note tool stays available after reading a page or search result, so a task can save the value it found.
-
-Editing a task keeps its note. Removing a task or clearing all tasks deletes its note history too. The worker adds `note_updated=true` to the completion log when a run changes its note.
-
-### Inspect or clear a note
-
-`poppet tasks show <task-id>` displays the current note, when it changed, and the occurrence that saved it, or `cli` for an owner clear. JSON output includes `note` and `noteHistory`, with changes newest first. `note` is `null` when no note has been saved; a cleared note has a null `text`.
-
-```fish
-poppet tasks show <task-id> --json
+```sh
+poppet tasks show <task-id>
 poppet tasks clear-note <task-id>
 ```
 
-Clearing works with the worker running or stopped, but fails while that task has a running occurrence. Wait for it to finish or cancel it first. Clearing an absent note changes nothing. The CLI can clear notes but cannot write their text, and interactive chat cannot clear them.
-
-## Use MCP tools
-
-Scheduled MCP access is off by default. Configure owner-verified read-only tools in `scheduledTools`, or opt actions into per-call review with `scheduledReviewedTools`. See [MCP permissions](mcp.md#permissions) and [scheduled reviewed actions](mcp.md#schedule-a-reviewed-action). Restart the worker after changing these lists.
-
-Reviewed MCP calls use the saved task prompt as their authority, not task notes or retrieved content. Only an allow decision executes the call. A denial, unavailable review, or need for human approval fails the occurrence without waiting for a person. Future recurring occurrences stay scheduled, and earlier actions are not rolled back.
-
-`poppet tasks show <task-id>` includes the reviewed invocation, decision, reason, and outcome. Inspect the server after an uncertain outcome before retrying. Tasks with a destination use the same [failure notices](#failure-notices) as other failed runs.
+`tasks show` displays the note and when it last changed. You cannot clear a note while the task is running.
 
 ## Choose a skill
 
-Add `--skill <name>` before the prompt to save a [skill](skills.md) with a new task. Each run uses the copy saved with the task. To use an edited skill, create a new task. Scheduled prompts do not expand `$name` mentions. You can select a manual-only skill with `tasks add --skill`; the model cannot select one when creating a task in chat.
+Add `--skill <name>` before the prompt to have the task follow a [skill](skills.md). The task keeps a copy of the skill from when you created it. To use an edited skill, create a new task. Writing `$name` in a task prompt does not load a skill.
 
-## Read a web page
+## Read and search the web
 
-A task prompt can include a public URL, and the run can read it:
+A task prompt can include a web address for Poppet to read:
 
 ```sh
 poppet tasks add page-summary --cron "0 9 * * *" --tz Europe/London "Summarize https://example.com/ and cite the source"
 ```
 
-A URL mentioned only in a skill, an earlier conversation, or a fetched page does not give the task permission to read it.
-
-## Research with web search
-
-With [web search](web.md) set up, a prompt can ask for research without a URL:
+Poppet only reads addresses that are in the prompt, or that it finds with [web search](web.md). With web search set up, a prompt can ask for research without an address:
 
 ```sh
 poppet tasks add weekly-research --cron "0 9 * * 5" --tz Europe/London "Search for recent Bun releases, read relevant sources, and cite them"
 ```
 
-Search errors return a failed tool result for the model to explain or handle within the run limits. They do not automatically retry or pause the provider.
+## Use MCP tools
 
-## Missed runs, pauses, and retries
+Scheduled tasks cannot use [MCP tools](mcp.md) unless you allow it for each tool. Allow read-only tools with `scheduledTools`, or tools that change things with `scheduledReviewedTools`. See [MCP permissions](mcp.md#permissions) and [schedule a reviewed action](mcp.md#schedule-a-reviewed-action).
 
-The worker runs one task at a time. The worker skips a recurring time that passes while it is stopped. If it was only briefly unavailable, it runs the most recent missed time once, as long as that time is within `tasks.catchUpMinutes`. The default is 60 minutes. With `tasks.catchUpMinutes` set to `0`, recurring slots missed during sleep are skipped too. An overdue one-off runs once. A recurring task has at most one pending or running run. Other due times are recorded as skipped.
+A tool that needs your approval fails the run, because nobody is there to approve it. The task's schedule continues, and actions that already finished are not undone.
 
-If the worker stops after saving a failed run, startup recovery records its occurrence as failed and keeps the failure reason.
+## Missed runs
 
-Pending recurring runs expire after 24 hours. One-off runs do not expire.
+The worker runs one task at a time, and only while your computer is awake.
 
-To cancel a run that is pending or running, or to retry a failed one:
+- A one-off task that was due while the worker was stopped runs once when it starts again.
+- A repeating task runs its most recent missed time once, if it was missed by 60 minutes or less. Poppet skips older missed times. Change this window with [`tasks.catchUpMinutes`](configuration.md#settings).
+- A repeating run that has waited 24 hours without starting is dropped. One-off runs do not expire.
+
+`tasks show` lists the times Poppet skipped.
+
+## Cancel or retry a run
 
 ```sh
 poppet tasks cancel <task-id>
 poppet tasks retry <task-id>
 ```
 
-Cancel selects the task's pending or active run. If neither exists, it fails without changing the schedule. Retry selects its latest occurrence and fails if that occurrence succeeded or is active. Add `--occurrence <occurrence-id>` to either command to select a specific occurrence belonging to the task. Restart an older worker after upgrading to these task-based commands.
+`tasks cancel` stops the task's current or next run without changing the schedule. `tasks retry` runs the task's latest failed, cancelled, or interrupted run again, in a new conversation. Add `--occurrence <occurrence-id>` to choose an earlier run from `tasks show`. Resume a paused task before you retry it.
 
-A quota failure pauses scheduled runs for that provider indefinitely. The CLI has no command to clear a quota pause. Inspect provider pauses with `poppet worker status`. Expired temporary holds no longer appear in status. Temporary and rate-limit failures delay later runs by 30 seconds, doubling after each failure up to five minutes. Poppet never retries a failed run on its own. `retry` starts a fresh session for it. Resume a paused task before retrying it.
+Poppet never retries a failed run by itself.
 
-## Remove a task
+## When your provider has problems
 
-```fish
+If your provider says you are out of quota, Poppet pauses every scheduled task that uses that provider. `poppet worker status` shows the pause. There is no command to lift it yet.
+
+For other temporary provider errors, Poppet waits 30 seconds before the next scheduled run, and doubles the wait after each further error, up to five minutes.
+
+## Remove tasks
+
+Remove one task and its history:
+
+```sh
 poppet tasks remove <task-id>
 ```
 
-This permanently removes one task and its history, including pending work. Conversations and runs remain saved. Cancel an active run first.
-
-## Clear tasks
-
-To remove every task and its run history:
+Remove every task and all task history:
 
 ```sh
 poppet tasks clear
 ```
 
-This works whether the worker is running or stopped. An active run is stopped first. Chat sessions, facts, credentials, and provider pauses are kept.
-
+`tasks remove` refuses a running task, so cancel it first. `tasks clear` stops any running task first. Neither command deletes your conversations or saved facts. Removing a task cannot be undone.
