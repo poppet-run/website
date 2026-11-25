@@ -53,7 +53,7 @@ poppet --help
 poppet setup
 ```
 
-Setup asks you to choose a provider, sign in, and pick a model. It can also connect Discord or Slack. On macOS, and on Linux with systemd, it offers to start the [worker](worker.md) each time you log in. On other systems it shows the command to run the worker yourself.
+Setup asks you to choose a provider, sign in, and pick a model. It can also connect a [messaging gateway](gateways/_index.md), such as Discord or Slack. On macOS, and on Linux with systemd, it offers to start the [worker](worker.md) each time you log in. On other systems it shows the command to run the worker yourself.
 
 Setup saves your choices in `config.json` and keeps your sign-in details in separate protected files. If you run it again, it starts from your current settings.
 
@@ -119,5 +119,5 @@ You can keep chatting without setting up anything else. When you want more:
 - [Memory](memory.md) keeps facts about you between conversations.
 - [Skills](skills.md) let you reuse a procedure in a chat or task.
 - [Scheduled tasks](tasks.md) run a prompt later. They need the [worker](worker.md) running.
-- [Messaging](gateways/_index.md) lets you chat from Discord or Slack.
+- [Messaging](gateways/_index.md) lets you chat through a gateway, such as Discord or Slack.
 - [Web search](web.md) and [MCP tools](mcp.md) give Poppet more tools.

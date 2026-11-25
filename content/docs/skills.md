@@ -45,7 +45,7 @@ Write `$` and a skill's name to use it for one message:
 Run $weekly-review for the Acorn project
 ```
 
-This works in the terminal, web chat, Discord, and Slack. In a shell command, use single quotes so the shell leaves `$` alone:
+This works in the terminal, web chat, and gateway threads. In a shell command, use single quotes so the shell leaves `$` alone:
 
 ```sh
 poppet chat new 'Run $weekly-review for the Acorn project'
@@ -73,9 +73,9 @@ Review the release checklist and report anything still unfinished.
 
 You can still choose a manual-only skill with `--skill`, `/new --skill`, or `$name`. `poppet skills list` marks these skills as `manual-only`. If the marker is not exactly on the first line, the skill is not manual-only.
 
-## Choose a skill in Discord or Slack
+## Choose a skill in a gateway
 
-In a Discord or Slack thread, start a new session with a skill:
+In a [messaging gateway](gateways/_index.md) thread, such as Discord or Slack, start a new session with a skill:
 
 ```text
 /new --skill weekly-review Review my Acorn project

@@ -80,7 +80,7 @@ Add `--to slack` to post a task's results in the home channel:
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --to slack "Summarize my recent conversations"
 ```
 
-Use `--to slack:<channel-id>` for another channel, or `--to slack:<channel-id>:<thread-timestamp>` for a thread. See [send results to Discord or Slack](../tasks.md#send-results-to-discord-or-slack).
+Use `--to slack:<channel-id>` for another channel, or `--to slack:<channel-id>:<thread-timestamp>` for a thread. See [send results to a gateway](../tasks.md#send-results-to-a-gateway).
 
 You can also ask Poppet in a thread to schedule a task. By default, its results go to the home channel. Ask for "this thread" or give another channel to post there instead.
 
@@ -88,4 +88,4 @@ You can also ask Poppet in a thread to schedule a task. By default, its results 
 
 Poppet saves each answer before it posts it. If Poppet cannot tell whether a post reached Slack, it does not post it again, to avoid a duplicate. Check the thread, then read the saved answer with `poppet chat show <session-id>` if you need it.
 
-If the connection to Slack drops, Poppet tries again after 30 seconds. Run `poppet worker status` to check that Slack is connected. See [troubleshooting](../troubleshooting.md#discord-or-slack-does-not-reply).
+If the connection to Slack drops, Poppet tries again after 30 seconds. Run `poppet worker status` to check that Slack is connected. See [troubleshooting](../troubleshooting.md#a-gateway-does-not-reply).
