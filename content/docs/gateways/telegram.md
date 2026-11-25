@@ -1,63 +1,123 @@
 +++
 title = "Telegram"
-description = "Connect a bot and chat privately, in a group, or in forum topics."
+description = "Connect a Telegram bot, and chat with Poppet privately, in a group, or in forum topics."
 +++
 
 # Telegram
 
-Chat with Poppet through a Telegram bot. Only the configured owner can invoke it, in one configured chat. Everyone who can read that chat can read its replies, including saved facts and conversation content.
+You can chat with Poppet through a Telegram bot that you create. It works in one chat that you choose, and only answers you. Everyone else in that chat can read its replies, including your saved facts and anything from your conversations, so a private chat is safest.
 
 ## Create the bot
 
-Create a bot with [@BotFather](https://t.me/BotFather) and copy its token. Message the bot, then read `from.id` in the Bot API's `getUpdates` response to find your numeric user ID. For a private chat, the chat ID is your user ID. For a group, add the bot and read `chat.id`; supergroup IDs start with `-100`.
+1. In Telegram, message [@BotFather](https://t.me/BotFather) and create a bot. Copy the token it gives you, and keep it private.
+2. Send your new bot a message.
+3. Open `https://api.telegram.org/bot<token>/getUpdates` in a browser, with your token in place of `<token>`. Your user ID is the number after `"from":{"id":`.
+4. Choose the chat Poppet will use:
+   - For a private chat with the bot, the chat ID is your user ID.
+   - For a group, add the bot to the group, send a message there, and open the same address again. The chat ID is the number after `"chat":{"id":`. Group IDs start with `-`.
 
-For a forum, make the bot an administrator with **Manage Topics**. In other groups, make it an administrator or disable privacy mode in BotFather so it can receive follow-up messages without a mention.
+In a group with forum topics, make the bot an administrator with **Manage Topics**. In other groups, make it an administrator, or turn off privacy mode in BotFather, so it can see your follow-up messages.
 
-Poppet uses long polling. Do not configure a webhook, and run only one worker per bot token.
+Do not set a webhook for the bot, and do not use its token in any other program. Poppet checks for new messages itself, and only one program can do that per bot.
 
 ## Connect Poppet
 
-Telegram uses named setup flags; it is not part of the interactive `poppet setup` flow. Read the token without putting it in shell history:
+`poppet setup` does not connect Telegram. Use this command instead. It reads the token without saving it in your shell history:
+
+{{< shell >}}
+```bash {label="bash"}
+IFS= read -r -s -p 'Telegram bot token: ' telegram_token; echo
+poppet gateway telegram setup --owner-id <user-id> --chat-id <chat-id> --bot-token "$telegram_token"
+unset telegram_token
+```
+
+```zsh
+read -r -s 'telegram_token?Telegram bot token: '; echo
+poppet gateway telegram setup --owner-id <user-id> --chat-id <chat-id> --bot-token "$telegram_token"
+unset telegram_token
+```
 
 ```fish
 read --silent --prompt-str 'Telegram bot token: ' telegram_token
-poppet gateway telegram setup --owner-id <your-user-id> --chat-id <chat-id> --bot-token "$telegram_token"
-set -e telegram_token
-poppet worker run
+poppet gateway telegram setup --owner-id <user-id> --chat-id <chat-id> --bot-token "$telegram_token"
+set --erase telegram_token
+```
+{{< /shell >}}
+
+Scheduled results go to the chat itself. To send them to a forum topic instead, add `--home-conversation-id <chat-id>:<topic-id>`.
+
+Poppet saves your Telegram settings and token in `channels/telegram.json` in your [data directory](../configuration.md#data-directory), where only your user account can read them. Telegram has no settings in `config.json`.
+
+Start the worker, or restart it if it is already running:
+
+```sh
+poppet worker restart
 ```
 
-The bot token is required. Add `--home-conversation-id <chat-id>:<topic-id>` to use a forum topic for scheduled results. Otherwise, home defaults to the configured chat. Negative group IDs work as values for both flags.
-
-All Telegram settings, including the token, are saved in `<data directory>/channels/telegram.json` with `0600` permissions. There is no `telegram` section in `config.json`. Restart an existing worker after changing settings. Removing this file disables Telegram after a worker restart.
+To turn Telegram off, delete `channels/telegram.json` and restart the worker.
 
 ## Start a conversation
 
-- In your private chat with the bot, every message is addressed to it. The whole chat is one conversation.
-- In a group or non-forum supergroup, mention the bot or reply to it to start. The whole chat is one conversation.
-- In a forum supergroup, mention the bot in General to open a topic for the request. Each topic is a conversation. Mention the bot to start in an existing topic.
+- **Private chat.** Send a message. The whole chat is one conversation.
+- **Group.** Mention the bot or reply to it. The whole group is one conversation.
+- **Group with forum topics.** Mention the bot in General, and Poppet opens a new topic for your request. Each topic is its own conversation. To start in an existing topic, mention the bot there.
 
-After a conversation starts, the owner can continue without mentioning the bot, provided Telegram delivers those messages. Only text messages are read; attachments are not supported. Replies are plain text, so Markdown appears as written. Poppet reacts with eyes while working and a thumbs-up when finished.
+Once a conversation has started, you can carry on without mentioning the bot, as long as the bot can see your messages. Poppet reacts with 👀 while it works and 👍 when it finishes.
 
-Use `/status`, `/cancel`, and `/new` as ordinary messages. `/new --skill <name>` starts a fresh session with a [skill](../skills.md). Bot mentions and command suffixes such as `/status@YourBot` are stripped before Poppet handles the text.
+Poppet only reads text. It does not accept photos or files. Replies are plain text, so any Markdown formatting shows as typed.
 
-Poppet names topics it creates after the session title. An external topic rename stops automatic renaming. After a worker restart, Poppet cannot rename a topic until it has learned the name again from a topic event.
+Poppet names each topic it opens after the conversation's title. If you rename a topic yourself, Poppet stops renaming it. After the worker restarts, Poppet can rename a topic again only once Telegram tells it the topic's current name.
+
+## Commands in a conversation
+
+Send these as ordinary messages:
+
+| Message | What it does |
+| ------- | ------------ |
+| `/new <message>` | Starts a new conversation |
+| `/new --skill <name> <message>` | Starts a new conversation using a [skill](../skills.md) |
+| `/status` | Shows the conversation and its latest answer |
+| `/cancel` | Stops the current answer and any waiting messages |
+
+Telegram's own style also works, such as `/status@YourBot`.
 
 ## Approve an action
 
-For [commands](../commands.md) and [MCP actions](../mcp.md#review-an-action) that need approval, Poppet posts the proposed action and an approval ID. Reply `/approve <id>` or `/deny <id>` in the same conversation. Only the owner can answer. Approval permits one execution and expires after two minutes, cancellation, or worker restart. Telegram has no approval buttons.
+When a [command](../commands.md) or [MCP action](../mcp.md#review-an-action) needs your approval, Poppet posts what it wants to do and an approval ID. Reply in the same conversation with one of these:
 
-## Deliver scheduled results
+```text
+/approve <id>
+/deny <id>
+```
 
-Use `--to telegram` for the configured home conversation:
+Telegram has no approval buttons. Only you can answer. An approval covers that one action, and expires after two minutes, or when you cancel the reply or restart the worker.
 
-```fish
+## Send scheduled results
+
+Add `--to telegram` when you create a [scheduled task](../tasks.md), to post its results to the chat or home topic:
+
+```sh
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --to telegram "Summarize my recent conversations"
 ```
 
-Use `--to telegram:<chat-id>` for the configured chat, or `--to telegram:<chat-id>:<topic-id>` for one of its forum topics. Destinations outside the configured chat are rejected. Scheduled delivery needs `poppet worker run`; see [scheduled tasks](../tasks.md).
+| Option | Posts to |
+| ------ | -------- |
+| `--to telegram` | The chat, or the home topic if you set one |
+| `--to telegram:<chat-id>` | The chat |
+| `--to telegram:<chat-id>:<topic-id>` | A forum topic in the chat |
 
-## Connection and delivery problems
+Poppet only posts to the chat you connected. Results need the [worker](../worker.md) running.
 
-Check `poppet worker status --json`, the configured owner and chat IDs, and the bot's membership and topic permissions. A rejected token needs setup again. A conflicting polling client or webhook must be stopped or removed.
+## If something goes wrong
 
-Telegram has no idempotency key. If a send or topic creation has an uncertain outcome, retrying it may duplicate it. Check the chat and the saved answer with `poppet chat show <session-id>` before posting again. Poppet processes queued Telegram updates when the worker starts and ignores messages the gateway has already accepted.
+Run `poppet worker status`, and check:
+
+- your user ID and chat ID
+- that the bot is still in the group, with the permissions above
+- that no webhook is set, and no other program uses the token
+
+If Telegram rejects the token, run the setup command again with a new one.
+
+Sometimes Poppet cannot tell whether a post reached Telegram. Posting it again could show it twice, so check the chat first. To read the saved answer, run `poppet chat show <session-id>`.
+
+When the worker starts, Poppet answers messages that arrived while it was stopped. It never answers the same message twice.
