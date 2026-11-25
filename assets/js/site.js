@@ -20,11 +20,15 @@ if (navigator.clipboard) {
 // shell everywhere on the page and remember it for later pages.
 const shellGroups = [...document.querySelectorAll(".shell-variants")].map((group) => [...group.querySelectorAll(":scope > .code-block")]);
 
+// bash blocks also work in zsh, so a zsh reader sees bash where a group has no zsh block.
+const shellFallbacks = { zsh: "bash" };
+
 function showShell(lang) {
   for (const blocks of shellGroups) {
-    if (!blocks.some((block) => block.dataset.lang === lang)) continue;
+    const shown = [lang, shellFallbacks[lang]].find((candidate) => blocks.some((block) => block.dataset.lang === candidate));
+    if (!shown) continue;
     for (const block of blocks) {
-      block.hidden = block.dataset.lang !== lang;
+      block.hidden = block.dataset.lang !== shown;
     }
   }
 }

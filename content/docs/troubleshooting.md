@@ -1,13 +1,17 @@
 +++
 title = "Troubleshooting"
-description = "Check setup, provider access, background workers, Discord, and optional tools."
+description = "Fix common problems with setup, providers, scheduled tasks, Discord, Slack, and tools."
 +++
 
 # Troubleshooting
 
-Run these commands from any directory. Keep the full error message when you report a problem.
+Start with doctor. It checks your setup without changing anything, and suggests what to fix:
 
-Start with `poppet doctor` for read-only setup and worker checks, or `poppet doctor --json` for scripts. See [doctor](doctor.md) for what it checks and its limits.
+```sh
+poppet doctor
+```
+
+If you report a problem, include the full error message. See [doctor](doctor.md) for what it checks.
 
 ## Poppet will not start
 
@@ -17,78 +21,79 @@ poppet --help
 poppet config
 ```
 
-Use Bun 1.4.4 and install dependencies with `bun install --frozen-lockfile`. A configuration error usually means malformed JSON, an unknown key, a wrong type, or an empty value. Fix the field named in the error, then try again. See [configuration](configuration.md).
+Make sure you have Bun 1.4.4. In the folder where you installed Poppet, run `bun install --frozen-lockfile` again.
 
-## Settings are not what you expect
+If `poppet config` shows an error, it names the setting at fault. Common causes are a missing comma or quote in `config.json`, a misspelled setting, or a value of the wrong kind. See [configuration](configuration.md).
 
-Check `poppet config`. It shows the config file location and whether it exists.
+## Poppet ignores a setting
 
-A running worker keeps the settings it read when it started. After you change `config.json`, restart it. For a worker that runs at login:
+Run `poppet config` to see the settings Poppet reads, and which file it reads them from.
+
+The worker reads settings only when it starts, so restart it after every change:
 
 ```sh
 poppet worker restart
 ```
 
-For a foreground worker, press Ctrl-C in its terminal and start it again.
+If the worker runs in a terminal, press Ctrl-C and start it again.
 
-Existing sessions and tasks keep the provider and model they were saved with. Start a new chat to use a different one.
+A conversation or task keeps the provider and model it started with. Start a new chat to use a different model.
 
 ## Chat fails
 
-Check the connection and model for your provider. Replace the provider name if you use OpenRouter or OpenCode Go:
+Check that you are signed in and that your model is available. Use `openrouter` or `opencode-go` in place of `openai-chatgpt` if you use those:
 
 ```sh
 poppet provider status openai-chatgpt
 poppet provider models openai-chatgpt
 ```
 
-Check that the model in `config.json` appears in the list. ChatGPT also needs plan-usage consent. For credential and quota errors, see the [provider guides](providers/_index.md).
+Check that the `model` in `config.json` appears in the list. For ChatGPT, `provider status` must show that you approved plan usage. For sign-in and quota errors, see your [provider's guide](providers/_index.md).
 
 ## A task did not run
 
-Keep a [worker](worker.md) running, then check the task in a second terminal:
+Tasks only run while the [worker](worker.md) is running and your computer is awake. Check that it is running, then look at the task:
 
 ```sh
+poppet worker status
 poppet tasks list
 poppet tasks show <task-id>
 ```
 
-`tasks show` lists the next time, past runs, pauses, failures, and results. Check the timezone you saved. Use `worker status` to inspect provider pauses, and check the worker log. Login startup is available on macOS and Linux with systemd:
+`tasks show` lists when the task is next due, its past runs, and any failures. Check the time zone. `worker status` shows whether Poppet paused your provider, for example because you ran out of quota. `poppet worker logs` shows errors.
+
+If your computer was asleep or the worker was stopped, see [missed runs](tasks.md#missed-runs) before you retry.
+
+## Discord or Slack does not reply
 
 ```sh
 poppet worker status
 poppet worker logs
 ```
 
-Only one worker can run for a data directory. A computer that is asleep or shut down cannot run tasks. Read [missed runs and retries](tasks.md#missed-runs-pauses-and-retries) before you retry a task.
+Check that:
 
-## Discord does not reply
+- the worker is running and shows Discord or Slack as connected
+- your user ID, server or workspace ID, and home channel ID are right in `config.json`
+- you are writing as the owner, in a channel where the bot is present
+- the bot has the permissions in the [Discord guide](gateways/discord.md#create-the-bot) or the scopes and events in the [Slack guide](gateways/slack.md#create-the-app)
+- for Slack, you are not in a direct message or a shared channel
 
-```sh
-poppet worker status
-```
+Restart the worker after you change any of these.
 
-Check the connection state, your owner ID, and the server ID in `config.json`. Poppet replies only to the owner, and only in the configured server. Make sure the bot has the permissions and the Message Content intent listed in the [Discord guide](gateways/discord.md). Restart the worker after you change Discord settings.
+If Poppet saved an answer but could not confirm that it was posted, it does not post it again. Check the thread, then read the answer with `poppet chat show <session-id>`.
 
-If a reply's delivery is uncertain, check the saved answer with `poppet chat show <session-id>` before you post it again. Discord may already have received it.
+## Web search or MCP tools are missing
 
-## Search or MCP tools are missing
+- For [web search](web.md), run `poppet web status`. Set `webSearchProvider` to `brave` or `kagi`, and save a key with `poppet web login`. Remove any old `webSearch` setting.
+- For [MCP tools](mcp.md), run `poppet mcp servers`. The server must have `"enabled": true`, and each tool must be allowed. Run `poppet mcp tools <name>` to connect and see its tools.
 
-- [Web search](web.md): run `poppet web status`. Search needs `webSearchProvider` set to `brave` or `kagi` and a saved key for that provider. Remove the obsolete `webSearch` field if present; it causes a configuration error.
-- [MCP tools](mcp.md): run `poppet mcp servers`. A server must be enabled, and each tool must be listed. `poppet mcp tools <server-id>` starts a server to discover its tools. `servers` does not.
+Restart the worker after changing settings. Restarting also reconnects a failed MCP server.
 
-Restart the worker after you change configuration, or to reconnect a failed MCP server.
+## A tool may have done something before an error
 
-## A run failed after a tool ran
+Run `poppet chat show <session-id>` to see the error and each tool Poppet used. A tool call marked uncertain may have finished. Check the file or service it changed before you ask Poppet to try again. Poppet never repeats an uncertain action by itself.
 
-Inspect the session with `poppet chat show <session-id>`. It shows the error and each tool call. A tool call that may have changed something is marked uncertain. Check the file or service it affected before asking Poppet to try again. Poppet never replays an uncertain action on its own.
+## Keep your data while you investigate
 
-## Where your data is
-
-Keep your data directory while you investigate. Deleting it removes your saved conversations, facts, tasks, and credentials. See [storage](storage.md).
-
-## Slack does not reply
-
-Check `poppet worker status --json`, your owner and workspace IDs, and the bot's channel membership. Enable Socket Mode and the scopes and event subscriptions in the [Slack guide](gateways/slack.md). Shared channels and DMs are unsupported. Mention the bot to start a conversation, and restart the worker after changing settings.
-
-If delivery is uncertain, inspect `poppet chat show <session-id>` before posting again. Slack may already have received the reply.
+Your data directory holds your conversations, facts, tasks, and sign-ins. Do not delete it to fix a problem. Make a [backup](storage.md#back-up) first if you want to experiment.

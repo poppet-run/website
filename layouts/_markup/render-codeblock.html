@@ -1,5 +1,5 @@
-{{- /* sh blocks work in every shell. bash blocks also work in zsh, and sit beside a fish block in the shell shortcode. */ -}}
-{{ $label := index (dict "sh" "bash / zsh / fish" "bash" "bash / zsh") .Type | default .Type | default "code" }}
+{{- /* sh blocks work in every shell. bash blocks also work in zsh, and sit beside a fish block in the shell shortcode. A label attribute, such as ```bash {label="bash"}, replaces the default label. */ -}}
+{{ $label := .Attributes.label | default (index (dict "sh" "bash / zsh / fish" "bash" "bash / zsh") .Type | default .Type | default "code") }}
 <div class="code-block" data-lang="{{ .Type }}">
   <div class="code-header">
     <span>{{ $label }}</span>
