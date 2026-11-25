@@ -1,70 +1,58 @@
 +++
 title = "Run commands"
-description = "Let Poppet run shell commands on your computer, with a review before each one and your approval in Discord, Slack, or Telegram when it is needed."
+description = "How Poppet runs shell commands on your computer, and how you approve them in Discord or Slack."
 +++
 
 # Run commands
 
-Poppet can run shell commands on your computer for chats, Discord and Slack threads, Telegram conversations, and scheduled tasks. Commands run as your user account, with its files and permissions. Poppet does not sandbox them, and it does not have root access or a sudo password.
+Poppet can run shell commands on your computer in chats, Discord and Slack threads, and scheduled tasks. Every model that can use tools has this ability, and there is no setting to turn it off.
 
-Because of that, every command is reviewed before it runs.
+Commands run as your user account. They can read, change, and delete anything your account can. Poppet has no sandbox, and it cannot use `sudo`. Because of this, Poppet reviews every command before it runs.
 
 ## How review works
 
-Before each command, a separate request to your current model reviews it against your message or the task's saved prompt. The reviewer sees only the command and that context. It has no tools and no chat history.
+Before each command, Poppet sends a separate request to your current model, asking whether the command matches what you asked for. The review sees only the command and your message, or the task's prompt for a scheduled task. Each review uses a little of your provider quota.
 
-The reviewer returns one of three decisions:
+The review gives one of three answers:
 
 - **Allow.** The command runs once, exactly as reviewed.
-- **Needs approval.** A person must approve it first. In Discord, Slack, or Telegram, Poppet asks you there. CLI and web chat commands stop without executing. Request the operation in Discord, Slack, or Telegram to approve it there. A scheduled task fails.
-- **Deny.** The command does not run, and the run ends.
+- **Needs approval.** You must approve the command first. In Discord or Slack, Poppet asks you in the thread. In the terminal and web chat, the command does not run. A scheduled task fails.
+- **Deny.** The command does not run, and Poppet stops answering.
 
-If the reviewer fails, times out, or returns an unreadable answer, nothing runs. A denied command cannot be retried within the same run.
+If the review fails or times out, the command does not run.
 
-Poppet records dispatch only after review and any required approval. Cancelling while either is pending records an interruption before dispatch. Approval messages escape control characters and markup so the command and reason can be read as data.
+The review is a second opinion from a model, and it can be wrong. It reads the command, but not the contents of any script the command runs. Only use Poppet on an account where you would be comfortable running these commands yourself.
 
-The reviewer is a model, so it can be wrong. It reads the command, not the scripts that command runs, and a script can change after review. Treat review as a second opinion, not a sandbox.
+## Approve a command
 
-## Approve commands in Discord
-
-When a command needs approval, Poppet posts its exact command, working directory, timeout, and reason in the thread. Click **Approve once** or **Deny**, or reply with the ID from that message:
+To approve commands, chat in [Discord](gateways/discord.md) or [Slack](gateways/slack.md). When a command needs approval, Poppet posts the exact command, the folder it runs in, its time limit, and the reason for asking. Click **Approve once** or **Deny**, or reply with the ID from the message:
 
 ```text
 /approve <id>
 /deny <id>
 ```
 
-Only the owner can answer, in the same conversation. An approval covers that one command, with the same directory and timeout, and nothing else. Requests expire after two minutes, or when the run is cancelled or the worker restarts. Repeated clicks or replies cannot execute the command again. Poppet confirms button clicks privately and disables the buttons when the request ends. Updating the message is best effort; after a restart, an old button may still appear but cannot revive the request. Ask again to get a new review.
+Only you can answer, and only in the same thread. An approval covers that one command and nothing else. A request expires after two minutes, or when you cancel the reply or restart the worker. To try again after that, ask Poppet again.
 
-## Approve commands in Telegram
+In Slack, the buttons need **Interactivity & Shortcuts** turned on in your [Slack app settings](gateways/slack.md#create-the-app). Replying with `/approve <id>` works without it.
 
-Poppet posts the command and approval ID in the conversation. Reply `/approve <id>` or `/deny <id>` as the configured owner in that conversation. There are no buttons. Approval permits one execution and expires after two minutes, cancellation, or worker restart. See [Telegram](gateways/telegram.md#approve-an-action).
+In the terminal or web chat, a command that needs approval does not run. Ask for the same thing in Discord or Slack to approve it there.
 
-## Approve commands in Slack
-
-Poppet posts the exact command, working directory, timeout, reason, and approval ID in the thread. Click **Approve once** or **Deny**, or reply with `/approve <id>` or `/deny <id>`. Only the configured owner can answer, in the same conversation. The approval covers one command with its saved directory and timeout. Requests expire after two minutes, cancellation, or a worker restart. Enable **Interactivity & Shortcuts** in your [Slack app settings](gateways/slack.md#create-the-app) to use the buttons.
-
-Buttons appear after the full invocation, even when it spans several messages. Repeated clicks or text replies cannot execute it again. Poppet confirms button clicks privately and replaces the buttons with the outcome when the request ends. Text replies update the buttons too. Updating the message is best effort; an old button cannot reopen a settled request.
-
-[Reviewed MCP actions](mcp.md#review-an-action) use the same approval controls. Their prompts show the target, expected effects, and exact tool arguments.
+[Reviewed MCP actions](mcp.md#review-an-action) use the same buttons and replies.
 
 ## Scheduled tasks
 
-A scheduled task never waits for approval. If a command needs it, that run fails right away, and the worker logs a reason code. `poppet tasks show <task-id>` has the details. Tasks with a destination queue a short [failure notice](tasks.md#failure-notices), without model output or error text. The recurring schedule keeps running. Poppet does not undo commands that finished before the failure, so check the machine before you retry.
+Nobody is around to approve a command during a scheduled task. If a command needs approval, that run fails straight away. The task's schedule continues. If the task posts to Discord or Slack, Poppet posts a short [failure notice](tasks.md#failure-notices) there. Run `poppet tasks show <task-id>` for details.
 
-Successful results still go to the task's destination, unless the whole answer is [`NO_REPLY`](tasks.md#stay-quiet-when-there-is-nothing-to-report).
+Commands that finished before the failure are not undone, so check your computer before you run the task again.
 
-## What a command gets
+## What a command can do
 
-- A timeout from 1 to 300 seconds, set by the model for each command.
-- A standard input that is closed, so a command cannot wait for typed input.
-- The output from stdout and stderr, the exit code, and whether the output was cut short. Truncated output keeps only complete UTF-8 characters.
-- A Bash shell that skips your shell profile.
+- Each command has a time limit of up to 300 seconds. When the limit passes, Poppet stops the command and anything it started.
+- A command cannot ask you for input.
+- Poppet sees the command's output and exit code. Long output is cut short.
+- Commands run in Bash, without your shell profile.
 
-A completed receipt includes `status: "completed"` and `approvedBy`, identifying the owner or reviewer. The command has already finished, even if it produced no output. Its exit code shows whether it succeeded.
+Commands receive only a few basic environment variables, such as `HOME`, `PATH`, and `LANG`. Your API keys and other variables are not passed on. Commands can still read any file your account can, including saved credentials, so avoid keeping secrets where a command could find them.
 
-A timeout or cancellation stops the command and its child processes. Poppet closes output pipes on timeout or cancellation even if a detached process still holds them open. Processes that deliberately detach from the command’s process group are outside the cleanup guarantee. Poppet does not replay a command that was interrupted. To keep a service running, use your system's service manager, not `command &`.
-
-## Limits
-
-Commands inherit only `HOME`, `PATH`, `USER`, `LOGNAME`, `SHELL`, `TERM`, `TMPDIR`, `LANG`, `LC_ALL`, and `LC_CTYPE`. Other variables, including provider keys and Bash startup controls, are not passed through. Commands can still read files and credentials accessible to your account. Only allow commands you would run yourself, and avoid storing secrets where a command could read them.
+If a command is interrupted, Poppet does not run it again. To keep a program running in the background, use your system's service manager rather than asking Poppet to start it.
