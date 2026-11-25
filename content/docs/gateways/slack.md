@@ -1,88 +1,91 @@
 +++
 title = "Slack"
-description = "Connect a Socket Mode app and chat in owner-authorized Slack threads."
+description = "Create a Slack app for Poppet and chat with it in threads."
 +++
 
 # Slack
 
-Chat with Poppet through a Slack app in your workspace. Only the configured owner can invoke it, but everyone with channel access can read its replies, including saved facts and conversation content. Choose a home channel that only trusted people can read.
+Chat with Poppet through a Slack app in your workspace. Only you can use the app. You talk to it in threads, and it can post scheduled results to a home channel.
+
+Anyone who can read a channel can read Poppet's replies there, including your saved facts and conversations. Use a private channel that only trusted people can see.
 
 ## Create the app
 
-Create a Slack app for your workspace and enable Socket Mode. Generate an app-level token with `connections:write`. Install the app with these bot scopes:
+1. At [api.slack.com/apps](https://api.slack.com/apps), create an app for your workspace.
+2. Turn on **Socket Mode**, and create an app-level token with the `connections:write` scope. Socket Mode means Slack does not need to reach your computer from the internet.
+3. Under **OAuth & Permissions**, add these bot token scopes: `chat:write`, `channels:read`, `channels:history`, `groups:read`, `groups:history`, `reactions:write`, and `files:read`.
+4. Under **Event Subscriptions**, subscribe to the `message.channels` and `message.groups` bot events.
+5. Turn on **Interactivity & Shortcuts**, so you can approve commands with buttons.
+6. Install the app to your workspace and copy its bot token.
+7. Invite the app to the channels you want to use.
 
-- `chat:write`
-- `channels:read` and `channels:history`
-- `groups:read` and `groups:history`
-- `reactions:write`
-- `files:read`
+Poppet works in ordinary public and private channels. It does not answer direct messages, group messages, archived channels, or channels shared with another organization.
 
-Subscribe to the `message.channels` and `message.groups` bot events. Turn on **Interactivity & Shortcuts** for approval buttons. Socket Mode needs no request URL. Invite the bot to an unshared channel. Direct and group messages, archived channels, and shared channels are refused. This includes organization-shared channels and channels with pending external sharing.
+Setup asks for three IDs, so find them first:
+
+- Your member ID, which starts with `U`. Open your Slack profile, choose the ⋮ menu, then **Copy member ID**.
+- Your workspace ID, which starts with `T`. Open Slack in a browser. It is the part of the address after `/client/`.
+- The home channel's ID, which starts with `C`. Open the channel's details. The ID is at the bottom.
 
 ## Connect
 
-Run setup for masked entry of the bot and app tokens:
+Run setup and choose Slack when it asks:
 
-```fish
+```sh
 poppet setup
 ```
 
-Or pass the three IDs as named flags and pipe the tokens from environment variables, with the bot token on the first line and the app token on the second:
+Setup asks for the three IDs, the bot token, and the app token. The tokens are hidden as you type them.
 
-```fish
-printf '%s\n%s\n' "$SLACK_BOT_TOKEN" "$SLACK_APP_TOKEN" | poppet gateway slack setup --owner-id <your-user-id> --team-id <workspace-id> --home-channel-id <home-channel-id>
-```
+Then start the worker, or restart it if it is already running:
 
-You can also pass `--bot-token <token>` and `--app-token <token>`. If you pass only one, stdin supplies the missing token on its first line. Piping existing environment variables or using masked entry in `poppet setup` keeps tokens out of the setup command arguments and shell history.
-
-Ordinary settings go under `slack` in `config.json`. Both tokens are saved in `<data directory>/channels/slack.json` with private file permissions. Removing the `slack` section disables the adapter and keeps the tokens.
-
-Start the [worker](../worker.md):
-
-```fish
+```sh
 poppet worker run
 ```
 
-After changing settings, stop and restart a foreground worker. For an installed login service, run `poppet worker restart`.
+If the worker starts at login, run `poppet worker restart` instead.
+
+Poppet saves the IDs in the `slack` section of `config.json`, and the tokens in a protected file. To turn Slack off, remove the `slack` section and restart the worker. To change settings without `poppet setup`, see [the command line reference](../cli.md#messaging).
 
 ## Start a conversation
 
-Mention the bot with a message to start a session in a thread. Follow-up messages in an attached thread need no mention. `/new` starts a fresh session; add `--skill <name>` to select a [skill](../skills.md). `/status` shows the session and latest saved run, even one with no messages, and `/cancel` stops active and queued requests.
+Mention the app with your message in a channel. It replies in a thread. After that, you do not need to mention it again in that thread.
 
-Controls and approval replies accept surrounding whitespace. These controls are ordinary messages, not Slack slash commands. Prefix them with the bot mention where needed. Only the configured owner can use them.
+While Poppet works, it adds 👀 to your message, and replaces it with ✅ when it finishes. Slack does not show Poppet typing, and Poppet does not rename threads.
 
-Attach images or text files using the [normal attachment types and limits](../chat.md#attach-files). With a file attached, `/new --skill <name>` can start a fresh session without a text prompt. Poppet downloads files through Slack's authenticated file host. Progress uses eyes and check-mark reactions. Typing indicators and remote thread naming are not implemented; session titles stay local.
+Attach images or text files to your message. A message with files does not need any text. See [attach files](../chat.md#attach-files) for the types and sizes Poppet accepts.
 
-You can also [name a skill](../skills.md#name-a-skill-in-a-message) with `$name` in a message to use it for that turn without starting a new session.
+## Thread commands
+
+Type these as ordinary messages in a thread. They are not Slack slash commands.
+
+| Message | What it does |
+| ------- | ------------ |
+| `/new <message>` | Starts a new conversation in this thread |
+| `/new --skill <name> <message>` | Starts a new conversation using a [skill](../skills.md) |
+| `/status` | Shows the conversation and its latest answer |
+| `/cancel` | Stops the current answer and any waiting messages |
+
+In a channel, mention the app first. To use a skill for one message without starting a new conversation, [name it](../skills.md#name-a-skill-in-a-message) with `$`, such as `Run $weekly-review for Acorn`.
 
 ## Approve commands
 
-When a command needs approval, click **Approve once** or **Deny**, or reply with `/approve <id>` or `/deny <id>` using the ID shown in the thread. Only the owner can answer. Approval covers one command and expires after two minutes, cancellation, or worker restart. See [run commands](../commands.md#approve-commands-in-slack).
-
-[Reviewed MCP actions](../mcp.md#review-an-action) use these same controls in the originating conversation. The prompt shows the target, expected effects, and exact arguments, and approval covers one call. If a reviewed MCP action stops a run, the reply includes the approval or review guidance.
+When a command needs your approval, Poppet posts it in the thread with **Approve once** and **Deny** buttons. You can also reply with `/approve <id>` or `/deny <id>`, using the ID it shows. Each approval covers one command, and a request expires after two minutes. See [run commands](../commands.md#approve-a-command). [Reviewed MCP actions](../mcp.md#review-an-action) work the same way.
 
 ## Scheduled results
 
-During [quiet hours](../configuration.md#quiet-hours), scheduled results and failure notices wait until the window ends. Replies to your messages are not held.
+Add `--to slack` to post a task's results in the home channel:
 
-Use `--to slack` to deliver to the home channel:
-
-```fish
+```sh
 poppet tasks add daily-summary --cron "0 9 * * *" --tz Europe/London --to slack "Summarize my recent conversations"
 ```
 
-Use `--to slack:<channel-id>` for another channel, or `--to slack:<channel-id>:<thread-timestamp>` for a thread. For example, `--to slack:C123:1730000000.000001` selects a thread in channel `C123`.
+Use `--to slack:<channel-id>` for another channel, or `--to slack:<channel-id>:<thread-timestamp>` for a thread. See [send results to Discord or Slack](../tasks.md#send-results-to-discord-or-slack).
 
-An answer of exactly `NO_REPLY`, ignoring surrounding whitespace, completes without posting. See [quiet completion](../tasks.md#stay-quiet-when-there-is-nothing-to-report).
+You can also ask Poppet in a thread to schedule a task. By default, its results go to the home channel. Ask for "this thread" or give another channel to post there instead.
 
-Replies are saved before delivery. An uncertain send is not automatically repeated; inspect `poppet tasks show <task-id>` and the destination before posting again. Failed scheduled runs can post a short [failure notice](../tasks.md#failure-notices). Results and notices do not change the destination's conversation session.
+## If a reply goes missing
 
-Ask Poppet in chat to create or manage tasks. A task created in messaging posts to the home channel by default. Ask for the current thread or supply another destination ID to change where it posts. See [scheduled tasks](../tasks.md#manage-tasks-from-chat).
+Poppet saves each answer before it posts it. If Poppet cannot tell whether a post reached Slack, it does not post it again, to avoid a duplicate. Check the thread, then read the saved answer with `poppet chat show <session-id>` if you need it.
 
-## Troubleshooting
-
-When Socket Mode closes, Poppet marks Slack offline and retries the connection after 30 seconds. Gateway work blocked by temporary channel unavailability can retry for about a minute.
-
-Use `poppet worker status` to inspect the connection and delivery queue. A reconnect or successful event acknowledgement clears a stale error. Check the owner, workspace, and home-channel IDs, both tokens, Socket Mode, Interactivity & Shortcuts, event subscriptions, scopes, and channel membership. Restart the worker after changing settings.
-
-Live verification requires a real Slack app. Check mentions and thread replies, owner rejection, attachments, cancellation, command approval, scheduled results and failure notices, and worker reconnection after restart.
+If the connection to Slack drops, Poppet tries again after 30 seconds. Run `poppet worker status` to check that Slack is connected. See [troubleshooting](../troubleshooting.md#discord-or-slack-does-not-reply).
