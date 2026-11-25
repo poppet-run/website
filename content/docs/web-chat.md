@@ -107,7 +107,9 @@ Login allows ten attempts per minute per client address and 60 per minute across
 
 Web chat has no attachments, conversation search, renaming, model selection, session-wide skill selection, reasoning display, or run details. New conversations use the first message as their title. Use `poppet chat show <session-id>` to inspect saved runs.
 
-Tool permissions still apply. A Bash command or reviewed MCP action that needs human approval stops the run. The browser cannot approve it. Request the operation in Discord or Slack to approve it there. See [reviewed MCP actions](mcp.md#review-an-action) and [command approval](commands.md). Markdown is sanitized, inline images and interactive controls are removed, and links open in a new tab.
+Tool permissions still apply. A Bash command or reviewed MCP action that needs human approval stops the run. The browser cannot approve it. Request the operation in Discord or Slack to approve it there. See [reviewed MCP actions](mcp.md#review-an-action) and [command approval](commands.md).
+
+Web chat displays raw HTML in replies as text. A few inline formatting tags, such as `<br>` and `<kbd>`, still render when written without attributes. Images appear as their alt text, and task lists appear without checkboxes. Relative links and links using `http`, `https`, or `mailto` open in a new tab. Other link destinations are dropped, leaving the link text.
 
 Use your browser's usual modified clicks to open a sidebar conversation in another tab or window.
 
