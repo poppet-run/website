@@ -13,7 +13,7 @@ Each task saves the provider and model from `config.json` when you add it. The w
 
 For a quick test, schedule a task one minute from now and start the worker:
 
-```fish
+```sh
 poppet tasks add summary --in 1m "Summarize my recent conversations"
 poppet worker run
 ```
@@ -47,7 +47,7 @@ Each run starts a fresh session. It has the current profile, saved facts, conver
 
 Add `--until` to give a recurring task an end time. Without it, the task has no end time.
 
-```fish
+```sh
 poppet tasks add release-watch --cron "0 9 * * *" --tz Europe/London --until 2099-10-29T09:00:00+00:00 "Tell me only if the release page changed"
 ```
 
@@ -166,7 +166,7 @@ Set up [Slack](gateways/slack.md) and run the combined worker. Use `--to slack` 
 
 Each task can keep one note of up to 4096 UTF-8 bytes. A new task has no note. Use it to remember the last value a recurring task checked:
 
-```fish
+```sh
 poppet tasks add release-watch --cron "0 9 * * *" --tz Europe/London "Read https://example.com/releases and find the newest release version. Compare it with the task note. If there is no note or the version differs, save the new version as the note and report it. Otherwise reply NO_REPLY."
 ```
 

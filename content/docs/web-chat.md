@@ -41,7 +41,9 @@ Hash the key without putting it in shell history. Paste the digest, without its 
 
 {{< shell >}}
 ```bash
-read -r -s -p 'Access key: ' poppet_web_key
+printf 'Access key: ' >&2
+IFS= read -rs poppet_web_key
+printf '\n' >&2
 printf '%s' "$poppet_web_key" | openssl dgst -sha256
 unset poppet_web_key
 chmod 600 ~/.config/poppet/web.json
@@ -49,7 +51,7 @@ chmod 600 ~/.config/poppet/web.json
 
 ```fish
 read --silent --prompt-str 'Access key: ' poppet_web_key
-printf '%s' $poppet_web_key | openssl dgst -sha256
+printf '%s' "$poppet_web_key" | openssl dgst -sha256
 set --erase poppet_web_key
 chmod 600 ~/.config/poppet/web.json
 ```
