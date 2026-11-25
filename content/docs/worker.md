@@ -87,7 +87,7 @@ Chat, memory, and task commands keep working while the worker runs. They go thro
 ```sh
 poppet memory set project.name Acorn
 poppet chat new "What is the project called?"
-poppet chat interactive
+poppet chat
 ```
 
 Ctrl-C cancels your own answer and leaves the worker running.

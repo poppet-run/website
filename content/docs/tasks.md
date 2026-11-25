@@ -33,9 +33,11 @@ Every task needs one of these:
 | ------ | ---- | ------- |
 | `--in` | Once, after a delay in seconds, minutes, hours, or days | `--in 30m`, `--in 2d` |
 | `--at` | Once, at a date and time | `--at 2099-10-22T09:00:00+01:00` |
-| `--cron` with `--tz` | Repeatedly, on a cron schedule in a time zone | `--cron "0 9 * * *" --tz Europe/London` |
+| `--cron` | Repeatedly, on a cron schedule in a time zone | `--cron "0 9 * * *" --tz Europe/London` |
 
 For `--at`, include a time zone offset such as `+01:00`, or `Z` for UTC. For `--tz`, use a time zone name such as `Europe/London` or `America/New_York`.
+
+For repeating tasks, `--tz` defaults to [`timeZone`](configuration.md#time-zone) in `config.json`. If that setting is absent, supply `--tz`. An explicit `--tz` overrides the setting.
 
 A cron schedule has five parts: minute, hour, day of the month, month, and day of the week. For example, `0 9 * * *` means 09:00 every day, and `30 8 * * 1-5` means 08:30 on weekdays.
 
@@ -79,7 +81,7 @@ poppet tasks edit <task-id> --cron "30 8 * * 1-5" --tz Europe/London
 poppet tasks edit <task-id> --at 2099-10-22T09:00:00+01:00
 ```
 
-An edit changes only what you give it. A new cron schedule needs both `--cron` and `--tz`. The provider, model, skill, and destination cannot be changed. To change those, create a new task. Editing a paused task keeps it paused.
+An edit changes only what you give it. A new cron schedule needs `--cron` and either `--tz` or the configured `timeZone`. Changing `timeZone` does not change schedules already saved. The provider, model, skill, and destination cannot be changed. To change those, create a new task. Editing a paused task keeps it paused.
 
 If you change the prompt or schedule before the next run starts, Poppet cancels that run and plans the next one with your changes. You cannot edit a task while it is running. To run a finished one-off task again, give it a new time with `--at`.
 
@@ -114,7 +116,7 @@ List my scheduled tasks.
 Pause task <task-id>.
 ```
 
-Poppet asks when a time, time zone, or task is unclear. A change is saved even if the rest of the reply fails, so check `poppet tasks list` before you ask again.
+With [`timeZone`](configuration.md#time-zone) set, Poppet uses your local time when you give no offset or zone. It asks when the intended time or task is unclear. A change is saved even if the rest of the reply fails, so check `poppet tasks list` before you ask again.
 
 Some limits apply to tasks created or changed from chat:
 

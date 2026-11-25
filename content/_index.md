@@ -12,7 +12,7 @@ guide = "docs/chat/"
 label = "Terminal"
 code = """poppet chat sessions
 poppet chat search "project TypeScript"
-poppet chat interactive $session_id"""
+poppet chat $session_id"""
 
 [[features]]
 title = "Memory and skills."
