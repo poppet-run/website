@@ -52,7 +52,9 @@ h1 span { color: var(--apricot); }
 .text-link { color: var(--apricot); font-size: 14px; font-weight: 650; text-decoration: none; }
 .text-link:hover { text-decoration: underline; }
 .hero-art { display: flex; flex-direction: column; align-items: center; min-width: 0; }
-.hero-art img { position: relative; z-index: 1; display: block; width: 58%; height: auto; margin: 0 2% -5% auto; }
+.hero-art picture { display: contents; }
+/* Each art pixel spans var(--cell). The last grid row is empty, so it overlaps the terminal. */
+.hero-mascot { --cell: 10px; position: relative; z-index: 1; display: block; width: calc(var(--cell) * 32); height: auto; margin: 0 2% calc(var(--cell) * -1) auto; image-rendering: pixelated; }
 .hero-terminal { width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 24px 60px rgb(0 0 0 / 0.25); }
 .window-bar { display: flex; align-items: center; gap: 14px; padding: 13px 16px; border-bottom: 1px solid var(--line); color: var(--muted); font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 11px; }
 .window-dots { display: flex; gap: 6px; }
@@ -193,6 +195,7 @@ pre { margin: 0; padding: 22px; font-size: 12px; line-height: 1.85; tab-size: 2;
   .docs-toc { display: none; }
   .setup-steps { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .local-section { gap: 40px; padding: 44px; }
+  .hero-mascot { --cell: 8px; }
   .docs-mobile-toc { display: block; margin: 0 0 28px; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .docs-mobile-toc summary { cursor: pointer; font-size: 13px; color: var(--muted); }
   .docs-mobile-toc .table-of-contents { margin-top: 18px; }
@@ -210,7 +213,7 @@ pre { margin: 0; padding: 22px; font-size: 12px; line-height: 1.85; tab-size: 2;
   .hero { grid-template-columns: 1fr; gap: 48px; padding: 44px 0 56px; }
   h1 { font-size: clamp(40px, 8vw, 60px); }
   .intro { max-width: 460px; font-size: 17px; }
-  .hero-art img { width: min(58%, 280px); }
+  .hero-mascot { --cell: 7px; }
   .site-footer { font-size: 11px; }
   .home-section { padding: 52px 0; }
   .setup-section { padding: 8px 0 52px; }

@@ -12,7 +12,11 @@
     <p class="work-note">{{ .Params.note }}</p>
   </div>
   <div class="hero-art">
-    <img src="{{ "images/poppet-mascot-happy.svg" | relURL }}" width="704" height="620" alt="Poppet, an apricot cushion with a cross-stitch and a smiling digital face, waving from a cream pocket.">
+    {{- /* Pixel art on a 32 × 32 grid. The CSS keeps it at whole multiples of 32 px. */}}
+    <picture>
+      <source media="(prefers-reduced-motion: reduce)" srcset="{{ "images/poppet-pixel-transparent.png" | relURL }}">
+      <img class="hero-mascot" src="{{ "images/poppet-pixel-transparent.gif" | relURL }}" width="320" height="320" alt="Pixel-art Poppet, an apricot cushion with a cross-stitch and a smiling digital face, sitting in a cream pocket.">
+    </picture>
     {{- /* An illustration of the interactive prompt, so it is hidden from screen readers. */}}
     <div class="hero-terminal" aria-hidden="true">
       <div class="window-bar"><span class="window-dots"><i></i><i></i><i></i></span>poppet chat interactive</div>
