@@ -70,7 +70,7 @@ In a channel, mention the app first. To use a skill for one message without star
 
 ## Approve commands
 
-When a command needs your approval, Poppet posts it in the thread with **Approve once** and **Deny** buttons. You can also reply with `/approve <id>` or `/deny <id>`, using the ID it shows. Each approval covers one command, and a request expires after two minutes. See [run commands](../commands.md#approve-a-command). [Reviewed MCP actions](../mcp.md#review-an-action) work the same way.
+When a command needs your approval, Poppet posts it in the thread with **Approve once** and **Deny** buttons. You can also reply with `/approve <id>` or `/deny <id>`, using the ID it shows. Each approval covers one command, and a request expires after two minutes by default, set with [`timeouts.approvalSeconds`](../configuration.md#timeouts-and-limits). See [run commands](../commands.md#approve-a-command). [Reviewed MCP actions](../mcp.md#review-an-action) work the same way.
 
 ## Scheduled results
 
@@ -88,4 +88,4 @@ You can also ask Poppet in a thread to schedule a task. By default, its results 
 
 Poppet saves each answer before it posts it. If Poppet cannot tell whether a post reached Slack, it does not post it again, to avoid a duplicate. Check the thread, then read the saved answer with `poppet chat show <session-id>` if you need it.
 
-If the connection to Slack drops, Poppet tries again after 30 seconds. Run `poppet worker status` to check that Slack is connected. See [troubleshooting](../troubleshooting.md#a-gateway-does-not-reply).
+If the connection to Slack drops, Poppet tries again after 30 seconds by default. Change this with [`timeouts.gatewayRetrySeconds`](../configuration.md#timeouts-and-limits). Run `poppet worker status` to check that Slack is connected. See [troubleshooting](../troubleshooting.md#a-gateway-does-not-reply).

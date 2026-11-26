@@ -103,7 +103,7 @@ poppet tasks run <task-id>
 
 Skipping and snoozing have no commands. Ask Poppet in a chat instead, such as "Skip the next run of my daily summary."
 
-You can keep up to 64 tasks, including paused and ended ones.
+You can keep up to 64 tasks by default, including paused and ended ones. Change this with [`limits.tasks`](configuration.md#timeouts-and-limits).
 
 ## Manage tasks from chat
 
@@ -121,8 +121,8 @@ With [`timeZone`](configuration.md#time-zone) set, Poppet uses your local time w
 
 Some limits apply to tasks managed from chat:
 
-- Poppet can create up to five tasks per message.
-- A repeating task must leave at least five minutes between runs, including across the end of an hour.
+- Poppet can create up to five tasks per message by default. Set `limits.chatTaskCreatesPerRun` to change this, or to `0` to stop chat from creating tasks.
+- By default, a repeating task must leave at least five minutes between runs, including across the end of an hour. Change this with [`limits.chatTaskIntervalMinutes`](configuration.md#timeouts-and-limits).
 - To edit, skip, snooze, resume, run, or delete a task that posts to a gateway, ask from a place where Poppet can post to that destination. From the terminal or web chat, you can only do those things for tasks that stay on your computer. You can still list, view, or pause any task from any chat.
 - Use the `poppet tasks` commands to change or delete a task that uses a [manual-only skill](skills.md#manual-only-skills). You can still view or pause it from chat.
 - Retrying and cancelling runs need the `poppet tasks` commands.

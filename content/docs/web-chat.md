@@ -149,7 +149,8 @@ Replies show as plain text until the page has loaded its formatting, and stay re
 ## Limits
 
 - 10 sign-in attempts per minute from each address, and 60 per minute in total.
-- Up to 32 open browser connections at once.
+- Up to 32 open event streams at once by default, set with `limits.webChatStreams` in `config.json`.
+- Request bodies up to 256 KiB by default, set with `limits.webChatBodyBytes` in `config.json`. See [timeouts and limits](configuration.md#timeouts-and-limits).
 - Up to 32 signed-in browsers. A new sign-in then signs out the oldest one.
 
 ## Troubleshooting

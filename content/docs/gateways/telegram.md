@@ -90,7 +90,7 @@ When a [command](../commands.md) or [MCP action](../mcp.md#review-an-action) nee
 /deny <id>
 ```
 
-Telegram has no approval buttons. Only you can answer. An approval covers that one action, and expires after two minutes, or when you cancel the reply or restart the worker.
+Telegram has no approval buttons. Only you can answer. An approval covers that one action, and expires after two minutes by default, set with [`timeouts.approvalSeconds`](../configuration.md#timeouts-and-limits). It also expires when you cancel the reply or restart the worker.
 
 ## Send scheduled results
 

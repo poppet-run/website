@@ -57,9 +57,77 @@ Telegram has no setting in `config.json`. Setup saves its IDs with its token. Se
 
 Install packages listed in `gatewayPackages` into `gateways/node_modules` in your data directory. A package made for an older version of Poppet may need an update before it loads.
 
-Some limits are fixed and cannot be changed, such as how much conversation history Poppet sends. See [chat limits](chat.md#limits).
+You can change timeouts, conversation history, and size limits. See [timeouts and limits](#timeouts-and-limits).
 
 Web chat has its own settings file. See [web chat](web-chat.md).
+
+## Timeouts and limits
+
+Set `timeouts` and `limits` in `config.json` when a request needs more time or space. Omit a setting to keep its default. Each value must be a whole number within the listed range. Timeouts are in seconds. Enter byte sizes as numbers, such as `32768` for 32 KiB. One KiB is 1024 bytes, and one MiB is 1048576 bytes.
+
+Run `poppet config` to check the file and see every resolved value. Restart the worker after changing settings. Larger limits can send more data to your model provider and use more memory.
+
+```json
+{
+  "timeouts": { "inferenceSeconds": 180, "pageFetchSeconds": 30 },
+  "limits": { "toolBytes": 32768, "historyTurns": 40 }
+}
+```
+
+| Field | Default | Range | Purpose |
+| ------------------------------------ | ------- | ------- | -------------------------------------------------------------------------------------- |
+| `timeouts.inferenceSeconds` | 60 | 5 to 3600 | Time allowed for one model request |
+| `timeouts.providerRequestSeconds` | 45 | 5 to 3600 | HTTP timeout for provider requests |
+| `timeouts.modelCatalogSeconds` | 30 | 1 to 300 | OpenCode and OpenRouter model-list request |
+| `timeouts.modelCatalogCacheSeconds` | 60 | 0 to 86400 | How long a fetched model list is reused; 0 refetches every time |
+| `timeouts.actionReviewSeconds` | 30 | 1 to 600 | Automatic review of a Bash command or MCP action |
+| `timeouts.sessionTitleSeconds` | 10 | 1 to 300 | Generating a chat session title |
+| `timeouts.conversationNamingSeconds` | 10 | 1 to 300 | Renaming a Discord or Slack conversation |
+| `timeouts.pageFetchSeconds` | 15 | 1 to 300 | Reading a public page, including redirects |
+| `timeouts.mcpConnectSeconds` | 5 | 1 to 300 | Connecting to an MCP server and each tool-list request |
+| `timeouts.mcpStartupSeconds` | 8 | 1 to 600 | Starting an MCP server, including discovery |
+| `timeouts.mcpToolCallSeconds` | 10 | 1 to 3600 | One MCP tool call |
+| `timeouts.taskOperationSeconds` | 8 | 1 to 300 | Creating or changing a task through the worker, and checking its messaging destination |
+| `timeouts.approvalSeconds` | 120 | 10 to 3600 | How long an approval request stays open |
+| `timeouts.attachmentDownloadSeconds` | 30 | 1 to 600 | Downloading one messaging attachment |
+| `timeouts.gatewayRequestSeconds` | 10 | 1 to 300 | Discord, Slack, and Telegram API requests |
+| `timeouts.gatewayRetrySeconds` | 30 | 1 to 3600 | Wait before a messaging adapter reconnects after a failure |
+| `timeouts.gatewayRestartMaxSeconds` | 300 | 1 to 3600 | Longest wait between messaging adapter restarts |
+| `timeouts.telegramPollSeconds` | 30 | 1 to 50 | Telegram long-poll duration |
+
+| Field | Default | Range | Purpose |
+| -------------------------------- | ------- | -------------- | ---------------------------------------------------------------- |
+| `limits.contextBytes` | 256 KiB | 16 KiB to 16 MiB | Context budget per model request |
+| `limits.historyTurns` | 20 | 1 to 200 | Recent exchanges kept in context |
+| `limits.modelTurns` | 16 | 1 to 128 | Model turns per run |
+| `limits.toolCalls` | 16 | 1 to 256 | Tool calls per run |
+| `limits.toolBytes` | 16 KiB | 1 KiB to 64 KiB | Size of one tool result |
+| `limits.soulBytes` | 8 KiB | 1 byte to 64 KiB | `soul.md` size |
+| `limits.profileBytes` | 8 KiB | 1 byte to 64 KiB | `profile.md` size |
+| `limits.skillIndexBytes` | 8 KiB | 0 bytes to 64 KiB | Skill index size; 0 turns the index and skill tools off |
+| `limits.skillIndexEntries` | 64 | 1 to 512 | Skills considered for the index |
+| `limits.skillDescriptionBytes` | 240 | 16 bytes to 4 KiB | Size of one skill description in the index |
+| `limits.skillMentions` | 4 | 0 to 32 | `$skill` mentions in one message |
+| `limits.attachmentsPerMessage` | 4 | 0 to 10 | Files attached to one message |
+| `limits.imageBytes` | 5 MiB | 1 KiB to 20 MiB | Size of one image attachment |
+| `limits.textFileBytes` | 64 KiB | 1 KiB to 1 MiB | Size of one text attachment |
+| `limits.imagesPerRequest` | 8 | 0 to 64 | Images sent in one model request |
+| `limits.imageContextBytes` | 6 KiB | 1 KiB to 64 KiB | Context budget counted for each image |
+| `limits.replyTextBytes` | 128 KiB | 4 KiB to 4 MiB | Answer text, and logged reasoning, per run |
+| `limits.completionBytes` | 1 MiB | 16 KiB to 16 MiB | Size of the saved provider response, including data needed to continue the chat |
+| `limits.pageBytes` | 1 MiB | 64 KiB to 16 MiB | Transferred and decoded page body |
+| `limits.mcpTools` | 128 | 1 to 1024 | Tools discovered from one MCP server |
+| `limits.mcpDiscoveryBytes` | 256 KiB | 16 KiB to 4 MiB | Tool-list JSON from one MCP server |
+| `limits.tasks` | 64 | 1 to 1024 | Saved tasks |
+| `limits.chatTaskCreatesPerRun` | 5 | 0 to 64 | Tasks one chat run can create |
+| `limits.chatTaskIntervalMinutes` | 5 | 1 to 1440 | Shortest interval for a recurring task created or edited in chat |
+| `limits.workerLogBytes` | 5 MiB | 64 KiB to 256 MiB | Size of each background worker log file before rotation |
+| `limits.webChatBodyBytes` | 256 KiB | 64 KiB to 16 MiB | Web chat request body |
+| `limits.webChatStreams` | 32 | 1 to 256 | Open web chat event streams |
+
+Increasing a timeout does not extend `chat.runDeadlineSeconds`, the deadline for the whole answer. Provider requests also have their own timeout, so a longer model request can need both `inferenceSeconds` and `providerRequestSeconds` increased.
+
+Saved facts, individual skill files, task notes and prompts, the Bash tool's 300-second maximum, and messaging platform message lengths still have fixed limits. Increasing a setting here does not change those limits.
 
 ## Time zone
 
@@ -137,6 +205,6 @@ With `chat.logReasoning` set to `true`, terminal chats show the reasoning as Pop
 
 With `chat.logTimings` set to `true`, Poppet writes how long each step took to the worker log.
 
-Poppet logs up to 128 KiB of reasoning per answer. While `chat.logReasoning` is on, an answer with more reasoning than that fails.
+Poppet logs up to 128 KiB of reasoning per answer by default. Change this with [`limits.replyTextBytes`](#timeouts-and-limits). While `chat.logReasoning` is on, an answer with more reasoning than that fails.
 
 Both are off by default. Reasoning can include private details from your messages and tools, so keep the log private. Neither setting changes how hard the model thinks. Restart the worker after you change them.

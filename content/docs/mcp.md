@@ -101,7 +101,7 @@ poppet chat new "Use reference to look up record 123"
 
 `mcp servers` shows each server, whether it is connected, which tools you allowed, and any problems. It does not start or contact anything. `mcp tools` connects to one server and lists all its tools.
 
-Poppet connects to a server the first time a chat needs it. If the server fails, Poppet keeps working without it and tries again later, waiting longer each time, up to 10 minutes.
+Poppet connects to a server the first time a chat needs it. By default, connecting and each tool-list request have a 5-second timeout, within an 8-second startup timeout. Change these with [`timeouts.mcpConnectSeconds` and `timeouts.mcpStartupSeconds`](configuration.md#timeouts-and-limits). If the server fails, Poppet keeps working without it and tries again later, waiting longer each time, up to 10 minutes.
 
 Poppet skips a tool it cannot use, for example because its description is too long. `mcp servers` lists any skipped tools and why.
 
@@ -153,7 +153,7 @@ For tools that change things, such as `update_record`, you can ask Poppet to rev
 
 A tool cannot be in both `reviewedTools` and `scheduledTools`, since `scheduledTools` is only for tools that change nothing. Restart the worker after editing. Before each call to a reviewed tool, Poppet asks your model whether the call matches what you asked for, as it does for [commands](commands.md#how-review-works). The review can allow the call, deny it, or ask you.
 
-When it asks you, Poppet shows the server, the tool, what it expects the call to do, and the exact details it will send. You can only answer in a [messaging gateway](gateways/_index.md) conversation, with **Approve once** or **Deny** where the gateway shows buttons, or with `/approve <id>` or `/deny <id>`. An approval covers one call, and expires after two minutes. In the terminal and web chat, the call does not run. Ask again in a gateway.
+When it asks you, Poppet shows the server, the tool, what it expects the call to do, and the exact details it will send. You can only answer in a [messaging gateway](gateways/_index.md) conversation, with **Approve once** or **Deny** where the gateway shows buttons, or with `/approve <id>` or `/deny <id>`. An approval covers one call, and expires after two minutes by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). In the terminal and web chat, the call does not run. Ask again in a gateway.
 
 The details of the call appear in the thread, so use a private channel if they are private.
 
@@ -227,9 +227,9 @@ When you register Poppet with the service, use `http://127.0.0.1:1455/auth/callb
 
 ## Limits
 
-- Up to 8 servers, each with up to 128 tools.
-- Each tool call can take up to 10 seconds.
-- Each tool result can be up to 16 KiB. Longer results are cut short.
+- Up to 8 servers. Each server defaults to at most 128 discovered tools and 256 KiB of tool-list JSON, set with `limits.mcpTools` and `limits.mcpDiscoveryBytes`.
+- Each tool call can take up to 10 seconds by default, set with `timeouts.mcpToolCallSeconds`.
+- Each tool result can be up to 16 KiB by default, set with `limits.toolBytes`. Longer results are cut short.
 - A server message can be up to 4 MiB. Larger messages close the connection. This does not increase the tool result limit above.
 
 Poppet uses MCP tools only. It does not support MCP resources, prompts, or servers that use the older HTTP with SSE connection.

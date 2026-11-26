@@ -51,7 +51,7 @@ This works in the terminal, web chat, and gateways. In a shell command, use sing
 poppet chat new 'Run $weekly-review for the Acorn project'
 ```
 
-The name must match the skill's folder name exactly, including capital letters. Punctuation straight after the name is fine. Poppet ignores names inside code and names that do not match a skill, so `$HOME` in a message stays as it is. A message can name up to four skills.
+The name must match the skill's folder name exactly, including capital letters. Punctuation straight after the name is fine. Poppet ignores names inside code and names that do not match a skill, so `$HOME` in a message stays as it is. A message can name up to four skills by default. Change this with [`limits.skillMentions`](configuration.md#timeouts-and-limits).
 
 Poppet saves the skill's text with your message. Naming the skill again in a later message reads the current file. Naming a skill does not change the skill chosen for the session.
 
@@ -85,7 +85,7 @@ In a [messaging gateway](gateways/_index.md), such as Discord, Slack, or Telegra
 
 ## Skills Poppet chooses itself
 
-Poppet sees a list of your skills, except manual-only ones, with the description from each. Before a task with several steps, it can read a skill that matches. The list holds up to 64 skills.
+Poppet sees a list of your skills, except manual-only ones, with the description from each. Before a task with several steps, it can read a skill that matches. By default, Poppet considers up to 64 skill files for the list, within an 8 KiB budget, with up to 240 bytes per description. Change these with [`limits.skillIndexEntries`, `limits.skillIndexBytes`, and `limits.skillDescriptionBytes`](configuration.md#timeouts-and-limits). Set `skillIndexBytes` to `0` to turn off the list and skill tools. Individual skill files still have an 8 KiB limit.
 
 ## Draft a skill from a conversation
 
