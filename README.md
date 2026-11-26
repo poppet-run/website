@@ -14,9 +14,9 @@ square 1254 × 1254 card, `static/images/poppet-social.png` from
 Both embed the still pixel mascot (`static/images/poppet-pixel-transparent.png`)
 with `image-rendering: pixelated`, at 14 px per art pixel in the wide card and 22 px
 in the square card, beside or above the Avenir Next Heavy wordmark and Avenir Next
-Bold domain converted to outlines. Avenir Next is what the site's font stack
-resolves to in Chrome on macOS, so the cards match its headings. They match the
-feedback cards in the Poppet brand repository. Export each SVG at its native size
+Bold domain converted to outlines. The site's font stack starts with Avenir Next,
+so the cards match its headings on Apple devices. They also match the feedback
+cards and logos in the Poppet brand repository. Export each SVG at its native size
 in a browser when updating the PNGs, so the pixels stay sharp. For example:
 
 ```fish

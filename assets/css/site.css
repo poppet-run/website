@@ -9,7 +9,7 @@
   --line-strong: #495a78;
   --panel: #1f2d47;
   --panel-hover: #253554;
-  font-family: ui-rounded, "SF Pro Rounded", "Avenir Next", Avenir, system-ui, sans-serif;
+  font-family: "Avenir Next", Avenir, system-ui, sans-serif;
   color: var(--cream);
   background: var(--navy);
   font-synthesis: none;
