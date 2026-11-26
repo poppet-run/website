@@ -37,7 +37,7 @@ Keep passwords, API keys, and tokens out of `config.json`. Poppet saves those in
 
 | Setting | Default | What it does |
 | ------- | ------- | ------------ |
-| `provider` | `openai-chatgpt` | Provider for new chats and tasks: `openai-chatgpt`, `openrouter`, or `opencode-go` |
+| `provider` | `openai-chatgpt` | Provider for new chats and tasks: `openai-chatgpt`, `openrouter`, `opencode`, or `opencode-go` |
 | `timeZone` | None | Your time zone for scheduled tasks and quiet hours. See [time zone](#time-zone). |
 | `model` | None | Model ID for new chats and tasks, from `poppet provider models` |
 | `chat.outputTokens` | `2048` | Longest answer to ask the model for, in tokens, from 1 to 32768 |
@@ -113,13 +113,14 @@ Each data directory has its own settings, sign-ins, and conversations. Set the s
 
 ## API keys
 
-`poppet provider login` saves your OpenRouter or OpenCode Go key in a protected file. It needs an interactive terminal, and shows `*` in place of each character you type or paste.
+`poppet provider login` saves your OpenRouter, OpenCode, or OpenCode Go key in a protected file. It needs an interactive terminal, and shows `*` in place of each character you type or paste.
 
 To use a key without saving it, set one of these environment variables. It takes the place of the saved key.
 
 | Variable | Provider |
 | -------- | -------- |
 | `POPPET_OPENROUTER_API_KEY` | OpenRouter |
+| `POPPET_OPENCODE_API_KEY` | OpenCode |
 | `POPPET_OPENCODE_GO_API_KEY` | OpenCode Go |
 
 If the variable is set but empty or wrong, Poppet reports an error rather than using the saved key. The background worker cannot see variables from your shell, so save the key with `provider login` for scheduled tasks and messaging.

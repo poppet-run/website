@@ -6,7 +6,7 @@ weight = 30
 
 # OpenCode Go
 
-OpenCode Go gives you a set of models through an OpenCode account. Check [OpenCode Go's usage terms](https://opencode.ai/v2/docs/console/go/) for your account before you connect Poppet.
+OpenCode Go uses your Go subscription. For workspace credit billing, use [OpenCode](opencode.md). Check [OpenCode Go's usage terms](https://opencode.ai/docs/console/go/) for your account before you connect Poppet.
 
 ## Connect
 
@@ -19,13 +19,15 @@ poppet provider status opencode-go
 
 ## Models
 
-Poppet supports two OpenCode Go models: `glm-5.3` and `gpt-6-luna`. Neither accepts images, but text file attachments work.
+Poppet lists paid chat models from the Go catalog. With a saved key or environment key, it requests the catalog for that key. Without a key, it lists the public catalog. You still need a key to chat.
+
+The list includes each model's tool and image support and token limits, as reported by the catalog. Poppet leaves out free-tier models and models that do not accept text and return text only. Image attachments work only when the selected model reports image support.
 
 ```sh
 poppet provider models opencode-go
 ```
 
-Save a model in `config.json`:
+Choose an ID from the list and save it in `config.json`. For example, if `glm-5.3` is listed:
 
 ```json
 {

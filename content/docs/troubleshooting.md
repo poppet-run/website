@@ -41,7 +41,7 @@ A conversation or task keeps the provider and model it started with. Start a new
 
 ## Chat fails
 
-Check that you are signed in and that your model is available. Use `openrouter` or `opencode-go` in place of `openai-chatgpt` if you use those:
+Check that you are signed in and that your model is available. Use `openrouter`, `opencode`, or `opencode-go` in place of `openai-chatgpt` if you use those:
 
 ```sh
 poppet provider status openai-chatgpt

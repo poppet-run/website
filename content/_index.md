@@ -65,8 +65,13 @@ description = "Many models, one account."
 guide = "docs/providers/openrouter/"
 
 [[providers]]
+title = "OpenCode"
+description = "Paid chat models with workspace credits."
+guide = "docs/providers/opencode/"
+
+[[providers]]
 title = "OpenCode Go"
-description = "Text chat with GLM-5.3 or GPT 6 Luna."
+description = "Chat models through your Go subscription."
 guide = "docs/providers/opencode-go/"
 +++
 
