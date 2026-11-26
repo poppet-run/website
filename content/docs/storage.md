@@ -32,6 +32,7 @@ poppet store status
 - **Facts.** Every version of every fact, with who changed it.
 - **Tasks.** Every run and its result, and the task's note and its history.
 - **Skills.** A copy of each skill used in a conversation or task, so later messages use the same version.
+- **Tool reviews.** Review decisions and reasons for shell commands and reviewed MCP calls, with any owner approval or denial. Inspect them with `poppet chat show <session-id>` or `poppet tasks show <task-id>`.
 - **Gateway approvals.** Approval requests and their outcomes, so Poppet can expire requests left by a stopped worker and explain late replies.
 - **Search index.** Your messages and Poppet's answers, for `chat search`.
 
