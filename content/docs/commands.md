@@ -36,9 +36,13 @@ Poppet removes the buttons and shows the outcome when the request ends. If you h
 /deny <id>
 ```
 
-Only you can answer, and only in the same conversation. An approval covers that one command and nothing else. Poppet saves your answer before running the command. If it cannot save your approval, the command does not run. A request expires after two minutes by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). It also expires when you cancel the reply or restart the worker. To try again after that, ask Poppet again.
+Only you can answer, and only in the same conversation. An approval covers that one command and nothing else. Poppet saves your answer before running the command. If it cannot save your approval, the command does not run. A request expires after one hour by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). You can set the wait to between 10 seconds and 24 hours. An explicit setting keeps its value after an update.
 
-When a gateway starts, Poppet expires any requests left pending by the previous worker. It tries to update their prompts to show **Expired** and remove the buttons. If an old button is still visible, it cannot approve the command. A late reply to a saved request in the same conversation tells you how it ended. Ask Poppet for the operation again if the request expired.
+While Poppet waits, it saves the unfinished answer and frees its place so other conversations can run. Waiting does not use up the answer's time limit. After you approve, Poppet continues when a place is available.
+
+Pending requests survive a worker restart until they expire. When the gateway reconnects, Poppet sends any approval prompt it had not sent. If it saved your approval but had not continued yet, it continues after reconnecting.
+
+Reply with `/cancel` to cancel the waiting answer. Sending a new message in the same session replaces the waiting answer and ends its approval request. Poppet tries to update the old prompt to show the outcome and remove its buttons. An ended approval cannot run the command, even if its button is still visible. A late reply tells you how the request ended. Ask for the operation again if you still need it.
 
 In Slack, the buttons need **Interactivity & Shortcuts** turned on in your [Slack app settings](gateways/slack.md#create-the-app). A reply with `/approve <id>` works without it if you have the approval ID.
 

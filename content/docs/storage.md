@@ -33,7 +33,7 @@ poppet store status
 - **Tasks.** Every run and its result, and the task's note and its history.
 - **Skills.** A copy of each skill used in a conversation or task, so later messages use the same version.
 - **Tool reviews.** Review decisions and reasons for shell commands and reviewed MCP calls, with any owner approval or denial. Inspect them with `poppet chat show <session-id>` or `poppet tasks show <task-id>`.
-- **Gateway approvals.** Approval requests and their outcomes, so Poppet can expire requests left by a stopped worker and explain late replies.
+- **Gateway approvals.** Approval requests and their outcomes, so waiting answers can survive worker restarts and Poppet can explain late replies.
 - **Search index.** Your messages and Poppet's answers, for `chat search`.
 
 Sign-ins, API keys, and tokens are kept in the `auth` and `channels` folders, separate from your conversations. Only your user account can read them.
@@ -79,7 +79,9 @@ Poppet refuses to open a database made by a newer version of Poppet. If you go b
 
 ## Interrupted answers
 
-If Poppet stops in the middle of an answer, because it crashed or you restarted the worker, it marks the answer as interrupted. Poppet does not repeat it, so send the message again if you still need the answer.
+If Poppet stops while generating an answer, because it crashed or you restarted the worker, it marks the answer as interrupted. Poppet does not repeat it, so send the message again if you still need the answer.
+
+An answer waiting for [gateway approval](commands.md#approve-a-command) survives a restart until the approval expires. You can still approve it in the original conversation. If Poppet saved your decision before it stopped but had not continued yet, it continues after the gateway reconnects.
 
 If Poppet was using a tool when it stopped, `chat show` marks that tool call as uncertain, because it may have finished. Check what the tool changed before you ask again.
 
