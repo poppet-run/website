@@ -70,7 +70,9 @@ In a channel, mention the app first. To use a skill for one message without star
 
 ## Approve commands
 
-When a command needs your approval, Poppet posts it in the thread with **Approve once** and **Deny** buttons. You can also reply with `/approve <id>` or `/deny <id>`, using the ID it shows. Each approval covers one command, and a request expires after two minutes by default, set with [`timeouts.approvalSeconds`](../configuration.md#timeouts-and-limits). See [run commands](../commands.md#approve-a-command). [Reviewed MCP actions](../mcp.md#review-an-action) work the same way.
+When a command needs your approval, Poppet posts it in the thread with **Approve once** and **Deny** buttons. The prompt shows when the request expires. If **Show details** appears, click it to read the full command or call details in a reply only you can see.
+
+Poppet removes the buttons and shows the outcome when the request ends. You can also reply with `/approve <id>` or `/deny <id>` if you have the approval ID. Each approval covers one command, and a request expires after two minutes by default, set with [`timeouts.approvalSeconds`](../configuration.md#timeouts-and-limits). See [run commands](../commands.md#approve-a-command). [Reviewed MCP actions](../mcp.md#review-an-action) work the same way.
 
 ## Scheduled results
 
