@@ -38,7 +38,7 @@ Keep passwords, API keys, and tokens out of `config.json`. Poppet saves those in
 | Setting | Default | What it does |
 | ------- | ------- | ------------ |
 | `provider` | `openai-chatgpt` | Provider for new chats and tasks: `openai-chatgpt`, `openrouter`, or `opencode-go` |
-| `timeZone` | None | Your time zone for scheduling and quiet hours. See [time zone](#time-zone). |
+| `timeZone` | None | Your time zone for scheduled tasks and quiet hours. See [time zone](#time-zone). |
 | `model` | None | Model ID for new chats and tasks, from `poppet provider models` |
 | `chat.outputTokens` | `2048` | Longest answer to ask the model for, in tokens, from 1 to 32768 |
 | `chat.runDeadlineSeconds` | `300` | Time limit for one answer, from 30 to 3600 seconds |
@@ -64,7 +64,7 @@ Web chat has its own settings file. See [web chat](web-chat.md).
 
 ## Time zone
 
-Set `timeZone` to your IANA time zone name:
+Set `timeZone` to a time zone name such as `Europe/London` or `America/New_York`:
 
 ```json
 {
@@ -72,9 +72,9 @@ Set `timeZone` to your IANA time zone name:
 }
 ```
 
-Poppet then sees your local date and time when scheduling from chat, and uses this zone when you give no offset or zone. For repeating tasks, `tasks add` and `tasks edit` use it when you leave out `--tz`. An explicit `--tz` takes precedence. One-off `--at` timestamps still need an offset.
+With `timeZone` set, Poppet uses your local time when you schedule a task from chat without naming a time zone. Repeating tasks created or edited with `--cron` also use it when you leave out `--tz`. Pass `--tz` when a task needs a different time zone. One-off tasks with `--at` still need a time zone offset.
 
-Quiet hours also use this zone unless you give them their own. Unknown zone names and offsets such as `+01:00` are rejected. Restart the worker after changing the setting.
+Quiet hours use this time zone too, unless you set one inside `quietHours`. Use a time zone name, not an offset such as `+01:00`. Restart the worker after you change it.
 
 ## Quiet hours
 
@@ -88,7 +88,7 @@ Quiet hours hold scheduled posts to [messaging gateways](gateways/_index.md), so
 }
 ```
 
-Use 24-hour times and a time zone name such as `Europe/London`. The hours can run past midnight. You can omit `tasks.quietHours.timeZone` if you set the top-level [`timeZone`](#time-zone); one of the two is required. A zone set inside `quietHours` takes precedence.
+Use 24-hour times. Quiet hours need a time zone name such as `Europe/London`. If you already set [`timeZone`](#time-zone), you can leave `timeZone` out of `quietHours`. If you set both, Poppet uses the one in `quietHours`. The hours can run past midnight.
 
 Tasks still run on time. Results and [failure notices](tasks.md#failure-notices) that are ready during quiet hours wait until they end. Replies to your own messages and approval requests are never held.
 

@@ -15,7 +15,7 @@
     <img src="{{ "images/poppet-mascot-happy.svg" | relURL }}" width="704" height="620" alt="Poppet, an apricot cushion with a cross-stitch and a smiling digital face, waving from a cream pocket.">
     {{- /* An illustration of the interactive prompt, so it is hidden from screen readers. */}}
     <div class="hero-terminal" aria-hidden="true">
-      <div class="window-bar"><span class="window-dots"><i></i><i></i><i></i></span>poppet chat interactive</div>
+      <div class="window-bar"><span class="window-dots"><i></i><i></i><i></i></span>poppet chat</div>
       <div class="transcript">
         <p><b>You&gt;</b> Remember that I prefer concise answers, under answer.style</p>
         <p class="reply">Saved. I'll keep my answers short from your next message on.</p>
@@ -86,7 +86,7 @@
     {{ $steps := slice
       (dict "title" "Install from source" "text" "Download the app, install what it needs, and add the poppet command to your terminal." "code" "git clone https://github.com/poppet-run/poppet.git\ncd poppet\nbun install --frozen-lockfile\nbun link")
       (dict "title" "Run setup" "text" "Choose a provider, sign in, and pick a model. You can connect a messaging app such as Discord or Slack here too." "code" "poppet setup")
-      (dict "title" "Say hello" "text" "Open the interactive prompt and send your first message." "code" "poppet chat interactive")
+      (dict "title" "Say hello" "text" "Open the interactive prompt and send your first message." "code" "poppet chat")
     }}
     {{ range $steps }}
     <li>

@@ -102,7 +102,7 @@ Without a provider name, these commands use the `provider` in `config.json`. See
 
 | Option | Used with | What it does |
 | ------ | --------- | ------------ |
-| `--skill <name>` | `new`, `interactive` | Use a skill for the whole conversation |
+| `--skill <name>` | `chat`, `new` | Use a skill for the whole conversation |
 | `--attach <path>` | `new`, `send` | Attach a file, and repeat for more files |
 | `--dry-run` | `prune` | List what would be deleted, without deleting it |
 
@@ -150,8 +150,8 @@ See [skills](skills.md).
 | ------ | --------- | ------------ |
 | `--in <delay>` | `add` | Run once, after a delay such as `30m` |
 | `--at <time>` | `add`, `edit` | Run once, at a date and time |
-| `--cron <schedule>` | `add`, `edit` | Run on a repeating schedule, using `--tz` or the configured `timeZone` |
-| `--tz <time-zone>` | `add`, `edit` | Set the time zone for `--cron`; defaults to [`timeZone`](configuration.md#time-zone) |
+| `--cron <schedule>` | `add`, `edit` | Run on a repeating schedule, with `--tz` or your [`timeZone`](configuration.md#time-zone) |
+| `--tz <time-zone>` | `add`, `edit` | Set the time zone for `--cron`, instead of [`timeZone`](configuration.md#time-zone) |
 | `--until <time>` | `add`, `edit` | End a repeating task, or remove the end with `none` |
 | `--skill <name>` | `add` | Follow a [skill](skills.md) |
 | `--to <gateway>` | `add` | Post results to a [messaging gateway](gateways/_index.md) |
