@@ -220,6 +220,10 @@ The worker runs one task at a time, and only while your computer is awake.
 - A repeating task runs its most recent missed time once, if it was missed by 60 minutes or less. Poppet skips older missed times. Change this window with [`tasks.catchUpMinutes`](configuration.md#settings).
 - A repeating run that has waited 24 hours without starting is dropped. One-off runs do not expire.
 
+Set `tasks.catchUpMinutes` to `0` to skip missed repeating runs when the worker starts. While the worker is running, a delayed timer still runs the most recent due time if it is less than a minute late, and skips earlier times.
+
+You cannot snooze or run an expired pending repeating run. Ask Poppet to skip it, or wait for the worker to drop it.
+
 `tasks show` lists the times Poppet skipped.
 
 ## Cancel or retry a run
