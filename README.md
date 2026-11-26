@@ -7,17 +7,14 @@ Visit the [documentation](https://poppet.run/docs/) to get started, or see the
 [Poppet repository](https://github.com/poppet-run/poppet) for the app source.
 
 The Open Graph image is `static/images/poppet-social-wide.png`, a 1200 × 630 card
-sized for link previews. Its source is `assets/images/poppet-social-wide.svg`. The
-square 1254 × 1254 card, `static/images/poppet-social.png` from
-`assets/images/poppet-social.svg`, is kept for links to the earlier image.
-
-Both embed the still pixel mascot (`static/images/poppet-pixel-transparent.png`)
-with `image-rendering: pixelated`, at 14 px per art pixel in the wide card and 22 px
-in the square card, beside or above the Avenir Next Heavy wordmark and Avenir Next
-Bold domain converted to outlines. The site's font stack starts with Avenir Next,
-so the cards match its headings on Apple devices. They also match the feedback
-cards and logos in the Poppet brand repository. Export each SVG at its native size
-in a browser when updating the PNGs, so the pixels stay sharp. For example:
+sized for link previews. Its source is `assets/images/poppet-social-wide.svg`: the
+still pixel mascot (`static/images/poppet-pixel-transparent.png`) embedded at 14 px
+per art pixel with `image-rendering: pixelated`, beside the Avenir Next Heavy
+wordmark and Avenir Next Bold domain converted to outlines. The site's font stack
+starts with Avenir Next, so the card matches its headings on Apple devices. It is
+the same image as `poppet-social-card-wide.png` in the Poppet brand repository.
+Export the SVG at 1200 × 630 in a browser when updating the PNG, so the pixels
+stay sharp:
 
 ```fish
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --hide-scrollbars --force-device-scale-factor=1 --window-size=1200,630 --screenshot=static/images/poppet-social-wide.png "file://$PWD/assets/images/poppet-social-wide.svg"
