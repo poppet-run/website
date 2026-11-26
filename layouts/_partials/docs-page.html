@@ -2,6 +2,23 @@
 {{- /* The table of contents starts at level 2, so the page's h1 alone does not need one. */ -}}
 {{ $hasToc := false }}
 {{ range .Fragments.HeadingsMap }}{{ if ge .Level 2 }}{{ $hasToc = true }}{{ end }}{{ end }}
+{{ $groupTitle := "" }}
+{{ range hugo.Data.docs }}
+  {{ $g := .title }}
+  {{ range .pages }}
+    {{ with site.GetPage . }}
+      {{ if eq .RelPermalink $.RelPermalink }}
+        {{ $groupTitle = $g }}
+      {{ else if .IsSection }}
+        {{ range .RegularPages }}
+          {{ if eq .RelPermalink $.RelPermalink }}
+            {{ $groupTitle = $g }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
 <main class="docs-layout" id="main" tabindex="-1">
   <aside class="docs-sidebar">{{ partial "docs-nav.html" . }}</aside>
   <div class="docs-body">
@@ -16,22 +33,41 @@
     </details>
     {{ end }}
     <article class="prose" aria-label="{{ .Title }}">
+      {{ with $groupTitle }}<p class="doc-eyebrow">{{ . }}</p>{{ end }}
       {{ .Content }}
     </article>
+    {{ $prev := false }}
     {{ $next := false }}
-    {{ with .Params.next }}
-      {{ $next = site.GetPage . }}
-      {{ if not $next }}{{ errorf "Missing next guide %s" . }}{{ end }}
-    {{ else }}
-      {{ $order := partial "docs-order.html" . }}
-      {{ range $i, $page := $order }}
-        {{ if and (eq $page $) (lt (add $i 1) (len $order)) }}
+    {{ $order := partial "docs-order.html" . }}
+    {{ range $i, $page := $order }}
+      {{ if eq $page $ }}
+        {{ if gt $i 0 }}
+          {{ $prev = index $order (sub $i 1) }}
+        {{ end }}
+        {{ if lt (add $i 1) (len $order) }}
           {{ $next = index $order (add $i 1) }}
         {{ end }}
       {{ end }}
     {{ end }}
-    {{ with $next }}
-      <p class="doc-next"><a href="{{ .RelPermalink }}">Next: {{ .Title }} <span aria-hidden="true">→</span></a></p>
+    {{ with .Params.next }}
+      {{ $next = site.GetPage . }}
+      {{ if not $next }}{{ errorf "Missing next guide %s" . }}{{ end }}
+    {{ end }}
+    {{ if or $prev $next }}
+    <nav class="doc-pager" aria-label="Pagination">
+      {{ with $prev }}
+      <a class="doc-pager-link doc-pager-prev" href="{{ .RelPermalink }}">
+        <span class="doc-pager-label"><span aria-hidden="true">←</span> Previous</span>
+        <span class="doc-pager-title">{{ .Title }}</span>
+      </a>
+      {{ else }}<span></span>{{ end }}
+      {{ with $next }}
+      <a class="doc-pager-link doc-pager-next" href="{{ .RelPermalink }}">
+        <span class="doc-pager-label">Next <span aria-hidden="true">→</span></span>
+        <span class="doc-pager-title">{{ .Title }}</span>
+      </a>
+      {{ end }}
+    </nav>
     {{ end }}
     <footer class="doc-footer">
       <span>In early development</span>
