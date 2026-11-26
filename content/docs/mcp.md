@@ -157,6 +157,8 @@ When it asks you, Poppet shows the server, tool, target, expected effects, revie
 
 You can only answer in a [messaging gateway](gateways/_index.md) conversation. Discord, Slack, and Telegram show **Approve once** and **Deny** buttons. You can also reply with `/approve <id>` or `/deny <id>` if you have the approval ID. An approval covers one call, and expires after two minutes by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). In the terminal and web chat, the call does not run. Ask again in a gateway.
 
+Pending approvals do not survive a worker restart. Poppet expires them when the gateway starts and tries to mark their prompts as **Expired**. An old button or approval ID cannot run the action. A late reply to a saved request tells you how it ended. Ask for the action again if you still need it.
+
 The details of the call appear in the thread, so use a private channel if they are private.
 
 Poppet does not use reviewed tools after reading a web page, command output, MCP result, or attachment, even with `availableAfterUntrusted`. Ask for the action in a new message.

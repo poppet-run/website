@@ -32,6 +32,7 @@ poppet store status
 - **Facts.** Every version of every fact, with who changed it.
 - **Tasks.** Every run and its result, and the task's note and its history.
 - **Skills.** A copy of each skill used in a conversation or task, so later messages use the same version.
+- **Gateway approvals.** Approval requests and their outcomes, so Poppet can expire requests left by a stopped worker and explain late replies.
 - **Search index.** Your messages and Poppet's answers, for `chat search`.
 
 Sign-ins, API keys, and tokens are kept in the `auth` and `channels` folders, separate from your conversations. Only your user account can read them.

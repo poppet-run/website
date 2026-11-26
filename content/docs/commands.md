@@ -36,6 +36,8 @@ Poppet removes the buttons and shows the outcome when the request ends. If you h
 
 Only you can answer, and only in the same conversation. An approval covers that one command and nothing else. A request expires after two minutes by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). It also expires when you cancel the reply or restart the worker. To try again after that, ask Poppet again.
 
+When a gateway starts, Poppet expires any requests left pending by the previous worker. It tries to update their prompts to show **Expired** and remove the buttons. If an old button is still visible, it cannot approve the command. A late reply to a saved request in the same conversation tells you how it ended. Ask Poppet for the operation again if the request expired.
+
 In Slack, the buttons need **Interactivity & Shortcuts** turned on in your [Slack app settings](gateways/slack.md#create-the-app). A reply with `/approve <id>` works without it if you have the approval ID.
 
 In the terminal or web chat, a command that needs approval does not run. Ask for the same thing in a gateway to approve it there.
