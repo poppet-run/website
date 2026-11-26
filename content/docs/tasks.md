@@ -37,7 +37,7 @@ Every task needs one of these:
 
 For `--at`, include a time zone offset such as `+01:00`, or `Z` for UTC. For `--tz`, use a time zone name such as `Europe/London` or `America/New_York`.
 
-For repeating tasks, `--tz` defaults to [`timeZone`](configuration.md#time-zone) in `config.json`. If that setting is absent, supply `--tz`. An explicit `--tz` overrides the setting.
+Repeating tasks need a time zone. If you set [`timeZone`](configuration.md#time-zone) in `config.json`, you can leave out `--tz`. Pass `--tz` to use a different time zone for one task.
 
 A cron schedule has five parts: minute, hour, day of the month, month, and day of the week. For example, `0 9 * * *` means 09:00 every day, and `30 8 * * 1-5` means 08:30 on weekdays.
 
@@ -81,7 +81,7 @@ poppet tasks edit <task-id> --cron "30 8 * * 1-5" --tz Europe/London
 poppet tasks edit <task-id> --at 2099-10-22T09:00:00+01:00
 ```
 
-An edit changes only what you give it. A new cron schedule needs `--cron` and either `--tz` or the configured `timeZone`. Changing `timeZone` does not change schedules already saved. The provider, model, skill, and destination cannot be changed. To change those, create a new task. Editing a paused task keeps it paused.
+An edit changes only what you give it. A new cron schedule needs `--cron`, plus `--tz` unless you set `timeZone` in `config.json`. Changing `timeZone` later does not change existing tasks. The provider, model, skill, and destination cannot be changed. To change those, create a new task. Editing a paused task keeps it paused.
 
 If you change the prompt or schedule before the next run starts, Poppet cancels that run and plans the next one with your changes. You cannot edit a task while it is running. To run a finished one-off task again, give it a new time with `--at`.
 
@@ -114,19 +114,19 @@ Every Friday at 09:00 Europe/London, summarize my recent conversations and deliv
 End task <task-id> at 2099-10-29T09:00:00+00:00.
 List my scheduled tasks.
 Pause task <task-id>.
+Delete my daily summary task.
 ```
 
-With [`timeZone`](configuration.md#time-zone) set, Poppet uses your local time when you give no offset or zone. It asks when the intended time or task is unclear. A change is saved even if the rest of the reply fails, so check `poppet tasks list` before you ask again.
+With [`timeZone`](configuration.md#time-zone) set, Poppet uses your local time when you leave out a time zone. Poppet asks when a time, time zone, or task is unclear. A change is saved even if the rest of the reply fails, so check `poppet tasks list` before you ask again.
 
-Some limits apply to tasks created or changed from chat:
+Some limits apply to tasks managed from chat:
 
 - Poppet can create up to five tasks per message.
-- A repeating task must have at least five minutes between runs. Poppet checks every listed minute, including the gap from the last minute of an hour to the first minute of the next. For example, `0,30 * * * *` is accepted, but `0,58 9 * * *` is rejected even though it only runs during one hour.
-- To edit, resume, reschedule, run, or delete a task that posts to a gateway, ask from a place where Poppet can post to that destination.
-- Tasks that use a [manual-only skill](skills.md#manual-only-skills) need the `poppet tasks` commands for changes or deletion. You can still pause them from chat.
+- A repeating task must leave at least five minutes between runs, including across the end of an hour.
+- To edit, skip, snooze, resume, run, or delete a task that posts to a gateway, ask from a place where Poppet can post to that destination. From the terminal or web chat, you can only do those things for tasks that stay on your computer. You can still list, view, or pause any task from any chat.
+- Use the `poppet tasks` commands to change or delete a task that uses a [manual-only skill](skills.md#manual-only-skills). You can still view or pause it from chat.
 - Retrying and cancelling runs need the `poppet tasks` commands.
-
-To delete a task from chat, ask "Delete my daily summary task" from an authorized gateway conversation. CLI chat can delete only tasks with local delivery. For other tasks, use `poppet tasks remove <task-id>`. Deletion removes the task and its history, including pending work, but keeps conversations and answers. A running task must finish or be cancelled with the CLI before you can delete it.
+- Deleting a task removes it and its history, but keeps your conversations and saved facts. Wait for a running task to finish, or cancel it with `poppet tasks cancel`, before you delete it. See [remove tasks](#remove-tasks).
 
 ## Send results to a gateway
 
@@ -219,12 +219,8 @@ A tool that needs your approval fails the run, because nobody is there to approv
 The worker runs one task at a time, and only while your computer is awake.
 
 - A one-off task that was due while the worker was stopped runs once when it starts again.
-- A repeating task runs its most recent missed time once, if it was missed by 60 minutes or less. Poppet skips older missed times. Change this window with [`tasks.catchUpMinutes`](configuration.md#settings).
-- A repeating run that has waited 24 hours without starting is dropped. One-off runs do not expire.
-
-Set `tasks.catchUpMinutes` to `0` to skip missed repeating runs when the worker starts. While the worker is running, a delayed timer still runs the most recent due time if it is less than a minute late, and skips earlier times.
-
-You cannot snooze or run an expired pending repeating run. Ask Poppet to skip it, or wait for the worker to drop it.
+- A repeating task runs its most recent missed time once, if it was missed by 60 minutes or less. Poppet skips older missed times. Change this window with [`tasks.catchUpMinutes`](configuration.md#settings), or set it to `0` to skip repeating runs missed while the worker was stopped or delayed by a minute or more.
+- A repeating run expires after waiting 24 hours without starting, and the worker drops it. You cannot snooze or start an expired run, so ask Poppet to skip it or wait for the worker to drop it. One-off runs do not expire.
 
 `tasks show` lists the times Poppet skipped.
 
