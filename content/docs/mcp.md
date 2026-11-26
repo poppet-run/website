@@ -153,7 +153,9 @@ For tools that change things, such as `update_record`, you can ask Poppet to rev
 
 A tool cannot be in both `reviewedTools` and `scheduledTools`, since `scheduledTools` is only for tools that change nothing. Restart the worker after editing. Before each call to a reviewed tool, Poppet asks your model whether the call matches what you asked for, as it does for [commands](commands.md#how-review-works). The review can allow the call, deny it, or ask you.
 
-When it asks you, Poppet shows the server, the tool, what it expects the call to do, and the exact details it will send. You can only answer in a [messaging gateway](gateways/_index.md) conversation, with **Approve once** or **Deny** where the gateway shows buttons, or with `/approve <id>` or `/deny <id>`. An approval covers one call, and expires after two minutes by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). In the terminal and web chat, the call does not run. Ask again in a gateway.
+When it asks you, Poppet shows the server, tool, target, expected effects, review reason, and arguments. Long values are shortened. If **Show details** appears, use it to read the full call details before deciding.
+
+You can only answer in a [messaging gateway](gateways/_index.md) conversation. Discord, Slack, and Telegram show **Approve once** and **Deny** buttons. You can also reply with `/approve <id>` or `/deny <id>` if you have the approval ID. An approval covers one call, and expires after two minutes by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). In the terminal and web chat, the call does not run. Ask again in a gateway.
 
 The details of the call appear in the thread, so use a private channel if they are private.
 

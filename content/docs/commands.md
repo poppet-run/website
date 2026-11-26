@@ -25,7 +25,9 @@ The review is a second opinion from a model, and it can be wrong. It reads the c
 
 ## Approve a command
 
-To approve commands, chat through a [messaging gateway](gateways/_index.md). When a command needs approval, Poppet posts the exact command, the folder it runs in, its time limit, and the reason for asking. In Discord and Slack, click **Approve once** or **Deny**. In any gateway, you can also reply with the ID from the message:
+To approve commands, chat through a [messaging gateway](gateways/_index.md). When a command needs approval, Poppet shows the command, the folder it runs in, its time limit, and the reason for asking. In Discord, Slack, and Telegram, choose **Approve once** or **Deny**. If **Show details** appears, use it to read the full command and its settings before deciding. Long commands and fields are shortened in the prompt.
+
+Poppet removes the buttons and shows the outcome when the request ends. If you have the approval ID, every gateway also accepts these replies:
 
 ```text
 /approve <id>
@@ -34,7 +36,7 @@ To approve commands, chat through a [messaging gateway](gateways/_index.md). Whe
 
 Only you can answer, and only in the same conversation. An approval covers that one command and nothing else. A request expires after two minutes by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). It also expires when you cancel the reply or restart the worker. To try again after that, ask Poppet again.
 
-In Slack, the buttons need **Interactivity & Shortcuts** turned on in your [Slack app settings](gateways/slack.md#create-the-app). Replying with `/approve <id>` works without it.
+In Slack, the buttons need **Interactivity & Shortcuts** turned on in your [Slack app settings](gateways/slack.md#create-the-app). A reply with `/approve <id>` works without it if you have the approval ID.
 
 In the terminal or web chat, a command that needs approval does not run. Ask for the same thing in a gateway to approve it there.
 

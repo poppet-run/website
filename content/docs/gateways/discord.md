@@ -76,7 +76,9 @@ Attach images or text files to your message. A message with files does not need 
 
 ## Approve commands
 
-When a command needs your approval, Poppet posts it in the thread with **Approve once** and **Deny** buttons. You can also reply with the ID it shows:
+When a command needs your approval, Poppet posts it in the thread with **Approve once** and **Deny** buttons. The prompt shows when the request expires. If **Show details** appears, click it to read the full command or call details in a reply only you can see. Longer details arrive as an `approval-details.json` attachment.
+
+Poppet removes the buttons and shows the outcome when the request ends. You can also reply if you have the approval ID:
 
 ```text
 /approve <id>

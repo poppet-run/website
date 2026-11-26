@@ -83,14 +83,16 @@ Telegram's own style also works, such as `/status@YourBot`.
 
 ## Approve an action
 
-When a [command](../commands.md) or [MCP action](../mcp.md#review-an-action) needs your approval, Poppet posts what it wants to do and an approval ID. Reply in the same conversation with one of these:
+When a [command](../commands.md) or [MCP action](../mcp.md#review-an-action) needs your approval, Poppet shows what it wants to do with **Approve once** and **Deny** buttons. If **Show details** appears, tap it to read the full command or call details. Poppet posts those details in the same chat or forum topic.
+
+You can also reply in the same conversation if you have the approval ID:
 
 ```text
 /approve <id>
 /deny <id>
 ```
 
-Telegram has no approval buttons. Only you can answer. An approval covers that one action, and expires after two minutes by default, set with [`timeouts.approvalSeconds`](../configuration.md#timeouts-and-limits). It also expires when you cancel the reply or restart the worker.
+Poppet removes the buttons and shows the outcome when the request ends. Only you can answer. An approval covers that one action, and expires after two minutes by default, set with [`timeouts.approvalSeconds`](../configuration.md#timeouts-and-limits). It also expires when you cancel the reply or restart the worker.
 
 ## Send scheduled results
 
