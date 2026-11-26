@@ -21,6 +21,8 @@ The review gives one of three answers:
 
 If the review fails or times out, the command does not run.
 
+Poppet saves the review decision and reason before running the command. To see them, run `poppet chat show <session-id>` or `poppet tasks show <task-id>` and look under **Reviewed calls**. If the review failed, its decision is `unavailable`. Any saved approval or denial appears there too, with the command's outcome.
+
 The review is a second opinion from a model, and it can be wrong. It reads the command, but not the contents of any script the command runs. Only use Poppet on an account where you would be comfortable running these commands yourself.
 
 ## Approve a command
@@ -34,7 +36,7 @@ Poppet removes the buttons and shows the outcome when the request ends. If you h
 /deny <id>
 ```
 
-Only you can answer, and only in the same conversation. An approval covers that one command and nothing else. A request expires after two minutes by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). It also expires when you cancel the reply or restart the worker. To try again after that, ask Poppet again.
+Only you can answer, and only in the same conversation. An approval covers that one command and nothing else. Poppet saves your answer before running the command. If it cannot save your approval, the command does not run. A request expires after two minutes by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). It also expires when you cancel the reply or restart the worker. To try again after that, ask Poppet again.
 
 When a gateway starts, Poppet expires any requests left pending by the previous worker. It tries to update their prompts to show **Expired** and remove the buttons. If an old button is still visible, it cannot approve the command. A late reply to a saved request in the same conversation tells you how it ended. Ask Poppet for the operation again if the request expired.
 
