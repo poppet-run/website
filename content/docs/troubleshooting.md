@@ -84,10 +84,11 @@ Restart the worker after you change any of these.
 
 If Poppet saved an answer but could not confirm that it was posted, it does not post it again. Check the thread, then read the answer with `poppet chat show <session-id>`.
 
-## Web search or MCP tools are missing
+## MCP tools are missing
 
-- For [web search](web.md), run `poppet web status`. Set `webSearchProvider` to `brave` or `kagi`, and save a key with `poppet web login`. Remove any old `webSearch` setting.
-- For [MCP tools](mcp.md), run `poppet mcp servers`. The server must have `"enabled": true`, and each tool must be allowed. Run `poppet mcp tools <name>` to connect and see its tools.
+Built-in web search has been removed. Follow the [migration steps](web.md#if-you-used-built-in-web-search) if you used it.
+
+For [MCP tools](mcp.md), run `poppet mcp servers`. The server must have `"enabled": true`, and each tool must be allowed. Run `poppet mcp tools <name>` to connect and see its tools.
 
 Restart the worker after changing settings. Restarting also reconnects a failed MCP server.
 

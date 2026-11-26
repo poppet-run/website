@@ -166,17 +166,11 @@ Poppet tells the model never to follow instructions found inside a file. As a pr
 poppet chat new "Summarize https://example.com/ and cite the source"
 ```
 
-When your message includes a public web address, Poppet can read that page. It reads plain text and ordinary web pages, but not PDFs, downloads, pages behind a login, or pages that need JavaScript to show their content. See [read and search the web](web.md#read-a-page).
+When your message includes a public web address, Poppet can read that page. It reads plain text and ordinary web pages, but not PDFs, downloads, pages behind a login, or pages that need JavaScript to show their content. See [read web pages](web.md#read-a-page).
 
 ## Search the web
 
-With [web search](web.md) turned on, Poppet can search the web and read the pages it finds:
-
-```sh
-poppet chat new "Search for recent Bun releases, read a source, and cite it"
-```
-
-Poppet asks the model to cite the pages it used, and to say whether a fact came from a search result or from a page it read in full.
+To search the web, connect an [MCP server](mcp.md) that offers search and allow its search tool. Poppet has no built-in web search. To read a page with the built-in page reader, include its address in your message, even if an MCP search returned it.
 
 ## When a message fails
 

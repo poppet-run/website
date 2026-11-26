@@ -120,4 +120,4 @@ You can keep chatting without setting up anything else. When you want more:
 - [Skills](skills.md) let you reuse a procedure in a chat or task.
 - [Scheduled tasks](tasks.md) run a prompt later. They need the [worker](worker.md) running.
 - [Messaging](gateways/_index.md) lets you chat through a gateway, such as Discord, Slack, or Telegram.
-- [Web search](web.md) and [MCP tools](mcp.md) give Poppet more tools.
+- [Read web pages](web.md) you link, or connect [MCP tools](mcp.md) from other services.

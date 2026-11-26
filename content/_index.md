@@ -44,10 +44,6 @@ thread = [
 
 [[tools]]
 title = "Read web pages"
-guide = "docs/chat/#read-a-web-page"
-
-[[tools]]
-title = "Web search"
 guide = "docs/web/"
 
 [[tools]]

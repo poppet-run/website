@@ -49,7 +49,7 @@ A repeating task keeps the same local time when the clocks change for daylight s
 
 Each task remembers the provider and model from `config.json` when you create it, and keeps using them even if you change `config.json` later.
 
-Each run starts a new conversation. It can read your profile and saved facts, search past conversations, read web pages, and search the web if you set that up. A scheduled task cannot change memory or other tasks.
+Each run starts a new conversation. It can read your profile and saved facts, search past conversations, and read web pages. A scheduled task cannot change memory or other tasks.
 
 ## End a repeating task
 
@@ -194,7 +194,7 @@ poppet tasks clear-note <task-id>
 
 Add `--skill <name>` before the prompt to have the task follow a [skill](skills.md). The task keeps a copy of the skill from when you created it. To use an edited skill, create a new task. Writing `$name` in a task prompt does not load a skill.
 
-## Read and search the web
+## Read web pages
 
 A task prompt can include a web address for Poppet to read:
 
@@ -202,11 +202,9 @@ A task prompt can include a web address for Poppet to read:
 poppet tasks add page-summary --cron "0 9 * * *" --tz Europe/London "Summarize https://example.com/ and cite the source"
 ```
 
-Poppet only reads addresses that are in the prompt, or that it finds with [web search](web.md). With web search set up, a prompt can ask for research without an address:
+Poppet only reads addresses that are in the prompt. Addresses in skills, previous conversations, pages, or MCP results do not give the built-in page reader permission to open them. See [read web pages](web.md).
 
-```sh
-poppet tasks add weekly-research --cron "0 9 * * 5" --tz Europe/London "Search for recent Bun releases, read relevant sources, and cite them"
-```
+For scheduled searches, connect an MCP server that offers search and allow its search tool for scheduled tasks.
 
 ## Use MCP tools
 
