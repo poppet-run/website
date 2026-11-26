@@ -85,7 +85,7 @@ Poppet removes the buttons and shows the outcome when the request ends. You can 
 /deny <id>
 ```
 
-Each approval covers one command. A request expires after two minutes by default, set with [`timeouts.approvalSeconds`](../configuration.md#timeouts-and-limits). See [run commands](../commands.md#approve-a-command). [Reviewed MCP actions](../mcp.md#review-an-action) work the same way.
+Each approval covers one command. A request expires after one hour by default, set with [`timeouts.approvalSeconds`](../configuration.md#timeouts-and-limits). Pending approvals survive worker restarts until they expire. Reply with `/cancel` to cancel one, or send a new message in the same session to replace the waiting answer. See [run commands](../commands.md#approve-a-command). [Reviewed MCP actions](../mcp.md#review-an-action) work the same way.
 
 ## Scheduled results
 

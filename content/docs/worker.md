@@ -100,7 +100,7 @@ Background logs rotate at 5 MiB per file by default. Change this with [`limits.w
 
 Poppet answers up to 3 conversations at once, across the terminal, web chat, gateways, and scheduled tasks. Messages in the same conversation are answered in order. Cancelling one conversation does not affect the others.
 
-To change the limit, set [`chat.maxConcurrentRequests`](configuration.md#settings) from 1 to 8 and restart the worker. An answer waiting for your approval keeps its place while it waits. The default wait is two minutes, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits).
+To change the limit, set [`chat.maxConcurrentRequests`](configuration.md#settings) from 1 to 8 and restart the worker. An answer waiting for your approval frees its place so other conversations can run. After you answer the approval request, Poppet continues when a place is available. The default wait is one hour, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). Pending approvals survive a worker restart until they expire. See [approval requests](commands.md#approve-a-command).
 
 ## Sleep and missed tasks
 

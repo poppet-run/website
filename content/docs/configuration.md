@@ -88,7 +88,7 @@ Run `poppet config` to check the file and see every resolved value. Restart the 
 | `timeouts.mcpStartupSeconds` | 8 | 1 to 600 | Starting an MCP server, including discovery |
 | `timeouts.mcpToolCallSeconds` | 10 | 1 to 3600 | One MCP tool call |
 | `timeouts.taskOperationSeconds` | 8 | 1 to 300 | Creating or changing a task through the worker, and checking its messaging destination |
-| `timeouts.approvalSeconds` | 120 | 10 to 3600 | How long an approval request stays open |
+| `timeouts.approvalSeconds` | 3600 | 10 to 86400 | How long an approval request stays open |
 | `timeouts.attachmentDownloadSeconds` | 30 | 1 to 600 | Downloading one messaging attachment |
 | `timeouts.gatewayRequestSeconds` | 10 | 1 to 300 | Discord, Slack, and Telegram API requests |
 | `timeouts.gatewayRetrySeconds` | 30 | 1 to 3600 | Wait before a messaging adapter reconnects after a failure |
