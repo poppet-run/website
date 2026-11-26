@@ -130,7 +130,7 @@ If your connection drops just as you send, web chat cannot tell whether Poppet r
 - **Recover submission** checks with Poppet. If Poppet received it, the conversation opens with the reply. If not, the message is sent now. Poppet never answers the same message twice.
 - **Forget recovery** also checks with Poppet first, and opens the conversation if your message arrived. Otherwise it discards the message from this tab. Check the conversation before you send it again.
 
-Web chat keeps a message waiting for recovery through sign-out, but only in the same browser tab.
+Signing out clears any message waiting for recovery from the browser tab. Check the conversation after signing back in before sending the message again.
 
 ## Delete a conversation
 

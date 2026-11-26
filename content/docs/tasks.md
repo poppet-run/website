@@ -121,7 +121,7 @@ With [`timeZone`](configuration.md#time-zone) set, Poppet uses your local time w
 Some limits apply to tasks created or changed from chat:
 
 - Poppet can create up to five tasks per message.
-- A repeating task must have at least five minutes between runs.
+- A repeating task must have at least five minutes between runs. Poppet checks every listed minute, including the gap from the last minute of an hour to the first minute of the next. For example, `0,30 * * * *` is accepted, but `0,58 9 * * *` is rejected even though it only runs during one hour.
 - To change a task that posts to a gateway, ask from a place where Poppet can post to that destination.
 - Tasks that use a [manual-only skill](skills.md#manual-only-skills) can only be changed with the `poppet tasks` commands.
 - Retrying and cancelling runs need the `poppet tasks` commands.
