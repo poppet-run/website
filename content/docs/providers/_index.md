@@ -11,7 +11,8 @@ Poppet does not include an AI model. It sends your messages to a model provider 
 | -------- | --------------- | -------- |
 | [ChatGPT](openai-chatgpt.md) | Sign in with your ChatGPT account | Using a ChatGPT plan you already pay for |
 | [OpenRouter](openrouter.md) | API key | Choosing from many models with prepaid credits |
-| [OpenCode Go](opencode-go.md) | API key | Text chat with GLM-5.3 or GPT 6 Luna |
+| [OpenCode](opencode.md) | API key | Paid chat models with workspace credits |
+| [OpenCode Go](opencode-go.md) | API key | Chat models included in your Go subscription |
 
 After you connect, list the models you can use and save one in [`config.json`](../configuration.md):
 
