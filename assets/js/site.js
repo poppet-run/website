@@ -7,11 +7,16 @@ if (navigator.clipboard) {
       try {
         await navigator.clipboard.writeText(code.textContent.trimEnd());
         button.textContent = "Copied";
+        button.dataset.state = "copied";
       } catch {
         button.textContent = "Copy failed";
+        delete button.dataset.state;
       }
       clearTimeout(reset);
-      reset = setTimeout(() => { button.textContent = "Copy"; }, 2000);
+      reset = setTimeout(() => {
+        button.textContent = "Copy";
+        delete button.dataset.state;
+      }, 2000);
     });
   }
 }
@@ -59,3 +64,37 @@ for (const blocks of shellGroups) {
 let savedShell = null;
 try { savedShell = localStorage.getItem("shell"); } catch {}
 showShell(savedShell || "bash");
+
+// Highlight the current section in the desktop "On this page" table of contents.
+const tocLinks = [...document.querySelectorAll(".docs-toc .table-of-contents a[href^='#']")];
+if (tocLinks.length > 0 && "IntersectionObserver" in window) {
+  const linkById = new Map(tocLinks.map((link) => [decodeURIComponent(link.getAttribute("href").slice(1)), link]));
+  const headings = [...linkById.keys()].map((id) => document.getElementById(id)).filter(Boolean);
+  let activeId = headings[0]?.id;
+
+  const setActive = (id) => {
+    if (!id) return;
+    activeId = id;
+    for (const [key, link] of linkById) {
+      if (key === id) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    }
+  };
+
+  if (headings.length > 0) {
+    setActive(activeId);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length > 0) {
+          setActive(visible[0].target.id);
+        } else {
+          const passed = headings.filter((h) => h.getBoundingClientRect().top <= 120);
+          if (passed.length > 0) setActive(passed[passed.length - 1].id);
+        }
+      },
+      { rootMargin: "-16px 0px -70% 0px", threshold: 0 }
+    );
+    for (const heading of headings) observer.observe(heading);
+  }
+}
