@@ -32,7 +32,7 @@ To approve commands, chat through a [messaging gateway](gateways/_index.md). Whe
 /deny <id>
 ```
 
-Only you can answer, and only in the same conversation. An approval covers that one command and nothing else. A request expires after two minutes, or when you cancel the reply or restart the worker. To try again after that, ask Poppet again.
+Only you can answer, and only in the same conversation. An approval covers that one command and nothing else. A request expires after two minutes by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). It also expires when you cancel the reply or restart the worker. To try again after that, ask Poppet again.
 
 In Slack, the buttons need **Interactivity & Shortcuts** turned on in your [Slack app settings](gateways/slack.md#create-the-app). Replying with `/approve <id>` works without it.
 

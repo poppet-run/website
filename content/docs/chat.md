@@ -147,16 +147,16 @@ poppet chat send <session-id> --attach ./build.log --attach ./config.json "Why d
 
 Put `--attach <path>` before the message. Repeat it for more files. In the interactive prompt, use `/attach <path>`. In Discord or Slack, attach files to your message as usual. Telegram does not accept attachments. A message with files does not need any text. Each gateway's guide covers its attachments, such as [Discord](gateways/discord.md#attachments).
 
-| Type | Accepted | Size limit |
+| Type | Accepted | Default size limit |
 | ---- | -------- | ---------- |
 | Images | PNG, JPEG, WebP, or GIF | 5 MiB each |
 | Text files | `.txt`, `.md`, `.log`, `.csv`, `.json`, `.yaml`, and common source code files | 64 KiB each |
 
-Each message can have up to 4 files. Poppet refuses PDFs and other file types. Images need a model that accepts images. If your session's model does not, start a new session with one that does.
+Each message can have up to 4 files by default. Poppet refuses PDFs and other file types. Images need a model that accepts images. If your session's model does not, start a new session with one that does.
 
 If Poppet refuses a file, it refuses the whole message and tells you which file and why.
 
-Poppet keeps attachments with the conversation and sends them again with later messages, so the model can still refer to them. After 8 images, older images are left out.
+Poppet keeps attachments with the conversation and sends them again with later messages, so the model can still refer to them. By default, Poppet sends up to 8 images per model request and leaves older images out. Change these defaults with [`limits.attachmentsPerMessage`, `limits.imageBytes`, `limits.textFileBytes`, and `limits.imagesPerRequest`](configuration.md#timeouts-and-limits).
 
 Poppet tells the model never to follow instructions found inside a file. As a precaution, a message with attachments cannot change memory or tasks. It also cannot use MCP tools, unless you [trust the server](mcp.md#after-poppet-reads-untrusted-content). Ask for those in a separate message.
 
@@ -180,9 +180,11 @@ Poppet never retries a message by itself, and it never switches to another provi
 
 ## Limits
 
-Poppet sends the model up to the last 20 exchanges of a conversation, within a 256 KiB budget. Older messages stay saved, but the model no longer sees them. A single message too large to fit is refused.
+By default, Poppet sends the model up to the last 20 exchanges of a conversation, within a 256 KiB budget. Older messages stay saved, but the model no longer sees them. A single message too large to fit is refused.
 
-| Limit | Value |
+Change these defaults in [timeouts and limits](configuration.md#timeouts-and-limits), including `limits.historyTurns` and `limits.contextBytes` for conversation history. The overall answer deadline still applies when you increase an individual timeout.
+
+| Limit | Default |
 | ----- | ----- |
 | Time for one answer | 300 seconds, set with [`chat.runDeadlineSeconds`](configuration.md#settings) |
 | Time for each model request | 60 seconds |

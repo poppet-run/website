@@ -83,7 +83,7 @@ When a command needs your approval, Poppet posts it in the thread with **Approve
 /deny <id>
 ```
 
-Each approval covers one command. A request expires after two minutes. See [run commands](../commands.md#approve-a-command). [Reviewed MCP actions](../mcp.md#review-an-action) work the same way.
+Each approval covers one command. A request expires after two minutes by default, set with [`timeouts.approvalSeconds`](../configuration.md#timeouts-and-limits). See [run commands](../commands.md#approve-a-command). [Reviewed MCP actions](../mcp.md#review-an-action) work the same way.
 
 ## Scheduled results
 

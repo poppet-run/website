@@ -68,7 +68,7 @@ Disagree when there is a good reason, and admit uncertainty plainly.
 
 ## Limits
 
-Your facts, `profile.md`, and `soul.md` can each be up to 8 KiB. If one is larger, Poppet stops with an error instead of cutting it short. All three count toward how much Poppet can send the model, so long files leave less room for the conversation.
+Your facts have a fixed 8 KiB budget. `profile.md` and `soul.md` each default to 8 KiB. Change the file limits with [`limits.profileBytes` and `limits.soulBytes`](configuration.md#timeouts-and-limits). If one is larger, Poppet stops with an error instead of cutting it short. All three count toward how much Poppet can send the model, so long files leave less room for the conversation.
 
 `profile.md` and `soul.md` must be plain text files that only you can change. If Poppet refuses one, make sure it is a regular file, not a link, and set its permissions:
 

@@ -22,7 +22,7 @@ Poppet reads the text of the page. It cannot read:
 - pages that need JavaScript to show their content
 - addresses on your own network, such as `localhost` or a router's address
 
-Each page can be up to 1 MiB, and Poppet gives up after 15 seconds.
+By default, each page can be up to 1 MiB, and Poppet gives up after 15 seconds. Change these with [`limits.pageBytes` and `timeouts.pageFetchSeconds`](configuration.md#timeouts-and-limits).
 
 Poppet only reads addresses that are in your current message or saved task prompt. It does not follow addresses it finds in earlier conversations, skills, MCP results, or other pages. This stops a web page from sending Poppet somewhere you did not ask it to go.
 
