@@ -105,6 +105,8 @@ Poppet connects to a server the first time a chat needs it. If the server fails,
 
 Poppet skips a tool it cannot use, for example because its description is too long. `mcp servers` lists any skipped tools and why.
 
+Tools can use standard JSON Schema and OpenAPI formats such as dates, timestamps, URIs, UUIDs, and 32-bit integers. Poppet checks arguments against these formats before calling a tool. An unsupported format still causes Poppet to skip the tool.
+
 If a tool call fails partway through, Poppet does not repeat it, because the action may already have happened. Check the service before you ask again.
 
 ## Permissions
@@ -113,7 +115,7 @@ Poppet uses an allowed tool only when your current message asks for it.
 
 ### After Poppet reads untrusted content
 
-A web page or tool result could contain text written to trick Poppet. Once Poppet reads a web page, a search result, or an MCP result during an answer, it stops using MCP tools for the rest of that answer. You can then ask again in a new message.
+A web page or tool result could contain text written to trick Poppet. Once Poppet reads a web page or an MCP result during an answer, it stops using MCP tools for the rest of that answer. You can then ask again in a new message.
 
 If you trust a server enough to keep using it after that, add `"availableAfterUntrusted": true` to its entry. This helps with servers where Poppet first reads documentation and then acts. Text Poppet has read can then influence its next calls to that server.
 
@@ -155,7 +157,7 @@ When it asks you, Poppet shows the server, the tool, what it expects the call to
 
 The details of the call appear in the thread, so use a private channel if they are private.
 
-Poppet does not use reviewed tools after reading a web page, search result, command output, MCP result, or attachment, even with `availableAfterUntrusted`. Ask for the action in a new message.
+Poppet does not use reviewed tools after reading a web page, command output, MCP result, or attachment, even with `availableAfterUntrusted`. Ask for the action in a new message.
 
 `poppet chat show <session-id>` shows each review, its reason, and the result.
 
@@ -228,5 +230,6 @@ When you register Poppet with the service, use `http://127.0.0.1:1455/auth/callb
 - Up to 8 servers, each with up to 128 tools.
 - Each tool call can take up to 10 seconds.
 - Each tool result can be up to 16 KiB. Longer results are cut short.
+- A server message can be up to 4 MiB. Larger messages close the connection. This does not increase the tool result limit above.
 
 Poppet uses MCP tools only. It does not support MCP resources, prompts, or servers that use the older HTTP with SSE connection.

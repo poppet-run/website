@@ -47,7 +47,6 @@ Keep passwords, API keys, and tokens out of `config.json`. Poppet saves those in
 | `chat.logTimings` | `false` | Write how long each step of an answer took to the worker log |
 | `tasks.catchUpMinutes` | `60` | How late a missed repeating task can still run, from 0 to 1440 minutes |
 | `tasks.quietHours` | None | Hours when scheduled posts wait. See [quiet hours](#quiet-hours). |
-| `webSearchProvider` | None | `brave` or `kagi`. See [web search](web.md#turn-on-web-search). |
 | `mcpServers` | `[]` | MCP servers and their tools. See [MCP tools](mcp.md). |
 | `discord` | None | Your Discord IDs. See [Discord](gateways/discord.md). |
 | `slack` | None | Your Slack IDs. See [Slack](gateways/slack.md). |
@@ -127,7 +126,7 @@ If the variable is set but empty or wrong, Poppet reports an error rather than u
 
 `poppet provider logout` deletes the saved key. It does not cancel the key with the provider. Do that on the provider's website.
 
-Web search keys are separate. They come only from `poppet web login`, never from environment variables. See [web search](web.md#turn-on-web-search).
+Built-in web search has been removed. Remove `webSearchProvider` and any older `webSearch` field from `config.json`, or Poppet will reject the file. See [migrate from built-in search](web.md#if-you-used-built-in-web-search).
 
 ## Reasoning and timing logs
 

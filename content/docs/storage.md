@@ -13,7 +13,7 @@ web.json          web chat settings, if you use web chat
 profile.md        your profile, which you write
 soul.md           Poppet's personality, which you write
 skills/           your skills
-auth/             provider, web search, and MCP sign-ins and keys
+auth/             provider and MCP sign-ins and keys
 channels/         messaging gateway tokens, and Telegram's settings
 store/            conversations, facts, and tasks
 logs/             the worker's log
@@ -41,7 +41,7 @@ Sign-ins, API keys, and tokens are kept in the `auth` and `channels` folders, se
 - Delete conversations with [`chat delete` or `chat prune`](chat.md#delete-old-sessions).
 - Forget facts with [`memory forget`](memory.md#saved-facts). Earlier versions stay in the fact's history.
 - Delete tasks with [`tasks remove` or `tasks clear`](tasks.md#remove-tasks).
-- Sign out with `poppet provider logout`, `poppet web logout`, or `poppet mcp logout`.
+- Sign out with `poppet provider logout` or `poppet mcp logout`.
 
 To remove everything, stop the worker, run `poppet worker uninstall`, and delete the data directory. This cannot be undone.
 

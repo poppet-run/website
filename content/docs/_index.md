@@ -28,7 +28,7 @@ Poppet runs on your computer and uses a model provider you choose. Start with [g
 ## Connect services
 
 - [Messaging](gateways/_index.md): chat with Poppet through a messaging gateway, such as Discord, Slack, or Telegram, and post scheduled results to a channel.
-- [Read and search the web](web.md): let Poppet read pages you link, or turn on web search with Brave or Kagi.
+- [Read web pages](web.md): let Poppet read public pages you link in a message or task.
 - [MCP tools](mcp.md): give Poppet tools from other apps and services you trust.
 
 ## Reference

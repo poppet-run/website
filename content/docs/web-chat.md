@@ -156,4 +156,4 @@ Replies show as plain text until the page has loaded its formatting, and stay re
 
 If web chat does not start, the worker keeps running tasks and messaging and writes the reason to its log. Run `poppet worker logs` and look for a problem with `web.json`, a missing web build, or a port already in use. Check the origin, the proxy settings, the file permissions, and the access key hash, then restart the worker.
 
-`poppet web login` is for [web search](web.md), not web chat. Web chat uses the access key from this guide.
+Web chat uses the access key from this guide.

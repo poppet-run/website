@@ -207,16 +207,6 @@ Telegram takes its bot token as an option. To keep it out of your shell history,
 
 See [Discord](gateways/discord.md), [Slack](gateways/slack.md), and [Telegram](gateways/telegram.md).
 
-## Web search
-
-| Command | What it does |
-| ------- | ------------ |
-| `web login` | Save the key for your search provider |
-| `web status` | Show whether search is on and has a key |
-| `web logout` | Delete the saved search key |
-
-Set `webSearchProvider` in `config.json` first. See [read and search the web](web.md).
-
 ## MCP
 
 | Command | What it does |
