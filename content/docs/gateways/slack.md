@@ -21,7 +21,7 @@ Anyone who can read a channel can read Poppet's replies there, including your sa
 
 Poppet works in ordinary public and private channels. It does not answer direct messages, group messages, archived channels, or channels shared with another organization.
 
-Setup asks for three IDs, so find them first:
+Find your member ID before setup. Keep the workspace and channel IDs available in case setup cannot list them:
 
 - Your member ID, which starts with `U`. Open your Slack profile, choose the ⋮ menu, then **Copy member ID**.
 - Your workspace ID, which starts with `T`. Open Slack in a browser. It is the part of the address after `/client/`.
@@ -32,10 +32,10 @@ Setup asks for three IDs, so find them first:
 Run setup and choose Slack when it asks:
 
 ```sh
-poppet setup
+poppet setup gateways
 ```
 
-Setup asks for the three IDs, the bot token, and the app token. The tokens are hidden as you type them.
+Setup checks both tokens, reads the workspace ID from the bot token, and offers channels the bot belongs to. Enter your member ID and choose the home channel. If the channel is missing or Slack refuses the lookup, you can type its ID. The tokens are hidden as you type them. Review your choices before saving.
 
 Then start the worker, or restart it if it is already running:
 

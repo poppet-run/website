@@ -63,11 +63,14 @@ poppet --completions fish > ~/.config/fish/completions/poppet.fish
 | Command | What it does |
 | ------- | ------------ |
 | `setup` | Choose a provider and model, connect a gateway, and start the worker |
+| `setup provider` | Change the provider and model, then offer worker setup |
+| `setup gateways` | Change messaging gateways, then offer worker setup |
+| `setup worker` | Set up only the background worker |
 | `config` | Show your settings and where Poppet found them |
 | `doctor` | Check your setup for problems |
 | `store status` | Show where your data is, and how many conversations it holds |
 
-`setup` needs an interactive terminal. It starts from your current settings, and leaves alone anything you skip. Sign-ins are saved as soon as you finish them. Everything else is saved at the end, so cancelling partway keeps only your sign-ins. See [getting started](getting-started.md#2-run-setup) and [doctor](doctor.md).
+`setup` needs an interactive terminal. It shows your current settings and lets you choose which parts to change. You review provider and gateway changes before saving. Sign-ins are saved immediately. Cancelling before you save keeps those sign-ins; stopping later keeps any completed saves. See [getting started](getting-started.md#2-run-setup) and [doctor](doctor.md).
 
 ## Providers
 
@@ -194,7 +197,7 @@ While the worker runs, other commands go through it. See [worker](worker.md).
 
 ## Messaging
 
-`poppet setup` can connect Discord and Slack for you. These commands connect a gateway without the interactive prompts, for example from a script. Telegram can only be connected this way.
+`poppet setup gateways` can connect Discord, Slack, and Telegram for you. These commands connect a gateway without the interactive prompts, for example from a script.
 
 | Command | What it does |
 | ------- | ------------ |

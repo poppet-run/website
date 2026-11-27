@@ -53,9 +53,29 @@ poppet --help
 poppet setup
 ```
 
-Setup asks you to choose a provider, sign in, and pick a model. It can also connect a [messaging gateway](gateways/_index.md), such as Discord or Slack. On macOS, and on Linux with systemd, it offers to start the [worker](worker.md) each time you log in. On other systems it shows the command to run the worker yourself.
+Setup asks you to choose a provider, sign in, and pick a model. It can also connect a [messaging gateway](gateways/_index.md), such as Discord, Slack, or Telegram. On macOS, and on Linux with systemd, it offers to start the [worker](worker.md) each time you log in. On other systems it shows the command to run the worker yourself.
 
-Setup saves your choices in `config.json` and keeps your sign-in details in separate protected files. If you run it again, it starts from your current settings.
+Setup shows your current settings, then guides you through numbered steps. After you choose a model, it offers a short test request that uses some of your provider quota. You can skip the test. If it fails, you can keep the model or choose another. If sign-in or the model list fails, you can retry, choose another provider, or quit.
+
+Choose the gateways you want from one list. Setup checks their tokens and offers the accounts, servers, or channels it can find. You can also type IDs yourself. If a token check fails, you can retry, continue with an unchecked token, or skip that gateway.
+
+Before saving, review the provider, model, and gateway changes. You can change your answers or cancel. Sign-ins are saved immediately, even if you cancel. Other choices are saved after you approve the review. If setup stops later, completed saves remain.
+
+Setup then offers to install, start, or restart the worker. Restarting can interrupt active answers. It finishes with [doctor](doctor.md) checks and instructions for starting a conversation. A worker that has just started can show as not responding; check again with `poppet doctor`.
+
+### Change part of your setup
+
+When you run setup again after saving a provider, you can choose what to change or keep everything. You can also go straight to one part:
+
+```sh
+poppet setup provider
+poppet setup gateways
+poppet setup worker
+```
+
+Provider and gateway setup both finish with the worker step. Unselected configured gateways stay connected unless you confirm removal of their settings and tokens. If setup cannot read a gateway's saved settings, it marks them unreadable and lets you replace or remove them.
+
+When two or more gateways remain configured, setup asks which [home gateway](configuration.md#home-gateway) should receive approval prompts for tasks without a destination. It also lets you keep a saved home gateway from an external package.
 
 Setup needs an interactive terminal. If you would rather edit the settings yourself, follow step 3 instead.
 

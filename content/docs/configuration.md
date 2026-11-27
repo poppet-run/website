@@ -52,6 +52,7 @@ Keep passwords, API keys, and tokens out of `config.json`. Poppet saves those in
 | `discord` | None | Your Discord IDs. See [Discord](gateways/discord.md). |
 | `slack` | None | Your Slack IDs. See [Slack](gateways/slack.md). |
 | `applicationName` | `Poppet` | The name ChatGPT shows for Poppet when you first sign in |
+| `homeGateway` | None | Preferred gateway for approval prompts from tasks without a destination. See [home gateway](#home-gateway). |
 | `gatewayPackages` | `[]` | Extra messaging integrations to load |
 
 Telegram has no setting in `config.json`. Setup saves its IDs with its token. See [Telegram](gateways/telegram.md).
@@ -61,6 +62,20 @@ Install packages listed in `gatewayPackages` into `gateways/node_modules` in you
 You can change timeouts, conversation history, and size limits. See [timeouts and limits](#timeouts-and-limits).
 
 Web chat has its own settings file. See [web chat](web-chat.md).
+
+## Home gateway
+
+When a task has no messaging destination and [waits for approval](tasks.md#wait-for-approval), Poppet needs a home conversation for its approval prompt. Set `homeGateway` to prefer one of your configured gateways:
+
+```json
+{
+  "homeGateway": "telegram"
+}
+```
+
+The worker tries that gateway's home conversation first. If it is unset, unknown, disabled, or cannot provide a destination, Poppet tries the other enabled gateways in order: Discord, Slack, Telegram, then external integrations. Without a usable home conversation or task destination, a call that needs approval fails the run.
+
+This setting only chooses where approval prompts go for tasks without a destination. Results still go to the task's saved destination. Tasks without `--to` keep results on your computer. Run `poppet config` to inspect the setting, and restart the worker after changing it.
 
 ## Timeouts and limits
 

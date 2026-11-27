@@ -11,7 +11,7 @@ You can chat with Poppet through a Telegram bot that you create. It works in one
 
 1. In Telegram, message [@BotFather](https://t.me/BotFather) and create a bot. Copy the token it gives you, and keep it private.
 2. Send your new bot a message.
-3. Open `https://api.telegram.org/bot<token>/getUpdates` in a browser, with your token in place of `<token>`. Your user ID is the number after `"from":{"id":`.
+3. For manual ID lookup, open `https://api.telegram.org/bot<token>/getUpdates` in a browser, with your token in place of `<token>`. Your user ID is the number after `"from":{"id":`.
 4. Choose the chat Poppet will use:
    - For a private chat with the bot, the chat ID is your user ID.
    - For a group, add the bot to the group, send a message there, and open the same address again. The chat ID is the number after `"chat":{"id":`. Group IDs start with `-`.
@@ -22,7 +22,17 @@ Do not set a webhook for the bot, and do not use its token in any other program.
 
 ## Connect Poppet
 
-`poppet setup` does not connect Telegram. Use this command instead. It reads the token without saving it in your shell history:
+Run setup and choose Telegram:
+
+```sh
+poppet setup gateways
+```
+
+Setup checks the token and offers accounts and chats from recent messages to the bot. Send the bot a private message so your account appears. For a group, add the bot and mention it there too. You can type IDs instead if the lists are empty or a running worker prevents setup from reading recent messages. Setup leaves those messages queued, so the worker still answers them later.
+
+For a group, setup asks for a home conversation for scheduled results. Keep the chat ID for the whole group, or enter `<chat-id>:<topic-id>` for a forum topic. Review your choices before saving.
+
+To connect without interactive setup, use this command. It reads the token without saving it in your shell history:
 
 {{< shell >}}
 ```bash {label="bash"}
