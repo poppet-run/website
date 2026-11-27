@@ -108,6 +108,18 @@ Without a provider name, these commands use the `provider` in `config.json`. See
 
 Put options before the message. See [chat](chat.md).
 
+## Approvals
+
+| Command | What it does |
+| ------- | ------------ |
+| `approvals`, `approvals list` | List pending shell command and MCP approvals |
+| `approvals approve <id>` | Approve one pending action once |
+| `approvals deny <id>` | Deny one pending action |
+
+The list shows each approval's ID, kind, conversation, expiry time, and summary. All three commands accept `--json`. Copy an ID from the list to answer a request from a gateway conversation or scheduled task. Expired or already answered requests cannot be answered again.
+
+See [answer approvals from the terminal](commands.md#answer-approvals-from-the-terminal).
+
 ## Memory
 
 | Command | What it does |
