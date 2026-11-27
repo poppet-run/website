@@ -46,6 +46,7 @@ Keep passwords, API keys, and tokens out of `config.json`. Poppet saves those in
 | `chat.logReasoning` | `false` | Show the model's reasoning, and write it to the worker log. See [reasoning and timing logs](#reasoning-and-timing-logs). |
 | `chat.logTimings` | `false` | Write how long each step of an answer took to the worker log |
 | `tasks.catchUpMinutes` | `60` | How late a missed repeating task can still run, from 0 to 1440 minutes |
+| `tasks.approvals` | `fail` | `fail` or `wait`. Default for tasks without an override. See [wait for approval](tasks.md#wait-for-approval). |
 | `tasks.quietHours` | None | Hours when scheduled posts wait. See [quiet hours](#quiet-hours). |
 | `mcpServers` | `[]` | MCP servers and their tools. See [MCP tools](mcp.md). |
 | `discord` | None | Your Discord IDs. See [Discord](gateways/discord.md). |

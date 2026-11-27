@@ -16,7 +16,7 @@ Before each command, Poppet sends a separate request to your current model, aski
 The review gives one of three answers:
 
 - **Allow.** The command runs once, exactly as reviewed.
-- **Needs approval.** You must approve the command first. In a [messaging gateway](gateways/_index.md), Poppet asks you in the thread. In the terminal and web chat, the command does not run. A scheduled task fails.
+- **Needs approval.** You must approve the command first. In a [messaging gateway](gateways/_index.md), Poppet asks you in the thread. In the terminal and web chat, the command does not run. A scheduled task fails unless you enable [waiting for approval](tasks.md#wait-for-approval).
 - **Deny.** The command does not run, and Poppet stops answering.
 
 If the review fails or times out, the command does not run.
@@ -52,7 +52,7 @@ In the terminal or web chat, a command that needs approval does not run. Ask for
 
 ## Scheduled tasks
 
-Nobody is around to approve a command during a scheduled task. If a command needs approval, that run fails straight away. The task's schedule continues. If the task posts to a gateway, Poppet posts a short [failure notice](tasks.md#failure-notices) there. Run `poppet tasks show <task-id>` for details.
+By default, a scheduled run fails as soon as a command needs approval. Set `--approvals wait` on the task, or `tasks.approvals` to `wait` in your configuration, to let it [wait for approval through a gateway](tasks.md#wait-for-approval). Without a task destination or gateway home conversation, the run still fails. The task's schedule continues. If the task posts to a gateway, Poppet posts a short [failure notice](tasks.md#failure-notices) there. Run `poppet tasks show <task-id>` for details.
 
 Commands that finished before the failure are not undone, so check your computer before you run the task again.
 

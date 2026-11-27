@@ -133,10 +133,10 @@ See [skills](skills.md).
 
 | Command | What it does |
 | ------- | ------------ |
-| `tasks add <name> <prompt>` | Create a task, with `--in`, `--at`, or `--cron` to set when it runs |
+| `tasks add <name> <prompt>` | Create a task, with `--in`, `--at`, or `--cron` to set when it runs. Use `--approvals fail` or `--approvals wait` to override its approval policy |
 | `tasks list` | List your tasks |
 | `tasks show <task-id>` | Show a task's runs, results, and note |
-| `tasks edit <task-id>` | Change a task's name, prompt, schedule, or end time |
+| `tasks edit <task-id>` | Change a task's name, prompt, schedule, end time, or approval policy. Use `--approvals default` to inherit `tasks.approvals` again |
 | `tasks run <task-id>` | Run a task now |
 | `tasks pause <task-id>` | Pause a task |
 | `tasks resume <task-id>` | Resume a paused task |
