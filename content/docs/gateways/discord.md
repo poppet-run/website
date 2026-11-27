@@ -22,10 +22,10 @@ Anyone who can read a channel can read Poppet's replies there, including your sa
 Run setup and choose Discord when it asks:
 
 ```sh
-poppet setup
+poppet setup gateways
 ```
 
-Setup asks for the three IDs and the bot token. The token is hidden as you type it.
+Setup checks the bot token, suggests the application owner as your user ID, and offers the bot's servers and text channels. For a team-owned application, it suggests the team owner. Check that the suggested user is you. You can type any ID instead. The token is hidden as you type it. Review your choices before saving.
 
 Then start the worker, or restart it if it is already running:
 
