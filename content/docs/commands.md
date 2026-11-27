@@ -1,6 +1,6 @@
 +++
 title = "Run commands"
-description = "How Poppet runs shell commands on your computer, and how you approve them in a messaging gateway."
+description = "How Poppet runs shell commands on your computer, and how you approve pending requests."
 +++
 
 # Run commands
@@ -36,7 +36,7 @@ Poppet removes the buttons and shows the outcome when the request ends. If you h
 /deny <id>
 ```
 
-Only you can answer, and only in the same conversation. An approval covers that one command and nothing else. Poppet saves your answer before running the command. If it cannot save your approval, the command does not run. A request expires after one hour by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). You can set the wait to between 10 seconds and 24 hours. An explicit setting keeps its value after an update.
+Only you can answer through the gateway, in the same conversation. You can also [answer from the terminal](#answer-approvals-from-the-terminal). An approval covers that one command and nothing else. Poppet saves your answer before running the command. If it cannot save your approval, the command does not run. A request expires after one hour by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). You can set the wait to between 10 seconds and 24 hours. An explicit setting keeps its value after an update.
 
 While Poppet waits, it saves the unfinished answer and frees its place so other conversations can run. Waiting does not use up the answer's time limit. After you approve, Poppet continues when a place is available.
 
@@ -49,6 +49,20 @@ In Slack, the buttons need **Interactivity & Shortcuts** turned on in your [Slac
 In the terminal or web chat, a command that needs approval does not run. Ask for the same thing in a gateway to approve it there.
 
 [Reviewed MCP actions](mcp.md#review-an-action) use the same buttons and replies.
+
+## Answer approvals from the terminal
+
+You can list and answer pending requests from gateway conversations and scheduled tasks on your computer:
+
+```sh
+poppet approvals list
+poppet approvals approve <id>
+poppet approvals deny <id>
+```
+
+Copy the approval ID from the list. `poppet approvals` also lists pending requests. The list shows the action summary, conversation, and expiry time. Use `--json` for the full result, including the run ID and creation time.
+
+Approval allows that one action. Denial stops it. An expired, cancelled, or already answered request cannot be approved again. These commands answer saved requests; they do not let a terminal or web chat pause for approval.
 
 ## Scheduled tasks
 
