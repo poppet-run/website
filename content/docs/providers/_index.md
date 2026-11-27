@@ -10,6 +10,7 @@ Poppet does not include an AI model. It sends your messages to a model provider 
 | Provider | How you connect | Good for |
 | -------- | --------------- | -------- |
 | [ChatGPT](openai-chatgpt.md) | Sign in with your ChatGPT account | Using a ChatGPT plan you already pay for |
+| [Gemini](gemini.md) | Google AI Studio API key | Using Google's Gemini chat models |
 | [OpenRouter](openrouter.md) | API key | Choosing from many models with prepaid credits |
 | [OpenCode](opencode.md) | API key | Paid chat models with workspace credits |
 | [OpenCode Go](opencode-go.md) | API key | Chat models included in your Go subscription |

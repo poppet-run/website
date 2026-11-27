@@ -8,7 +8,7 @@ next = "/docs/chat"
 
 You install Poppet from its source code. You need Git, Bun 1.4.4, and an account with one of the supported providers.
 
-Every message you send uses your provider account's quota. If you already pay for ChatGPT, start with ChatGPT. It needs no API key. OpenRouter, OpenCode, and OpenCode Go use an API key instead. See [providers](providers/_index.md) to compare them.
+Every message you send uses your provider account's quota. If you already pay for ChatGPT, start with ChatGPT. It needs no API key. Gemini, OpenRouter, OpenCode, and OpenCode Go use an API key instead. See [providers](providers/_index.md) to compare them.
 
 ## 1. Install Poppet
 
@@ -91,7 +91,7 @@ poppet provider status openai-chatgpt
 
 In the browser, pick your account and approve access to your plan, then return to the terminal. The [ChatGPT guide](providers/openai-chatgpt.md) covers what you approve and how to sign out.
 
-For an API key, follow the [OpenRouter](providers/openrouter.md), [OpenCode](providers/opencode.md), or [OpenCode Go](providers/opencode-go.md) guide.
+For an API key, follow the [Gemini](providers/gemini.md), [OpenRouter](providers/openrouter.md), [OpenCode](providers/opencode.md), or [OpenCode Go](providers/opencode-go.md) guide.
 
 Then save the provider and a model ID from the list in `~/.config/poppet/config.json`:
 

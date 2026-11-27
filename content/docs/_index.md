@@ -10,7 +10,7 @@ Poppet runs on your computer and uses a model provider you choose. Start with [g
 ## Start here
 
 - [Getting started](getting-started.md): install Poppet, connect a provider, and send a message.
-- [Providers](providers/_index.md): compare ChatGPT, OpenRouter, OpenCode, and OpenCode Go, and connect one.
+- [Providers](providers/_index.md): compare ChatGPT, Gemini, OpenRouter, OpenCode, and OpenCode Go, and connect one.
 
 ## Use Poppet
 
