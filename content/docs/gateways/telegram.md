@@ -92,7 +92,9 @@ You can also reply in the same conversation if you have the approval ID:
 /deny <id>
 ```
 
-Poppet removes the buttons and shows the outcome when the request ends. Only you can answer. An approval covers that one action, and expires after one hour by default, set with [`timeouts.approvalSeconds`](../configuration.md#timeouts-and-limits). Pending approvals survive worker restarts until they expire. Reply with `/cancel` to cancel one, or send a new message in the same session to replace the waiting answer. See [approval requests](../commands.md#approve-a-command).
+Poppet removes the buttons and shows the outcome when the request ends. Only you can answer. **Approve once** covers that one action. A request expires after one hour by default, set with [`timeouts.approvalSeconds`](../configuration.md#timeouts-and-limits). Pending approvals survive worker restarts until they expire. Reply with `/cancel` to cancel one, or send a new message in the same session to replace the waiting answer. See [approval requests](../commands.md#approve-a-command).
+
+When **Always allow** appears, it approves the action and saves a rule for later calls. You can also reply with `/approve-always <id>`. Use `/approvals list` to see saved rules, `/approvals revoke <rule-id>` to revoke one, or `/approvals revoke all` to revoke them all. Read [saved approval rules](../commands.md#save-an-approval-rule) for what each rule permits and when it applies.
 
 ## Send scheduled results
 

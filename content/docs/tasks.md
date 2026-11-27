@@ -222,7 +222,7 @@ poppet tasks add project-check --in 1h --to discord --approvals wait "Check my p
 
 Poppet posts the approval request to the task's messaging destination. If the task has no destination, it uses an available gateway home conversation. Without either, a call that needs approval still fails the run. Using a home conversation for approval does not change where results go. Tasks without `--to` still keep their results on your computer.
 
-In the conversation with the request, only you can answer. Use **Approve once** or **Deny**, or reply with `/approve <id>` or `/deny <id>`. You can also [list and answer pending requests from the terminal](commands.md#answer-approvals-from-the-terminal). The approval covers one call. See [approval requests](commands.md#approve-a-command) for how to inspect its details.
+In the conversation with the request, only you can answer. Use **Approve once** or **Deny**, or reply with `/approve <id>` or `/deny <id>`. You can also [list and answer pending requests from the terminal](commands.md#answer-approvals-from-the-terminal). The approval covers one call. **Always allow**, when offered, also saves a rule for later interactive chats. Scheduled runs never use saved rules automatically. See [approval requests](commands.md#approve-a-command) for how to inspect its details.
 
 To change an existing task's policy:
 

@@ -16,7 +16,7 @@ Before each command, Poppet sends a separate request to your current model, aski
 The review gives one of three answers:
 
 - **Allow.** The command runs once, exactly as reviewed.
-- **Needs approval.** You must approve the command first. In a [messaging gateway](gateways/_index.md), Poppet asks you in the thread. In the terminal and web chat, the command does not run. A scheduled task fails unless you enable [waiting for approval](tasks.md#wait-for-approval).
+- **Needs approval.** You must approve the command first. In a [messaging gateway](gateways/_index.md), Poppet asks you in the thread. In the terminal and web chat, the command does not run unless a [saved approval rule](#save-an-approval-rule) applies. A scheduled task fails unless you enable [waiting for approval](tasks.md#wait-for-approval).
 - **Deny.** The command does not run, and Poppet stops answering.
 
 If the review fails or times out, the command does not run.
@@ -36,7 +36,7 @@ Poppet removes the buttons and shows the outcome when the request ends. If you h
 /deny <id>
 ```
 
-Only you can answer through the gateway, in the same conversation. You can also [answer from the terminal](#answer-approvals-from-the-terminal). An approval covers that one command and nothing else. Poppet saves your answer before running the command. If it cannot save your approval, the command does not run. A request expires after one hour by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). You can set the wait to between 10 seconds and 24 hours. An explicit setting keeps its value after an update.
+Only you can answer through the gateway, in the same conversation. You can also [answer from the terminal](#answer-approvals-from-the-terminal). **Approve once** covers that one command and nothing else. Poppet saves your answer before running the command. If it cannot save your approval, the command does not run. A request expires after one hour by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). You can set the wait to between 10 seconds and 24 hours. An explicit setting keeps its value after an update.
 
 While Poppet waits, it saves the unfinished answer and frees its place so other conversations can run. Waiting does not use up the answer's time limit. After you approve, Poppet continues when a place is available.
 
@@ -46,7 +46,7 @@ Reply with `/cancel` to cancel the waiting answer. Sending a new message in the 
 
 In Slack, the buttons need **Interactivity & Shortcuts** turned on in your [Slack app settings](gateways/slack.md#create-the-app). A reply with `/approve <id>` works without it if you have the approval ID.
 
-In the terminal or web chat, a command that needs approval does not run. Ask for the same thing in a gateway to approve it there.
+In the terminal or web chat, a command that needs approval does not run unless a saved approval rule applies. Ask for the same thing in a gateway to approve it there.
 
 [Reviewed MCP actions](mcp.md#review-an-action) use the same buttons and replies.
 
@@ -62,7 +62,45 @@ poppet approvals deny <id>
 
 Copy the approval ID from the list. `poppet approvals` also lists pending requests. The list shows the action summary, conversation, and expiry time. Use `--json` for the full result, including the run ID and creation time.
 
-Approval allows that one action. Denial stops it. An expired, cancelled, or already answered request cannot be approved again. These commands answer saved requests; they do not let a terminal or web chat pause for approval.
+Approval without `--always` allows that one action. Denial stops it. An expired, cancelled, or already answered request cannot be approved again. These commands answer saved requests; they do not let a terminal or web chat pause for approval.
+
+## Save an approval rule
+
+Choose **Always allow** in Discord, Slack, or Telegram to approve the pending action and save a rule for later calls. The button appears only when Poppet can save a rule for the action. Read the prompt's rule summary before choosing it. You can also reply with `/approve-always <id>` or use the terminal:
+
+```sh
+poppet approvals approve <id> --always
+```
+
+If Poppet cannot create a rule, it leaves the request pending. Approve it once without `--always`, or deny it.
+
+A shell rule matches the exact command text and working folder. Changing either needs a new decision. Poppet does not save rules for commands with pipes, redirects, shell expansions, or certain programs such as `sudo`, `rm`, and shell interpreters. A saved command can still run a script whose contents change, so only save rules for commands you trust.
+
+A [reviewed MCP rule](mcp.md#review-an-action) matches the server name, tool name, and remote origin when present. It does not match the arguments. Later calls to that tool can use different arguments.
+
+Rules apply across conversations in the same data directory, including terminal and web chats. Poppet still reviews every call. A rule supplies your approval only when the review asks for it; it never overrides a denial or failed review. Rules do not apply to scheduled runs or after the current answer has read untrusted content, such as a web page, command output, MCP result, or attachment.
+
+Saved rules survive restarts and have no automatic expiry when created through these controls. The one-hour request timeout does not expire a saved rule. Poppet records the rule ID with each approval it supplies.
+
+### List and revoke rules
+
+```sh
+poppet approvals rules list
+poppet approvals rules revoke <rule-id>
+poppet approvals rules revoke --all
+```
+
+`poppet approvals rules` also lists rules. The list shows each rule's ID, kind, use count, last use, and summary. These commands accept `--json`.
+
+In a gateway conversation, only the configured owner can manage rules:
+
+```text
+/approvals list
+/approvals revoke <rule-id>
+/approvals revoke all
+```
+
+`/approvals` also lists saved rules. Use the rule ID from that list, not the pending approval ID. Revoking a rule stops future calls from using it. It does not undo actions or approvals already granted.
 
 ## Scheduled tasks
 
