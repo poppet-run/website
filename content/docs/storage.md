@@ -34,6 +34,7 @@ poppet store status
 - **Skills.** A copy of each skill used in a conversation or task, so later messages use the same version.
 - **Tool reviews.** Review decisions and reasons for shell commands and reviewed MCP calls, with any owner approval or denial. Inspect them with `poppet chat show <session-id>` or `poppet tasks show <task-id>`.
 - **Gateway approvals.** Approval requests and their outcomes, so waiting answers can survive worker restarts and Poppet can explain late replies.
+- **Saved approval rules.** Reusable permissions, their use counts and last use, and records of revoked rules. They survive restarts. [List or revoke rules](commands.md#list-and-revoke-rules) from the terminal or a gateway.
 - **Search index.** Your messages and Poppet's answers, for `chat search`.
 
 Sign-ins, API keys, and tokens are kept in the `auth` and `channels` folders, separate from your conversations. Only your user account can read them.

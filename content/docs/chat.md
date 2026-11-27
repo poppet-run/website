@@ -124,7 +124,7 @@ The session keeps a copy of the skill from when it started, so editing or deleti
 
 ## Run commands
 
-Poppet can run shell commands on your computer when it needs to. A separate review checks each command first. Some commands need your approval, and you can only give it in a gateway conversation. In the terminal and web chat, a command that needs approval does not run. See [run commands](commands.md).
+Poppet can run shell commands on your computer when it needs to. A separate review checks each command first. Some commands need your approval. In the terminal and web chat, they run only if a [saved approval rule](commands.md#save-an-approval-rule) applies. Otherwise, ask in a gateway conversation, where Poppet can wait for your answer. See [run commands](commands.md).
 
 ## Schedule tasks from chat
 

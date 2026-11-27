@@ -15,4 +15,4 @@ Each gateway has its own setup guide:
 
 Gateways need the [worker](../worker.md) running. Terminal chat works without it.
 
-A gateway is also the only place you can [approve commands](../commands.md#approve-a-command) that need your permission.
+Gateway conversations can [wait for your approval](../commands.md#approve-a-command) before running commands. Answer in the conversation or [from the terminal](../commands.md#answer-approvals-from-the-terminal). You can also save and revoke [approval rules](../commands.md#save-an-approval-rule).
