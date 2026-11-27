@@ -37,7 +37,7 @@ Keep passwords, API keys, and tokens out of `config.json`. Poppet saves those in
 
 | Setting | Default | What it does |
 | ------- | ------- | ------------ |
-| `provider` | `openai-chatgpt` | Provider for new chats and tasks: `openai-chatgpt`, `openrouter`, `opencode`, or `opencode-go` |
+| `provider` | `openai-chatgpt` | Provider for new chats and tasks: `openai-chatgpt`, `gemini`, `openrouter`, `opencode`, or `opencode-go` |
 | `timeZone` | None | Your time zone for scheduled tasks and quiet hours. See [time zone](#time-zone). |
 | `model` | None | Model ID for new chats and tasks, from `poppet provider models` |
 | `chat.outputTokens` | `2048` | Longest answer to ask the model for, in tokens, from 1 to 32768 |
@@ -94,7 +94,7 @@ Run `poppet config` to check the file and see every resolved value. Restart the 
 | ------------------------------------ | ------- | ------- | -------------------------------------------------------------------------------------- |
 | `timeouts.inferenceSeconds` | 60 | 5 to 3600 | Time allowed for one model request |
 | `timeouts.providerRequestSeconds` | 45 | 5 to 3600 | HTTP timeout for provider requests |
-| `timeouts.modelCatalogSeconds` | 30 | 1 to 300 | OpenCode and OpenRouter model-list request |
+| `timeouts.modelCatalogSeconds` | 30 | 1 to 300 | Gemini, OpenCode, and OpenRouter model-list request |
 | `timeouts.modelCatalogCacheSeconds` | 60 | 0 to 86400 | How long a fetched model list is reused; 0 refetches every time |
 | `timeouts.actionReviewSeconds` | 30 | 1 to 600 | Automatic review of a Bash command or MCP action |
 | `timeouts.sessionTitleSeconds` | 10 | 1 to 300 | Generating a chat session title |
@@ -197,12 +197,13 @@ Each data directory has its own settings, sign-ins, and conversations. Set the s
 
 ## API keys
 
-`poppet provider login` saves your OpenRouter, OpenCode, or OpenCode Go key in a protected file. It needs an interactive terminal, and shows `*` in place of each character you type or paste.
+`poppet provider login` saves your Gemini, OpenRouter, OpenCode, or OpenCode Go key in a protected file. It needs an interactive terminal, and shows `*` in place of each character you type or paste.
 
 To use a key without saving it, set one of these environment variables. It takes the place of the saved key.
 
 | Variable | Provider |
 | -------- | -------- |
+| `POPPET_GEMINI_API_KEY` | Gemini |
 | `POPPET_OPENROUTER_API_KEY` | OpenRouter |
 | `POPPET_OPENCODE_API_KEY` | OpenCode |
 | `POPPET_OPENCODE_GO_API_KEY` | OpenCode Go |

@@ -60,6 +60,11 @@ description = "Use the ChatGPT plan you already have."
 guide = "docs/providers/openai-chatgpt/"
 
 [[providers]]
+title = "Gemini"
+description = "Google chat models with your AI Studio API key."
+guide = "docs/providers/gemini/"
+
+[[providers]]
 title = "OpenRouter"
 description = "Many models, one account."
 guide = "docs/providers/openrouter/"

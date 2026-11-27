@@ -87,7 +87,7 @@ poppet --completions fish > ~/.config/fish/completions/poppet.fish
 | `--callback-port <port>` | `login` | Choose the port ChatGPT sign-in returns to |
 | `--forget` | `logout` | Also forget your ChatGPT account, so you can switch accounts |
 
-Without a provider name, these commands use the `provider` in `config.json`. See [ChatGPT](providers/openai-chatgpt.md), [OpenRouter](providers/openrouter.md), [OpenCode](providers/opencode.md), and [OpenCode Go](providers/opencode-go.md).
+Without a provider name, these commands use the `provider` in `config.json`. See [ChatGPT](providers/openai-chatgpt.md), [Gemini](providers/gemini.md), [OpenRouter](providers/openrouter.md), [OpenCode](providers/opencode.md), and [OpenCode Go](providers/opencode-go.md).
 
 ## Chat
 
