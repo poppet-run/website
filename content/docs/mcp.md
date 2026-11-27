@@ -177,7 +177,7 @@ To let a scheduled task use a reviewed tool, also add it to `scheduledReviewedTo
 }
 ```
 
-Poppet reviews each call against the task's prompt. Only an allowed call runs. If the review denies the call or needs your approval, the run fails, because nobody is there to approve it. Actions that already finished are not undone, and the task's schedule continues. `poppet tasks show <task-id>` shows each review and its result.
+Poppet reviews each call against the task's prompt. Only an allowed call runs. If the review denies the call, the run fails. A call that needs your approval also fails by default. To let it wait for your answer through a messaging gateway, enable [waiting for approval](tasks.md#wait-for-approval). The tool must still be in `scheduledReviewedTools`. Actions that already finished are not undone, and the task's schedule continues. `poppet tasks show <task-id>` shows each review and its result.
 
 ## Server settings
 

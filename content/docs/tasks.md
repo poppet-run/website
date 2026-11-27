@@ -210,7 +210,35 @@ For scheduled searches, connect an MCP server that offers search and allow its s
 
 Scheduled tasks cannot use [MCP tools](mcp.md) unless you allow it for each tool. Allow read-only tools with `scheduledTools`, or tools that change things with `scheduledReviewedTools`. See [MCP permissions](mcp.md#permissions) and [schedule a reviewed action](mcp.md#schedule-a-reviewed-action).
 
-A tool that needs your approval fails the run, because nobody is there to approve it. The task's schedule continues, and actions that already finished are not undone.
+By default, a tool that needs your approval fails the run. You can let the task [wait for approval](#wait-for-approval) instead. The task's schedule continues after a failure, and actions that already finished are not undone.
+
+## Wait for approval
+
+By default, a scheduled run fails if a shell command or reviewed MCP call needs your approval. To let one task wait for you, add `--approvals wait`:
+
+```sh
+poppet tasks add project-check --in 1h --to discord --approvals wait "Check my project and run its tests"
+```
+
+Poppet posts the approval request to the task's messaging destination. If the task has no destination, it uses an available gateway home conversation. Without either, a call that needs approval still fails the run. Using a home conversation for approval does not change where results go. Tasks without `--to` still keep their results on your computer.
+
+Only you can answer, in the conversation with the request. Use **Approve once** or **Deny**, or reply with `/approve <id>` or `/deny <id>`. The approval covers one call. See [approval requests](commands.md#approve-a-command) for how to inspect its details.
+
+To change an existing task's policy:
+
+```sh
+poppet tasks edit <task-id> --approvals wait
+poppet tasks edit <task-id> --approvals fail
+poppet tasks edit <task-id> --approvals default
+```
+
+`default` removes the task's override. Tasks without an override use [`tasks.approvals`](configuration.md#settings), which defaults to `fail`. Set it to `wait` in `config.json` and restart the worker to let those tasks wait for approval.
+
+While waiting, the occurrence stays `running`, but other tasks can run. The request expires after [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits), or at the next scheduled time for a repeating task, whichever comes first. An expired request fails the occurrence. If the next scheduled time is already due, Poppet cannot wait.
+
+Pending approvals survive worker restarts until they expire. After you approve, the worker continues the saved run and handles its result as usual. Approval requests are sent even during quiet hours; results still follow quiet hours.
+
+Use `poppet tasks cancel <task-id>` to cancel a waiting occurrence and its approval request. Check the review and outcome with `poppet tasks show <task-id>`. Waiting does not grant access to extra MCP tools or let a task change memory or other tasks.
 
 ## Missed runs
 
