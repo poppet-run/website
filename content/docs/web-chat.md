@@ -103,7 +103,7 @@ If your proxy sets the `X-Forwarded-For` header, add `"trustProxy": true` to `we
 
 ## Signing in
 
-Anyone with your access key can read and use all of your conversations and approve actions requested in web chat, so keep it private.
+Anyone with your access key can read and use all of your conversations and approve actions requested in web chat, gateways, and scheduled tasks, so keep it private.
 
 You stay signed in for 12 hours, until you sign out, or until the worker restarts. To sign out every browser at once, create a new access key, put its hash in `web.json`, and restart the worker.
 
@@ -134,6 +134,14 @@ While the reply waits, you cannot type or send another message in that conversat
 Pending requests survive closing the page and restarting the worker until they expire. Sign in again after a restart to answer them. Requests expire after one hour by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). Expiry ends the reply without running the pending action. Actions that already finished are not undone.
 
 You can also [list and answer pending web requests from the terminal](commands.md#answer-approvals-from-the-terminal). Web chat offers no **Always allow** button. Use the terminal to [save a rule](commands.md#save-an-approval-rule) when supported.
+
+## Approvals across conversations
+
+Open **Needs you** in the sidebar to see pending command and reviewed MCP approvals across web chat, gateways, and scheduled tasks. Each entry shows its source conversation, requested action, and expiry time. Expand an entry to inspect the request, then choose **Approve once** or **Deny**. Expand **Full request** when available to read details that were shortened.
+
+Anyone signed in with the web access key can answer these requests. The inbox refreshes every five seconds while open and after you answer. If someone answers in another browser or in the original channel, the first decision wins.
+
+Approving a request lets the worker continue its saved run. Gateway replies still go to the original conversation. Scheduled tasks keep their configured result destination. To let a scheduled task wait for approval, follow [wait for approval](tasks.md#wait-for-approval). The inbox does not change those requirements.
 
 ## If a message might not have been sent
 

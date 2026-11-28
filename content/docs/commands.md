@@ -50,6 +50,8 @@ In terminal chat, a command that needs approval does not run unless a saved appr
 
 [Reviewed MCP actions](mcp.md#review-an-action) use the same buttons and replies.
 
+You can also answer pending requests from any conversation in the web chat [Needs you inbox](web-chat.md#approvals-across-conversations).
+
 ## Answer approvals from the terminal
 
 You can list and answer pending requests from web chat, gateway conversations, and scheduled tasks on your computer:
