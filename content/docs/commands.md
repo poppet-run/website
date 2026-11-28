@@ -16,7 +16,7 @@ Before each command, Poppet sends a separate request to your current model, aski
 The review gives one of three answers:
 
 - **Allow.** The command runs once, exactly as reviewed.
-- **Needs approval.** You must approve the command first. In a [messaging gateway](gateways/_index.md), Poppet asks you in the thread. In the terminal and web chat, the command does not run unless a [saved approval rule](#save-an-approval-rule) applies. A scheduled task fails unless you enable [waiting for approval](tasks.md#wait-for-approval).
+- **Needs approval.** You must approve the command first. In a [messaging gateway](gateways/_index.md), Poppet asks you in the thread. In [web chat](web-chat.md#approve-an-action), Poppet shows an approval request in the conversation. In the terminal, the command does not run unless a [saved approval rule](#save-an-approval-rule) applies. A scheduled task fails unless you enable [waiting for approval](tasks.md#wait-for-approval).
 - **Deny.** The command does not run, and Poppet stops answering.
 
 If the review fails or times out, the command does not run.
@@ -27,7 +27,7 @@ The review is a second opinion from a model, and it can be wrong. It reads the c
 
 ## Approve a command
 
-To approve commands, chat through a [messaging gateway](gateways/_index.md). When a command needs approval, Poppet shows the command, the folder it runs in, its time limit, and the reason for asking. In Discord, Slack, and Telegram, choose **Approve once** or **Deny**. If **Show details** appears, use it to read the full command and its settings before deciding. Long commands and fields are shortened in the prompt.
+To approve commands in your browser, see [web chat approvals](web-chat.md#approve-an-action). In a [messaging gateway](gateways/_index.md), follow the steps below. When a command needs approval, Poppet shows the command, the folder it runs in, its time limit, and the reason for asking. In Discord, Slack, and Telegram, choose **Approve once** or **Deny**. If **Show details** appears, use it to read the full command and its settings before deciding. Long commands and fields are shortened in the prompt.
 
 Poppet removes the buttons and shows the outcome when the request ends. If you have the approval ID, every gateway also accepts these replies:
 
@@ -46,13 +46,13 @@ Reply with `/cancel` to cancel the waiting answer. Sending a new message in the 
 
 In Slack, the buttons need **Interactivity & Shortcuts** turned on in your [Slack app settings](gateways/slack.md#create-the-app). A reply with `/approve <id>` works without it if you have the approval ID.
 
-In the terminal or web chat, a command that needs approval does not run unless a saved approval rule applies. Ask for the same thing in a gateway to approve it there.
+In terminal chat, a command that needs approval does not run unless a saved approval rule applies. Ask for the same thing in web chat or a gateway to approve it there.
 
 [Reviewed MCP actions](mcp.md#review-an-action) use the same buttons and replies.
 
 ## Answer approvals from the terminal
 
-You can list and answer pending requests from gateway conversations and scheduled tasks on your computer:
+You can list and answer pending requests from web chat, gateway conversations, and scheduled tasks on your computer:
 
 ```sh
 poppet approvals list
@@ -62,7 +62,7 @@ poppet approvals deny <id>
 
 Copy the approval ID from the list. `poppet approvals` also lists pending requests. The list shows the action summary, conversation, and expiry time. Use `--json` for the full result, including the run ID and creation time.
 
-Approval without `--always` allows that one action. Denial stops it. An expired, cancelled, or already answered request cannot be approved again. These commands answer saved requests; they do not let a terminal or web chat pause for approval.
+Approval without `--always` allows that one action. Denial stops it. An expired, cancelled, or already answered request cannot be approved again. These commands answer saved requests; they do not let terminal chat pause for approval.
 
 ## Save an approval rule
 

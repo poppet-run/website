@@ -103,7 +103,7 @@ If your proxy sets the `X-Forwarded-For` header, add `"trustProxy": true` to `we
 
 ## Signing in
 
-Anyone with your access key can read and use all of your conversations, so keep it private.
+Anyone with your access key can read and use all of your conversations and approve actions requested in web chat, so keep it private.
 
 You stay signed in for 12 hours, until you sign out, or until the worker restarts. To sign out every browser at once, create a new access key, put its hash in `web.json`, and restart the worker.
 
@@ -123,6 +123,18 @@ Your draft survives moving around the page, but not a refresh or signing out.
 
 To use a skill for one message, [name it](skills.md#name-a-skill-in-a-message) with `$`, such as `Run $weekly-review for Acorn`.
 
+## Approve an action
+
+When a [command](commands.md) or [reviewed MCP action](mcp.md#review-an-action) needs your approval, Poppet pauses the reply and shows a request in the conversation. Read the reason and action details, then choose **Approve once** or **Deny**. If **Full request** appears, expand it to read the details that were shortened.
+
+**Approve once** allows that one action. The worker continues the saved reply after approval. **Deny** stops the action. The request shows the outcome and who answered it, even after you reload the page. Browser decisions are recorded as coming from the access-key holder.
+
+While the reply waits, you cannot type or send another message in that conversation, delete it, or use **Stop reply**. Answer the request or let it expire. Other conversations can continue.
+
+Pending requests survive closing the page and restarting the worker until they expire. Sign in again after a restart to answer them. Requests expire after one hour by default, set with [`timeouts.approvalSeconds`](configuration.md#timeouts-and-limits). Expiry ends the reply without running the pending action. Actions that already finished are not undone.
+
+You can also [list and answer pending web requests from the terminal](commands.md#answer-approvals-from-the-terminal). Web chat offers no **Always allow** button. Use the terminal to [save a rule](commands.md#save-an-approval-rule) when supported.
+
 ## If a message might not have been sent
 
 If your connection drops just as you send, web chat cannot tell whether Poppet received your message. It keeps the message and shows a notice with two buttons:
@@ -141,8 +153,6 @@ See [delete old sessions](chat.md#delete-old-sessions) for what else deletion af
 ## What web chat cannot do yet
 
 Web chat does not support attachments, search, renaming, choosing a model, choosing a skill for the whole conversation, showing reasoning, or showing run details. Use the [terminal](chat.md) for these. For example, `poppet chat show <session-id>` shows run details for a web conversation.
-
-You cannot approve commands or [reviewed MCP actions](mcp.md#review-an-action) in web chat. If Poppet needs your approval, the reply stops. Ask again in a [messaging gateway](gateways/_index.md) to approve it there. See [run commands](commands.md).
 
 Replies show as plain text until the page has loaded its formatting, and stay readable as plain text if it fails to load. Web chat shows HTML in replies as text, apart from a few simple tags such as `<br>`. Images show as their description, and checklists lose their checkboxes. Links open in a new tab. Web chat shows other kinds of links, such as `file:` links, as plain text.
 
