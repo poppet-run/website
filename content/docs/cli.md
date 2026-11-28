@@ -123,7 +123,7 @@ Put options before the message. See [chat](chat.md).
 | `approvals rules revoke <id>` | Revoke one saved rule |
 | `approvals rules revoke --all` | Revoke all saved rules |
 
-The list shows each approval's ID, kind, conversation, expiry time, and summary. All approval commands accept `--json`. Copy an ID from the list to answer a request from a gateway conversation or scheduled task. Expired or already answered requests cannot be answered again.
+The list shows each approval's ID, kind, conversation, expiry time, and summary. All approval commands accept `--json`. Copy an ID from the list to answer a request from web chat, a gateway conversation, or a scheduled task. Expired or already answered requests cannot be answered again.
 
 See [answer approvals from the terminal](commands.md#answer-approvals-from-the-terminal) and [saved approval rules](commands.md#save-an-approval-rule).
 
